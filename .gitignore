@@ -7,6 +7,9 @@
 .paux
 tex_sources/*
 
+#python compiled
+*.pyc
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
