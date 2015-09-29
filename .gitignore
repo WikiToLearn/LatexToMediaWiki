@@ -1,0 +1,8 @@
+*.tex
+*.xml
+*.mw
+*.mww
+.directory
+.paux
+tex_sources/*
+
