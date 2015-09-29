@@ -42,6 +42,8 @@ class MediaWikiRenderer (Renderer):
         self.tree = PageTree(doc_title)
         #parameter for list formatting
         self.list_level=u'' 
+
+        ####### TAGS ANALYSY
         #set for default tags
         self.def_tags = set()
 
