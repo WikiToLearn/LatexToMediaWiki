@@ -7,16 +7,16 @@ import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
-# #XML RENDERER
-# f = open('tex_sources/DispenseStruttura.tex','r')
-# text = f.read().decode('utf-8')
-# tex2 = TeX()
-# tex2.ownerDocument.config['files']['split-level'] = -100
-# tex2.ownerDocument.config['files']['filename'] = 'DispenseStruttura.xml'
-# tex2.input(text)
-# document2 = tex2.parse()
-# rend = XMLRenderer()
-# rend.render(document2)
+#XML RENDERER
+f = open('tex_sources/DispenseStruttura.tex','r')
+text = f.read().decode('utf-8')
+tex2 = TeX()
+tex2.ownerDocument.config['files']['split-level'] = -100
+tex2.ownerDocument.config['files']['filename'] = 'test.xml'
+tex2.input(text)
+document2 = tex2.parse()
+rend = XMLRenderer()
+rend.render(document2)
 
 #MEDIAWIKI RENDERER
 f2 = open('tex_sources/DispenseStruttura.tex','r')
@@ -24,7 +24,7 @@ text2 = f2.read().decode('utf-8')
 #tex object parse the tex
 tex2 = TeX()
 tex2.ownerDocument.config['files']['split-level'] = -100
-tex2.ownerDocument.config['files']['filename'] = 'DispenseStruttura.mww'
+tex2.ownerDocument.config['files']['filename'] = 'test.mww'
 tex2.input(text2)
 document2 = tex2.parse()
 #initializing render with Document title

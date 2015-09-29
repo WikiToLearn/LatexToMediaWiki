@@ -34,8 +34,9 @@ class Page(object):
 			for subpage in self.subpages:
 				pages_dict[subpage].collapseText(max_level,pages_dict)
 				#the subpages'index is created
+				self.text+='\n\n==Sottopagine=='
 				for p in self.subpages:
-					self.text += '\n\n==Sottopagine==\n[['+p+']]'
+					self.text += '\n[['+p+']]'
 		else:
 			#we have to managed the text
 			for subpage in self.subpages:
