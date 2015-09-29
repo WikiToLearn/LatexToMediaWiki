@@ -96,11 +96,13 @@ class PageTree (object):
 	def fixReferences(self):
 		self.pages[self.doc_title].fixReferences(self.labels,self.pages)
 
-	'''Entry point for XML exporting'''
-	def exportXML(self):
+	'''Entry point for XML exporting
+	-base_path is the base path for all exported pages'''
+	def exportXML(self,base_path=''):
 		s = []
 		s.append('<mediawiki xml:lang="en">')
 		#starting iteration
+		self.base_path = base_path
 		self._exportXML(s,-1,self.index,'')
 		s.append('</mediawiki>')
 		return '\n'.join(s)
@@ -124,7 +126,7 @@ class PageTree (object):
 	'''Return the mediawiki XML of a single page'''
 	def getPageXML(self,page):
 		s =[]
-		s.append('<page>\n<title>'+page.url+'</title>')
+		s.append('<page>\n<title>'+self.base_path+'/'+page.url+'</title>')
 		s.append('\n<restrictions></restrictions>')
 		s.append('\n<revision>')
 		ts = time.time()
