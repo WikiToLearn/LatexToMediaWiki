@@ -141,6 +141,7 @@ class MediaWikiRenderer (Renderer):
 
     do_pageref = do_ref
     do_vref = do_ref
+    do_eqref = do_ref
 
 
     ################################################
