@@ -132,6 +132,8 @@ class MediaWikiRenderer (Renderer):
         self.label(l)
         return u''
 
+    '''All ref tag are substituted by normal ref tag.
+    It'll be reparsed after text collapsing'''
     def do_ref(self,node):
         r = node.attributes['label']
         return unicode('\\ref{'+r+'} ')

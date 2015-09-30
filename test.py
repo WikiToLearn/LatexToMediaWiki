@@ -44,6 +44,6 @@ o.write(xml)
 
 #DEBUg PRINTING
 #print(str(rend.tree.index))
-for k in rend2.tree.pages:
-	print(str(rend2.tree.pages[k]))
-	#print(rend.tree.pages[k].text)
+# for k in rend2.tree.pages:
+# 	print(str(rend2.tree.pages[k]))
+# 	#print(rend.tree.pages[k].text)

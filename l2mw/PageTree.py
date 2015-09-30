@@ -72,7 +72,6 @@ class PageTree (object):
 		self.current_url= self.pageurl_stack.pop()
 
 	def addLabel(self,label):
-		print('label='+label)
 		self.labels[label]= self.current_url
 
 	def getRef(self,label):

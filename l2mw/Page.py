@@ -91,13 +91,8 @@ class Page(object):
 
 	'''This method insert the right mediawikiurl in 
 	the \ref tags after the collapsing'''
-	def fixReferences(self, labels,pages):
-		#test occorenze
-		elements = re.findall('\\ref{(.*?)}', self.text)
-		if elements:
-			print elements.group(1)
-		for ref in re.findall('\\ref{(.*?)}', self.text): 
-			label = ref.group(1)
+	def fixReferences(self, labels, pages):
+		for label in re.findall(r'\\ref{(.*?)}', self.text): 
 			self.text = self.text.replace(unicode('\\ref{'+label+'}'),' ([[' + labels[label] + ']]) ')
 		for sub in self.subpages:
 			pages[sub].fixReferences(labels,pages)
