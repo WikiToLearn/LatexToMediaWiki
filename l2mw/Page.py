@@ -38,14 +38,18 @@ class Page(object):
 				self.text+='\n\n==Sottopagine=='
 				for p in self.subpages:
 					self.text += '\n*[['+p+']]'
+			#added refs tags to show footnotes
+			self.text+='\n<references/>'
 		else:
 			#we have to managed the text
 			for subpage in self.subpages:
 				t = pages_dict[subpage].collapseText(max_level,pages_dict)
 				#add text
 				self.text+= '\n'+t
-				#print('text@'+ self.text)
-			if self.level>max_level:
+			if self.level ==max_level:
+				#added refs tags to show footnotes
+				self.text+='\n<references/>'
+			elif self.level>max_level:
 				#Creation of current page'title
 				tit = '\n'+'='*(self.level-max_level+1)+self.title+'='*(self.level-max_level+1)
 				self.text = tit+ "\n"+ self.text
