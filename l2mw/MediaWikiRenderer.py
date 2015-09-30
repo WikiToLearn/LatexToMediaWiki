@@ -1,6 +1,6 @@
 import string,re
 from plasTeX.Renderers import Renderer
-from PageTree import PageTree
+from PageTree import PageTree,Figure
 
 class MediaWikiRenderer (Renderer):
 
@@ -67,7 +67,6 @@ class MediaWikiRenderer (Renderer):
     #sectioning
     def sectioning(self, node,page_type):
         title = unicode(node.attributes['title'])
-        print(title)
         #adding index to parent
         self.tree.addToSubpageIndex(title)
         #creation of the new page
@@ -314,18 +313,33 @@ class MediaWikiRenderer (Renderer):
     #figures and tables
 
     def do_figure(self,node):
-        return u''
+        file_path=''
+        caption = ''
+        label=''
+        #searchin includegraphics
+        graphics_search = re.search(ur'\\includegraphics(\[.*\])*{(.*?)}',node.source)
+        if graphics_search: 
+            file_path= graphics_search.group(1)
 
-    def do_includegraphics(self,node):
-        s = []
-        s.append('[[')
-        if node.hasAttributes():
-            for key, value in node.attributes.items():
-                if key == 'self':
-                     continue
-                if key == 'file':
-                    s.append('%s|%s]]' % (unicode(value),unicode(node.parentNode.parentNode.previousSibling.lastChild)))
-        return u''.join(s) 
+        #searching label
+        label_search = re.search(ur'\\label{(.*?)}',node.source)
+        if label_search:
+            label = label_search.group(1)
+
+        #searching caption
+        caption_search = re.search(ur'\\caption{(.*?)}',node.source)
+        if caption_search:
+            caption = caption_search.group(1)
+
+        #creating figure
+        f = Figure(label,caption,file_path)
+        #adding figure to tree
+        self.tree.addFigure(f)
+        #adding label
+        if label:
+            self.label(label)
+        #return warning text for figure
+        return unicode('[[Figura:'+label+'_'+caption+']]')
 
     ###################################################
     #Math tags

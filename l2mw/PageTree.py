@@ -2,6 +2,16 @@ from Page import Page
 import datetime
 import time
 
+class Figure(object):
+	def __init__(self,label,caption,filename):
+		self.label = label
+		self.caption = caption
+		self.filename= filename
+		self.page_url=''
+	def addPageUrl(self,page_url):
+		self.page_url = page_url
+
+
 ''' Class that memorize the pages' structure and content during parsing '''
 class PageTree (object):
 
@@ -11,7 +21,7 @@ class PageTree (object):
 		-self.pages is a dictionary of pages. The keys are internal url of pages.
 		-self.media_urls is a dictionary internal_url = media_url
 		-self.labels is a dictionary for label: label=media_url 
-		-self.figure is a dictionary for figure_name= media_url
+		-self.figures contains the list of figure objects
 		-self.tables is a dictionary for tables_name= media_url
 		-self.page_stack contains the history of enviroment until the one before the current'''
 	def __init__(self, doc_title):
@@ -20,7 +30,7 @@ class PageTree (object):
 		self.pages = {}
 		self.media_urls = {}
 		self.labels = {}
-		self.figures = {}
+		self.figures = []
 		self.tables = {}
 		#ROOT PAGE
 		self.index[doc_title]={}
@@ -83,10 +93,10 @@ class PageTree (object):
 	def getRef(self,label):
 		return self.media_urls[self.labels[label]]
 
-	'''This method add the figure_name to the figures dictionary. 
-	It's related values is it's page url'''
+	'''This method add the figure to the figures list. (DO NOT handle the label) '''
 	def addFigure(self,figure):
-		self.figures[figure]=self.current_url
+		self.figures.append(figure)
+		figure.addPageUrl(self.current_url)
 
 	'''This method add the table_name to the tables dictionary. 
 	It's related values is it's page url'''
@@ -105,6 +115,9 @@ class PageTree (object):
 		#fixing labels with mediawikiurls
 		for l in self.labels:
 			self.labels[l] = self.media_urls[self.labels[l]]
+		#fixing figures urls
+		for f in self.figures:
+			f.page_url = self.media_urls[f.page_url]
 
 	'''Method that starts the rendering of refs'''
 	def fixReferences(self):
@@ -153,5 +166,3 @@ class PageTree (object):
 		s.append('\n</revision>\n</page>')
 		return '\n'.join(s)
 
-
-	
