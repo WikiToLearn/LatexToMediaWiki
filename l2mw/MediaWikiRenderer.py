@@ -144,11 +144,19 @@ class MediaWikiRenderer (Renderer):
 
     ################################################
     #Formatting
+    '''Paragraph'''
     def do_par(self, node):
         s = []
-        s.append(u'\n')
+        s.append(u'\n\n')
         s.append(unicode(node))
         return u''.join(s)
+
+    '''Breaks line inside a paragraph'''
+    def do_newline(self,node):
+        return u'<br/>'
+    
+    do__backslash = do_newline
+
         
     def do_textbf(self,node):
         s=[]
@@ -169,14 +177,6 @@ class MediaWikiRenderer (Renderer):
     do_textsl = do_textit
     do_slshape = do_textit
    
-    def do_newline(self,node):
-        s = []
-        s.append(u'\n')
-        s.append(unicode(node))
-        return u''.join(s)
-    
-    do__backslash=do_newline
-
     def do_newpage(self,node):
         s = []
         s.append(u'')
