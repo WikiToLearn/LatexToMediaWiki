@@ -299,6 +299,13 @@ class MediaWikiRenderer (Renderer):
         s.append(unicode(node))
         s.append(u"</tt>")
         return u''.join(s)  
+
+    def do_verbatim(self,node):
+        s=[]
+        s.append(u'<nowiki>')
+        s.append(unicode(node.source))
+        s.append(u'</nowiki>\n')
+        return u''.join(s)
         
     ##########################################
     #Image tags
