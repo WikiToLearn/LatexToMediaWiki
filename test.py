@@ -7,9 +7,9 @@ import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
-#XML RENDERER
-f = open('tex_sources/DispenseStruttura.tex','r')
+f = open('tex_sources/test.tex','r')
 text = f.read().decode('utf-8')
+#tex object parse the tex
 tex2 = TeX()
 tex2.ownerDocument.config['files']['split-level'] = -100
 tex2.ownerDocument.config['files']['filename'] = 'test.xml'
@@ -19,25 +19,25 @@ rend = XMLRenderer()
 rend.render(document2)
 
 #MEDIAWIKI RENDERER
-f2 = open('tex_sources/DispenseStruttura.tex','r')
+f2 = open('tex_sources/test.tex','r')
 text2 = f2.read().decode('utf-8')
 #tex object parse the tex
-tex2 = TeX()
-tex2.ownerDocument.config['files']['split-level'] = -100
-tex2.ownerDocument.config['files']['filename'] = 'test.mww'
-tex2.input(text2)
-document2 = tex2.parse()
+tex3 = TeX()
+tex3.ownerDocument.config['files']['split-level'] = -100
+tex3.ownerDocument.config['files']['filename'] = 'test.mww'
+tex3.input(text2)
+document2 = tex3.parse()
 #initializing render with Document title
-rend2 = MediaWikiRenderer("Title")
+rend2 = MediaWikiRenderer("Prova")
 #rendering process start
 rend2.render(document2)
 ##after rendering hooks
 #collapsing text to the right page level
-rend2.tree.collapseText(0)
+rend2.tree.collapseText(3)
 #fixing refs
 rend2.tree.fixReferences()
 #xml exporting
-xml = rend2.tree.exportXML()
+xml = rend2.tree.exportXML('Fisica')
 o = open('test.mw','w')
 o.write(xml)
 

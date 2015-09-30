@@ -102,7 +102,9 @@ class PageTree (object):
 		s = []
 		s.append('<mediawiki xml:lang="en">')
 		#starting iteration
-		self.base_path = base_path
+		if base_path!='':
+			self.base_path = base_path+'/'
+		else: self.base_path = ''
 		self._exportXML(s,-1,self.index,'')
 		s.append('</mediawiki>')
 		return '\n'.join(s)
@@ -126,13 +128,13 @@ class PageTree (object):
 	'''Return the mediawiki XML of a single page'''
 	def getPageXML(self,page):
 		s =[]
-		s.append('<page>\n<title>'+self.base_path+'/'+page.url+'</title>')
+		s.append('<page>\n<title>'+self.base_path+page.url+'</title>')
 		s.append('\n<restrictions></restrictions>')
 		s.append('\n<revision>')
 		ts = time.time()
 		s.append('\n<timestamp>'+ datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
 		s.append('</timestamp>')
-		s.append('\n<contributor><username>BoTeX</username></contributor>')
+		s.append('\n<contributor><username>RotTeX</username></contributor>')
 		s.append('\n<text>'+ page.text+'\n</text>')
 		s.append('\n</revision>\n</page>')
 		return '\n'.join(s)

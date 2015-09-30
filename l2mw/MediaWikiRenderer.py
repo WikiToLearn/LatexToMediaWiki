@@ -24,6 +24,9 @@ class MediaWikiRenderer (Renderer):
         'backslash': '\\',
     }
 
+    '''List of nodes not to explore'''
+    no_enter = ['titlepage']
+
     def __init__(self, doc_title,*args, **kwargs):
         Renderer.__init__(self, *args, **kwargs)
         #document title
@@ -48,6 +51,8 @@ class MediaWikiRenderer (Renderer):
         self.def_tags = set()
 
     def default(self, node):
+        if node.nodeName in self.no_enter:
+            return u''
         s = []
         self.def_tags.add(node.nodeName)
         s.append(unicode(node))
@@ -125,6 +130,7 @@ class MediaWikiRenderer (Renderer):
         #retriving label id
         l = node.attributes['label']
         self.label(l)
+        return u''
 
     def do_ref(self,node):
         r = node.attributes['label']
