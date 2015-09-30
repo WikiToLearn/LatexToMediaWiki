@@ -247,6 +247,8 @@ class MediaWikiRenderer (Renderer):
         s.append(u'</div>')
         return u''.join(s)
 
+    do_center = do_centering
+
     def do_flushright(self, node):
         s = []
         s.append(u'<div style="text-align:right;">')
