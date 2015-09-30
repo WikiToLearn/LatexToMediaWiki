@@ -321,18 +321,14 @@ class MediaWikiRenderer (Renderer):
         graphics_search = re.search(ur'\\includegraphics(\[.*\])*{(.*?)}',node.source)
         if graphics_search: 
             file_path= graphics_search.group(2)
-
         #searching label
         label_search = re.search(ur'\\label{(.*?)}',node.source)
         if label_search:
             label = label_search.group(1)
-
         #searching caption
         caption_search = re.search(ur'\\caption{(.*?)}',node.source)
         if caption_search:
             caption = caption_search.group(1)
-
-        print file_path
         #creating figure
         f = Figure(label,caption,file_path)
         #adding figure to tree
@@ -342,6 +338,28 @@ class MediaWikiRenderer (Renderer):
             self.label(label)
         #return warning text for figure
         return unicode('[[Figura:'+label+'_'+caption+'_'+file_path+']]')
+
+    '''The Table environment is handled with regex'''
+    def table(self,node):
+        caption = ''
+        label = ''
+        #searching label
+        label_search = re.search(ur'\\label{(.*?)}',node.source)
+        if label_search:
+            label = label_search.group(1)
+        #searching caption
+        caption_search = re.search(ur'\\caption{(.*?)}',node.source)
+        if caption_search:
+            caption = caption_search.group(1)
+        #creating table
+        t = Table(label,caption)
+        #adding table to the tree
+        self.tree.addTable(t)
+        #æssing label
+        if label:
+            self.label(labale)
+        #return warning text for table
+        return unicode('[[Tabella:'+label+'_'+caption+']]')
 
 
     ###################################################

@@ -2,15 +2,6 @@ from Page import Page
 import datetime
 import time
 
-class Figure(object):
-	def __init__(self,label,caption,filename):
-		self.label = label
-		self.caption = caption
-		self.filename= filename
-		self.page_url=''
-	def addPageUrl(self,page_url):
-		self.page_url = page_url
-
 
 ''' Class that memorize the pages' structure and content during parsing '''
 class PageTree (object):
@@ -22,7 +13,7 @@ class PageTree (object):
 		-self.media_urls is a dictionary internal_url = media_url
 		-self.labels is a dictionary for label: label=media_url 
 		-self.figures contains the list of figure objects
-		-self.tables is a dictionary for tables_name= media_url
+		-self.tables contains the list of table objects
 		-self.page_stack contains the history of enviroment until the one before the current'''
 	def __init__(self, doc_title):
 		self.doc_title= doc_title
@@ -31,7 +22,7 @@ class PageTree (object):
 		self.media_urls = {}
 		self.labels = {}
 		self.figures = []
-		self.tables = {}
+		self.tables = []
 		#ROOT PAGE
 		self.index[doc_title]={}
 		r = Page(doc_title,doc_title,'root',-1)
@@ -101,7 +92,8 @@ class PageTree (object):
 	'''This method add the table_name to the tables dictionary. 
 	It's related values is it's page url'''
 	def addTable(self,table):
-		self.tables[table]= self.current_url
+		self.tables.append(table)
+		table.addPageUrl(self.current_url)
 
 	''' This method collapse the text contained in subpages 
 	in the pages with level > level_min.
@@ -118,6 +110,9 @@ class PageTree (object):
 		#fixing figures urls
 		for f in self.figures:
 			f.page_url = self.media_urls[f.page_url]
+		#fixing tables urls
+		for t in self.tables:
+			t.page_url = self.media_urls[t.page_url]
 
 	'''Method that starts the rendering of refs'''
 	def fixReferences(self):
@@ -166,3 +161,25 @@ class PageTree (object):
 		s.append('\n</revision>\n</page>')
 		return '\n'.join(s)
 
+
+
+class Figure(object):
+
+	def __init__(self,label,caption,filename):
+		self.label = label
+		self.caption = caption
+		self.filename= filename
+		self.page_url=''
+
+	def addPageUrl(self,page_url):
+		self.page_url = page_url
+
+class Table(object):
+
+	def __init__(self,label,caption):
+		self.label = label
+		self.caption = caption
+		self.page_url=''
+		
+	def addPageUrl(self,page_url):
+		self.page_url = page_url
