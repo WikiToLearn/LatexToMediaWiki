@@ -312,7 +312,7 @@ class MediaWikiRenderer (Renderer):
         
     ##########################################
     #figures and tables
-
+    '''The figure environment is handled with regexs. '''
     def do_figure(self,node):
         file_path=''
         caption = ''
@@ -320,7 +320,7 @@ class MediaWikiRenderer (Renderer):
         #searchin includegraphics
         graphics_search = re.search(ur'\\includegraphics(\[.*\])*{(.*?)}',node.source)
         if graphics_search: 
-            file_path= graphics_search.group(1)
+            file_path= graphics_search.group(2)
 
         #searching label
         label_search = re.search(ur'\\label{(.*?)}',node.source)
@@ -332,6 +332,7 @@ class MediaWikiRenderer (Renderer):
         if caption_search:
             caption = caption_search.group(1)
 
+        print file_path
         #creating figure
         f = Figure(label,caption,file_path)
         #adding figure to tree
@@ -340,7 +341,8 @@ class MediaWikiRenderer (Renderer):
         if label:
             self.label(label)
         #return warning text for figure
-        return unicode('[[Figura:'+label+'_'+caption+']]')
+        return unicode('[[Figura:'+label+'_'+caption+'_'+file_path+']]')
+
 
     ###################################################
     #Math tags
