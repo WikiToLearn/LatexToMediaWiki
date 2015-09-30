@@ -11,6 +11,8 @@ class PageTree (object):
 		-self.pages is a dictionary of pages. The keys are internal url of pages.
 		-self.media_urls is a dictionary internal_url = media_url
 		-self.labels is a dictionary for label: label=media_url 
+		-self.figure is a dictionary for figure_name= media_url
+		-self.tables is a dictionary for tables_name= media_url
 		-self.page_stack contains the history of enviroment until the one before the current'''
 	def __init__(self, doc_title):
 		self.doc_title= doc_title
@@ -18,6 +20,8 @@ class PageTree (object):
 		self.pages = {}
 		self.media_urls = {}
 		self.labels = {}
+		self.figures = {}
+		self.tables = {}
 		#ROOT PAGE
 		self.index[doc_title]={}
 		r = Page(doc_title,doc_title,'root',-1)
@@ -56,14 +60,14 @@ class PageTree (object):
 		self.current_url= newurl
 
 	'''This method insert text in the current page   '''
-	def addTextCurrentPage(self,text):
+	def addText(self,text):
 		#print('ADDING TEXT TO URL='+unicode(self.current_url)+' | ADDING TEXT='+unicode(text) +\
 			#' |current url='+unicode(self.current_url)+ '|current='+unicode(self.current) )
 		self.pages[self.current_url].addText(text)
 
 	'''This method insert a page in the current page's index. It's used when 
  	subsection is encountered'''
-	def addIndexParentPage(self,title):
+	def addToSubpageIndex(self,title):
 		self.pages[self.current_url].addIndex(self.current_url+'/'+title)
 
 	'''Return to the parent page enviroment'''
@@ -71,12 +75,23 @@ class PageTree (object):
 		self.current = self.page_stack.pop()
 		self.current_url= self.pageurl_stack.pop()
 
+	'''Add label to the current page enviroment'''
 	def addLabel(self,label):
 		self.labels[label]= self.current_url
 
+	'''This method return the media_url of the section closer to the label''' 
 	def getRef(self,label):
 		return self.media_urls[self.labels[label]]
 
+	'''This method add the figure_name to the figures dictionary. 
+	It's related values is it's page url'''
+	def addFigure(self,figure):
+		self.figures[figure]=self.current_url
+
+	'''This method add the table_name to the tables dictionary. 
+	It's related values is it's page url'''
+	def addTable(self,table):
+		self.tables[table]= self.current_url
 
 	''' This method collapse the text contained in subpages 
 	in the pages with level > level_min.

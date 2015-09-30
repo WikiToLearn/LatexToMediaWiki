@@ -25,7 +25,8 @@ class MediaWikiRenderer (Renderer):
     }
 
     '''List of nodes not to explore'''
-    no_enter = ['titlepage']
+    no_enter = ['titlepage','maketitle',
+            'numberwithin','geometry']
 
     def __init__(self, doc_title,*args, **kwargs):
         Renderer.__init__(self, *args, **kwargs)
@@ -66,14 +67,15 @@ class MediaWikiRenderer (Renderer):
     #sectioning
     def sectioning(self, node,page_type):
         title = unicode(node.attributes['title'])
+        print(title)
         #adding index to parent
-        self.tree.addIndexParentPage(title)
+        self.tree.addToSubpageIndex(title)
         #creation of the new page
         self.tree.createPage(title,page_type)
         #content processing
         text = unicode(node)
         #adding text to current page
-        self.tree.addTextCurrentPage(text)
+        self.tree.addText(text)
         #exiting the section
         self.tree.exitPage()
 
@@ -114,7 +116,7 @@ class MediaWikiRenderer (Renderer):
     '''Enter point for parsing. Root page is already created'''
     def do_document(self,node):
         content = unicode(node)
-        self.tree.addTextCurrentPage(content)
+        self.tree.addText(content)
         return u'%s' % content
 
 
@@ -157,7 +159,6 @@ class MediaWikiRenderer (Renderer):
     
     do__backslash = do_newline
 
-        
     def do_textbf(self,node):
         s=[]
         s.append(u"\'\'\'")
@@ -310,7 +311,10 @@ class MediaWikiRenderer (Renderer):
         return u''.join(s)
         
     ##########################################
-    #Image tags
+    #figures and tables
+
+    def do_figure(self,node):
+        return u''
 
     def do_includegraphics(self,node):
         s = []
