@@ -373,7 +373,8 @@ class MediaWikiRenderer (Renderer):
     have to be handled by specific methods'''
     def handleDisplayMath(self, node): 
         begin_tag = None
-        end_Tag = None
+        end_Tag = None        
+        split_tag = None
         label_tag = None
         structure_label_tag = None
         s = node.source
@@ -381,9 +382,18 @@ class MediaWikiRenderer (Renderer):
         #$$ search
         global_dollars_search = re.search(ur'\$\$(.*?)\$\$', node.source)
 
-        #search \begin and end \tag  or \[ \]
-        global_begin_tag = re.search(ur'\\\bbegin\b\{(.*?)\}|\\\[', node.source)
-        global_end_tag = re.search(ur'\\\bend\b\{(.*?)\}|\\\]', node.source)
+        #search \begin and end \tag
+        global_begin_tag = re.search(ur'\\\bbegin\b\{(\bequation)\}|\\\[', node.source)
+        global_end_tag = re.search(ur'\\\bend\b\{(\bequation)\}|\\\]', node.source)
+
+        #search for split tag
+        re_global_split_tag = re.compile(ur'\\\bbegin\{(split)\}(.*?)\\\bend\{(split)\}', re.DOTALL)
+        global_split_tag = re.findall(re_global_split_tag, node.source)
+
+        #get content between \begin{split}
+        if global_split_tag:
+            for split_tag in global_split_tag:
+                s = s.replace("split", u"align")
 
         #get content between $$ $$
         #get \begin{tag} and \end{tag}
