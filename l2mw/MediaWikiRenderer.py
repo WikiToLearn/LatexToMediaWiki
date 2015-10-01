@@ -22,6 +22,9 @@ class MediaWikiRenderer (Renderer):
         'tilde': 'active::~',
         'at': '@',
         'backslash': '\\',
+        #math starred commmands
+        'align_star':'align*',
+        'alignat_star':'alignat*'
     }
 
     '''List of nodes not to explore'''
@@ -383,8 +386,8 @@ class MediaWikiRenderer (Renderer):
         global_dollars_search = re.search(ur'\$\$(.*?)\$\$', node.source)
 
         #search \begin and end \tag
-        global_begin_tag = re.search(ur'\\\bbegin\b\{(\bequation)\}|\\\[', node.source)
-        global_end_tag = re.search(ur'\\\bend\b\{(\bequation)\}|\\\]', node.source)
+        global_begin_tag = re.search(ur'\\\bbegin\b\{(\bequation\*?)\}|\\\[', node.source)
+        global_end_tag = re.search(ur'\\\bend\b\{(\bequation\*?)\}|\\\]', node.source)
 
         #search for split tag
         re_global_split_tag = re.compile(ur'\\\bbegin\{(split)\}(.*?)\\\bend\{(split)\}', re.DOTALL)
@@ -492,10 +495,12 @@ class MediaWikiRenderer (Renderer):
         return '<dmath>'+ label_tag + s + '</dmath>\n'
 
     do_eqnarray = do_align
-    do_align* = do_align
-    do_alignat* = do_align
     do_multline = do_align
     do_alignat =  do_align
+    #using aliases
+    do__align_star = do_align
+    do__alignat_star = do_align
+
 
     ###############################################
     
