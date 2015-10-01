@@ -364,49 +364,6 @@ class MediaWikiRenderer (Renderer):
 
     ###################################################
     #Math tags
-    '''support for align type tag'''
-    def do_align(self, node):
-        global_label_tag = None
-        split_tag = None
-        label_tag = None
-        begin_tag = None
-        end_Tag = None
-        structure_label_tag = None
-        s = node.source
-        #search equation tag
-        label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', node.source)
-
-        #search for split tag
-        re_global_split_tag = re.compile(ur'\\\bbegin\{(split)\}(.*?)\\\bend\{(split)\}', re.DOTALL)
-        global_split_tag = re.findall(re_global_split_tag, node.source)
-
-        #get content between \begin{split}
-        if global_split_tag:
-            for split_tag in global_split_tag:
-                s = s.replace("split", u"align")
-            
-        if global_label_tag:
-            label_tag = global_label_tag.group(1)
-            structure_label_tag = global_label_tag.group(0)
-        else:
-            label_tag = ''
-            structure_label_tag = ''
-
-        s = s.replace(structure_label_tag, "")
-
-        # check if label tag exist. If it does, creates the tag
-        if label_tag is not '':
-            #adding label to tree
-            self.label(label_tag)
-            label_tag = "<label> " + label_tag + " </label>"
-        else:
-            label_tag = ""
-        return '<dmath>'+ label_tag + s + '</dmath>\n'
-
-    do_eqnarray = do_align
-    do_multline = do_align
-    do_alignat =  do_align
-
 
     '''Handles math insede a displaymath mode:
     -it removes $$ and \[ \].
@@ -415,11 +372,11 @@ class MediaWikiRenderer (Renderer):
     Other \begin{math_environment} that are not inside a displaymath 
     have to be handled by specific methods'''
     def handleDisplayMath(self, node): 
-        begin_tag = None
-        end_Tag = None        
-        split_tag = None
-        label_tag = None
-        structure_label_tag = None
+        begin_tag = ''
+        end_Tag = ''     
+        split_tag = ''
+        label_tag = ''
+        structure_label_tag = ''
         s = node.source
 
         #$$ search
@@ -451,14 +408,14 @@ class MediaWikiRenderer (Renderer):
 
         #search equation tag
         global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', node.source)
-
+        #getting label and deleting label tag
         if global_label_tag:
             label_tag = global_label_tag.group(1)
             structure_label_tag = global_label_tag.group(0)
         else:
             label_tag = ''
             structure_label_tag = ''
-
+        #deleting label tag
         s = s.replace(structure_label_tag, "")
 
         # check if label tag exist. If it does, creates the tag
@@ -473,26 +430,73 @@ class MediaWikiRenderer (Renderer):
     do_displaymath = handleDisplayMath
     do_equation = handleDisplayMath
 
-
+    '''Handles inline math '''
     def do_math(self, node):
-        tag = None
-
+        content = ''
         #search content between $ $
         global_tag = re.search(ur'\$(.*?)\$', node.source)
-        
+        #search for \( \)
         regexp_brackets_global_tag = re.compile(ur'\\\((.*?)\\\)', re.DOTALL)
         brackets_global_tag = re.search(regexp_brackets_global_tag, node.source)
 
         #get content between $ $
         if global_tag:
-            tag = global_tag.group(1)
+            content = global_tag.group(1)
         elif brackets_global_tag:
-            tag = brackets_global_tag.group(1)
+            content = brackets_global_tag.group(1)
         else:
-            tag = ''
-        return '<math>'+ tag +'</math>\n'
+            content = ''
+        return '<math>'+ content +'</math>\n'
 
     do_ensuremath = do_math
+
+    '''Support for align type tags. 
+    They are outside math modes an supported directluy'''
+    def do_align(self, node):
+        split_tag = ''
+        label_tag = ''
+        begin_tag = ''
+        end_Tag = ''
+        structure_label_tag = ''
+        s = node.source
+      
+        #search equation tag
+        global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', node.source)
+        #search for split tag
+        re_global_split_tag = re.compile(ur'\\\bbegin\{(split)\}(.*?)\\\bend\{(split)\}', re.DOTALL)
+        global_split_tag = re.findall(re_global_split_tag, node.source)
+
+        #get content between \begin{split}
+        if global_split_tag:
+            for split_tag in global_split_tag:
+                s = s.replace("split", u"align")
+            
+        #getting label and deleting label tag
+        if global_label_tag:
+            label_tag = global_label_tag.group(1)
+            structure_label_tag = global_label_tag.group(0)
+        else:
+            label_tag = ''
+            structure_label_tag = ''
+        #deleting label tag
+        s = s.replace(structure_label_tag, "")
+
+        # check if label tag exist. If it does,
+        # insert the tag in output and tree
+        if label_tag is not '':
+            #adding label to tree
+            self.label(label_tag)
+            label_tag = "<label> " + label_tag + " </label>"
+        else:
+            label_tag = ""
+        return '<dmath>'+ label_tag + s + '</dmath>\n'
+
+    do_eqnarray = do_align
+    do_align* = do_align
+    do_alignat* = do_align
+    do_multline = do_align
+    do_alignat =  do_align
+
     ###############################################
     
     

@@ -19,7 +19,7 @@ rend = XMLRenderer()
 rend.render(document2)
 
 #MEDIAWIKI RENDERER
-f2 = open('tex_sources/test2.tex','r')
+f2 = open('tex_sources/DispenseStruttura.tex','r')
 text2 = f2.read().decode('utf-8')
 #tex object parse the tex
 tex3 = TeX()
