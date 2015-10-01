@@ -424,20 +424,20 @@ class MediaWikiRenderer (Renderer):
         #deleting label tag
         s = s.replace(structure_label_tag, "")
 
-        # check if label tag exist. If it does, creates the tag
+        s_tag = ''
         if label_tag is not '':
             #adding label to tree
             self.label(label_tag)
-            label_tag = "<label> " + label_tag + " </label>"
+            s_tag = '<dmath label="' + label_tag + '">'
         else:
-            label_tag = ""
-        return '<dmath>'+ label_tag + s +'</dmath>\n'
+            s_tag = '<dmath>'
+        return s_tag + s + '</dmath>\n'
 
     do_displaymath = handleDisplayMath
     do_equation = handleDisplayMath
     do__equation_star = handleDisplayMath
 
-    '''Handles inline math '''
+    '''Handles inline math ( $..$ \( \) ) '''
     def do_math(self, node):
         content = ''
         s = node.source
@@ -469,7 +469,7 @@ class MediaWikiRenderer (Renderer):
     do_ensuremath = do_math
 
     '''Support for align type tags. 
-    They are outside math modes an supported directluy'''
+    They are outside math modes an supported directly'''
     def do_align(self, node):
         split_tag = ''
         label_tag = ''
@@ -505,13 +505,14 @@ class MediaWikiRenderer (Renderer):
         
         # check if label tag exist. If it does,
         # insert the tag in output and tree
+        s_tag = ''
         if label_tag is not '':
             #adding label to tree
             self.label(label_tag)
-            label_tag = "<label> " + label_tag + " </label>"
+            s_tag = '<dmath label="' + label_tag + '">'
         else:
-            label_tag = ""
-        return '<dmath>'+ label_tag + s + '</dmath>\n'
+            s_tag = '<dmath>'
+        return s_tag + s + '</dmath>\n'
 
     do_eqnarray = do_align
     do_multline = do_align
