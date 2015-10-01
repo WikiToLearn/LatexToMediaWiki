@@ -161,6 +161,13 @@ class PageTree (object):
 		s.append('\n</revision>\n</page>')
 		return '\n'.join(s)
 
+	def exportFiguresTables(self,base_path):
+		f = open('ft_list',w)
+		for fig in self.figures:
+			f.write(str(fig))
+		for t in self.tables:
+			f.write(str(t))
+		f.close()
 
 
 class Figure(object):
@@ -174,6 +181,15 @@ class Figure(object):
 	def addPageUrl(self,page_url):
 		self.page_url = page_url
 
+	def __str__(self):
+		s = []
+		s.append('Figure|label@'+self.label)
+		s.append('|caption@'+ self.caption)
+		s.append('|filename@'+self.filename)
+		s.append('|pageurl@'+self.page_url)
+		return u''.join(s)
+
+
 class Table(object):
 
 	def __init__(self,label,caption):
@@ -183,3 +199,10 @@ class Table(object):
 		
 	def addPageUrl(self,page_url):
 		self.page_url = page_url
+
+	def __str__(self):
+		s = []
+		s.append('Table|label@'+self.label)
+		s.append('|caption@'+ self.caption)
+		s.append('|pageurl@'+self.page_url)
+		return u''.join(s)
