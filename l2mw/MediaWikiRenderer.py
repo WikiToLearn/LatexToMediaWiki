@@ -364,7 +364,14 @@ class MediaWikiRenderer (Renderer):
 
     ###################################################
     #Math tags
-    def do_equation(self, node): #TBD
+
+    '''Handles math insede a displaymath mode:
+    -it removes $$ and \[ \].
+    -it remove \begin and \end so it has to be used 
+    only for \begin{equation} and \begin{displaymath}.
+    Other \begin{math_environment} that are not inside a displaymath 
+    have to be handled by specific methods'''
+    def handleDisplayMath(self, node): 
         begin_tag = None
         end_Tag = None
         label_tag = None
@@ -374,7 +381,7 @@ class MediaWikiRenderer (Renderer):
         #$$ search
         global_dollars_search = re.search(ur'\$\$(.*?)\$\$', node.source)
 
-        #search \begin and end \tag
+        #search \begin and end \tag  or \[ \]
         global_begin_tag = re.search(ur'\\\bbegin\b\{(.*?)\}|\\\[', node.source)
         global_end_tag = re.search(ur'\\\bend\b\{(.*?)\}|\\\]', node.source)
 
@@ -410,11 +417,9 @@ class MediaWikiRenderer (Renderer):
             label_tag = ""
         return '<dmath>'+ label_tag + s +'</dmath>\n'
 
-    do_displaymath = do_equation
-    do_eqnarray = do_equation
-    do_matrix = do_equation
-    do_array = do_equation
-    do_align = do_equation
+    do_displaymath = handleDisplayMath
+    do_equation = handleDisplayMath
+
 
     def do_math(self, node):
         tag = None
@@ -432,7 +437,6 @@ class MediaWikiRenderer (Renderer):
             tag = brackets_global_tag.group(1)
         else:
             tag = ''
-
         return '<math>'+ tag +'</math>\n'
 
     do_ensuremath = do_math
