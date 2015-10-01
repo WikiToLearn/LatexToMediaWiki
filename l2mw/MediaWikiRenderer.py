@@ -364,6 +364,49 @@ class MediaWikiRenderer (Renderer):
 
     ###################################################
     #Math tags
+    '''support for align type tag'''
+    def do_align(self, node):
+        global_label_tag = None
+        split_tag = None
+        label_tag = None
+        begin_tag = None
+        end_Tag = None
+        structure_label_tag = None
+        s = node.source
+        #search equation tag
+        label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', node.source)
+
+        #search for split tag
+        re_global_split_tag = re.compile(ur'\\\bbegin\{(split)\}(.*?)\\\bend\{(split)\}', re.DOTALL)
+        global_split_tag = re.findall(re_global_split_tag, node.source)
+
+        #get content between \begin{split}
+        if global_split_tag:
+            for split_tag in global_split_tag:
+                s = s.replace("split", u"align")
+            
+        if global_label_tag:
+            label_tag = global_label_tag.group(1)
+            structure_label_tag = global_label_tag.group(0)
+        else:
+            label_tag = ''
+            structure_label_tag = ''
+
+        s = s.replace(structure_label_tag, "")
+
+        # check if label tag exist. If it does, creates the tag
+        if label_tag is not '':
+            #adding label to tree
+            self.label(label_tag)
+            label_tag = "<label> " + label_tag + " </label>"
+        else:
+            label_tag = ""
+        return '<dmath>'+ label_tag + s + '</dmath>\n'
+
+    do_eqnarray = do_align
+    do_multline = do_align
+    do_alignat =  do_align
+
 
     '''Handles math insede a displaymath mode:
     -it removes $$ and \[ \].
