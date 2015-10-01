@@ -1,6 +1,6 @@
 import string,re
 from plasTeX.Renderers import Renderer
-from PageTree import PageTree,Figure
+from PageTree import *
 
 class MediaWikiRenderer (Renderer):
 
@@ -340,7 +340,7 @@ class MediaWikiRenderer (Renderer):
         return unicode('[[Figura:'+label+'_'+caption+'_'+file_path+']]')
 
     '''The Table environment is handled with regex'''
-    def table(self,node):
+    def do_table(self,node):
         caption = ''
         label = ''
         #searching label
@@ -355,9 +355,9 @@ class MediaWikiRenderer (Renderer):
         t = Table(label,caption)
         #adding table to the tree
         self.tree.addTable(t)
-        #æssing label
+        #adding label
         if label:
-            self.label(labale)
+            self.label(label)
         #return warning text for table
         return unicode('[[Tabella:'+label+'_'+caption+']]')
 
