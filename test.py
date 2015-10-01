@@ -7,7 +7,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
-f = open('tex_sources/test2.tex','r')
+f = open('tex_sources/DispenseStruttura.tex','r')
 text = f.read().decode('utf-8')
 #tex object parse the tex
 tex2 = TeX()
@@ -19,7 +19,7 @@ rend = XMLRenderer()
 rend.render(document2)
 
 #MEDIAWIKI RENDERER
-f2 = open('tex_sources/test2.tex','r')
+f2 = open('tex_sources/DispenseStruttura.tex','r')
 text2 = f2.read().decode('utf-8')
 #tex object parse the tex
 tex3 = TeX()
@@ -33,7 +33,7 @@ rend2 = MediaWikiRenderer("Prova")
 rend2.render(document2)
 ##after rendering hooks
 #collapsing text to the right page level
-rend2.tree.collapseText(1)
+rend2.tree.collapseText(-1)
 #fixing refs
 rend2.tree.fixReferences()
 #xml exporting

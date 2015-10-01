@@ -27,7 +27,8 @@ class MediaWikiRenderer (Renderer):
         'eqnarray_star':'eqnarray*',
         'align_star':'align*',
         'alignat_star':'alignat*',
-        'multline_star':'multline*'
+        'multline_star':'multline*',
+        'gather_star':'gather*'
     }
 
     '''List of nodes not to explore'''
@@ -62,12 +63,12 @@ class MediaWikiRenderer (Renderer):
             return u''
         s = []
         self.def_tags.add(node.nodeName)
-        s.append(unicode(node))
+        s.append(unicode(node).lstrip())
         return u''.join(s)
 
 
     def do_textDefault(self, node):
-        return unicode(node) 
+        return unicode(node).lstrip()
 
     ###############################
     #sectioning
@@ -78,7 +79,7 @@ class MediaWikiRenderer (Renderer):
         #creation of the new page
         self.tree.createPage(title,page_type)
         #content processing
-        text = unicode(node)
+        text = unicode(node).lstrip()
         #adding text to current page
         self.tree.addText(text)
         #exiting the section
@@ -115,7 +116,7 @@ class MediaWikiRenderer (Renderer):
         s.append('\n\'\'\'')
         s.append(unicode(node.attributes['title']))
         s.append('\'\'\'\'')
-        s.append(unicode(node))
+        s.append(unicode(node).lstrip())
         return u''.join(s)
     
     '''Enter point for parsing. Root page is already created'''
@@ -156,7 +157,7 @@ class MediaWikiRenderer (Renderer):
     def do_par(self, node):
         s = []
         s.append(u'\n\n')
-        s.append(unicode(node))
+        s.append(unicode(node).lstrip())
         return u''.join(s)
 
     '''Breaks line inside a paragraph'''
@@ -168,14 +169,14 @@ class MediaWikiRenderer (Renderer):
     def do_textbf(self,node):
         s=[]
         s.append(u"\'\'\'")
-        s.append(unicode(node))
+        s.append(unicode(node).lstrip())
         s.append(u"\'\'\'")
         return u''.join(s)
         
     def do_textit(self,node):
         s=[]
         s.append(u"\'\'")
-        s.append(unicode(node))
+        s.append(unicode(node).lstrip())
         s.append(u"\'\'")
         return u''.join(s)    
 
@@ -187,14 +188,14 @@ class MediaWikiRenderer (Renderer):
     def do_newpage(self,node):
         s = []
         s.append(u'')
-        s.append(unicode(node))
+        s.append(unicode(node).lstrip())
         return u''.join(s)
 
     def do_itemize(self,node):
         s = []
         self.list_level+=u'*'
         for item in node.childNodes:
-            t=unicode(item)
+            t=unicode(item).lstrip()
             s.append(self.list_level+t)
         self.list_level = self.list_level[:-1]
         return u'\n'.join(s)
@@ -203,7 +204,7 @@ class MediaWikiRenderer (Renderer):
         s = []
         self.list_level+=u'#'
         for item in node.childNodes:
-            t=unicode(item)
+            t=unicode(item).lstrip()
             s.append(self.list_level+t)
         self.list_level = self.list_level[:-1]
         return u'\n'.join(s)
@@ -211,7 +212,7 @@ class MediaWikiRenderer (Renderer):
     def do_description(self,node):
         s = []
         for item in node.childNodes:
-            t=unicode(item)
+            t=unicode(item).lstrip()
             s.append(u';'+ str(item.attributes['term'])+":" +t)
         return u'\n'.join(s)
 
@@ -242,7 +243,7 @@ class MediaWikiRenderer (Renderer):
     def do_quotation(self, node):
         s = []
         s.append(u'<blockquote>')
-        s.append(unicode(node))
+        s.append(unicode(node)).lstring()
         s.append(u'</blockquote>')
         return u''.join(s)
 
@@ -252,7 +253,7 @@ class MediaWikiRenderer (Renderer):
     def do_centering(self, node):
         s = []
         s.append(u'<div style="text-align:center;">')
-        s.append(unicode(node))
+        s.append(unicode(node).lstrip())
         s.append(u'</div>')
         return u''.join(s)
 
@@ -261,22 +262,22 @@ class MediaWikiRenderer (Renderer):
     def do_flushright(self, node):
         s = []
         s.append(u'<div style="text-align:right;">')
-        s.append(unicode(node))
+        s.append(unicode(node).lstrip())
         s.append(u'</div>')
         return u''.join(s)
 
     def do_flushleft(self, node):
-        return unicode(node)
+        return unicode(node).lstrip()
 
     def do_footnote(self,node):
         s=[]
         s.append(u"<ref>")
-        s.append(unicode(node))
+        s.append(unicode(node).lstrip())
         s.append(u"</ref>")
         return u''.join(s)
 
     def do_hrulefill(self,node):
-        return u'-----'  
+        return u'----'  
 
     do_rule=do_hrulefill   
 
@@ -286,7 +287,7 @@ class MediaWikiRenderer (Renderer):
     def do_small(self, node):
         s = []
         s.append(u'<small>')
-        s.append(unicode(node))
+        s.append(unicode(node).lstrip())
         s.append(u'</small>')
         return u''.join(s)
 
@@ -296,7 +297,7 @@ class MediaWikiRenderer (Renderer):
     def do_underline(self, node):
         s = []
         s.append(u'<u>')
-        s.append(unicode(node))
+        s.append(unicode(node).lstrip())
         s.append(u'</u>')
         return u''.join(s)
     
@@ -305,14 +306,14 @@ class MediaWikiRenderer (Renderer):
     def do_texttt(self,node):
         s=[]
         s.append(u"<tt>")
-        s.append(unicode(node))
+        s.append(unicode(node).lstrip())
         s.append(u"</tt>")
         return u''.join(s)  
 
     def do_verbatim(self,node):
         s=[]
         s.append(u'<nowiki>')
-        s.append(unicode(node.source))
+        s.append(unicode(node.source)).lstrip()
         s.append(u'</nowiki>\n')
         return u''.join(s)
         
@@ -431,7 +432,7 @@ class MediaWikiRenderer (Renderer):
             s_tag = '<dmath label="' + label_tag + '">'
         else:
             s_tag = '<dmath>'
-        return s_tag + s + '</dmath>\n'
+        return s_tag + s + '</dmath>'
 
     do_displaymath = handleDisplayMath
     do_equation = handleDisplayMath
@@ -464,7 +465,7 @@ class MediaWikiRenderer (Renderer):
         #get content between \begin{split}
         s = s.replace("split", u"align")
 
-        return '<math>'+ content +'</math>\n'
+        return '<math>'+ content +'</math>'
 
     do_ensuremath = do_math
 
@@ -484,6 +485,7 @@ class MediaWikiRenderer (Renderer):
         s = s.replace('alignat',u'align')
         s = s.replace('eqnarray',u'align')
         s = s.replace('multline',u'align')
+        s = s.replace('gather',u'align')
 
         #removing inner starred commands
         re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
@@ -512,16 +514,18 @@ class MediaWikiRenderer (Renderer):
             s_tag = '<dmath label="' + label_tag + '">'
         else:
             s_tag = '<dmath>'
-        return s_tag + s + '</dmath>\n'
+        return s_tag + s + '</dmath>'
 
     do_eqnarray = do_align
     do_multline = do_align
     do_alignat =  do_align
+    do_gather = do_align
     #using aliases
     do__align_star = do_align
     do__alignat_star = do_align
     do__eqnarray_star = do_align
     do__multline_star = do_align
+    do__gather_star = do_align
 
 
     ###############################################
