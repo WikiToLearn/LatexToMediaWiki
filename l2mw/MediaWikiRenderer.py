@@ -23,8 +23,11 @@ class MediaWikiRenderer (Renderer):
         'at': '@',
         'backslash': '\\',
         #math starred commmands
+        'equation_star':'equation*',
+        'eqnarray_star':'eqnarray*',
         'align_star':'align*',
-        'alignat_star':'alignat*'
+        'alignat_star':'alignat*',
+        'multline_star':'multline*'
     }
 
     '''List of nodes not to explore'''
@@ -383,23 +386,14 @@ class MediaWikiRenderer (Renderer):
         s = node.source
 
         #$$ search
-        global_dollars_search = re.search(ur'\$\$(.*?)\$\$', node.source)
-
+        global_dollars_search = re.search(ur'\$\$(.*?)\$\$', s)
         #search \begin and end \tag
-        global_begin_tag = re.search(ur'\\\bbegin\b\{(\bequation\*?)\}|\\\[', node.source)
-        global_end_tag = re.search(ur'\\\bend\b\{(\bequation\*?)\}|\\\]', node.source)
-
-        #search for split tag
-        re_global_split_tag = re.compile(ur'\\\bbegin\{(split)\}(.*?)\\\bend\{(split)\}', re.DOTALL)
-        global_split_tag = re.findall(re_global_split_tag, node.source)
-
-        #get content between \begin{split}
-        if global_split_tag:
-            for split_tag in global_split_tag:
-                s = s.replace("split", u"align")
+        global_begin_tag = re.search(ur'\\\bbegin\b\{(\bequation\*?)\}|\\\[', s)
+        global_end_tag = re.search(ur'\\\bend\b\{(\bequation\*?)\}|\\\]', s)
 
         #get content between $$ $$
         #get \begin{tag} and \end{tag}
+        #and delete the tags
         if global_begin_tag and global_end_tag:
             begin_tag = global_begin_tag.group(0)
             end_tag = global_end_tag.group(0)
@@ -409,8 +403,17 @@ class MediaWikiRenderer (Renderer):
             dollars_tag = global_dollars_search.group(1)
             s = s.replace(dollars_tag, "")
 
-        #search equation tag
-        global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', node.source)
+        #replace split with align
+        s = s.replace("split", u"align")
+
+        #removing inner starred commands
+        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
+        for star_tag in re.finditer(re_remove_star,s):
+            s = s.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
+                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
+        
+        #searching for label
+        global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', s)
         #getting label and deleting label tag
         if global_label_tag:
             label_tag = global_label_tag.group(1)
@@ -432,23 +435,35 @@ class MediaWikiRenderer (Renderer):
 
     do_displaymath = handleDisplayMath
     do_equation = handleDisplayMath
+    do__equation_star = handleDisplayMath
 
     '''Handles inline math '''
     def do_math(self, node):
         content = ''
+        s = node.source
         #search content between $ $
-        global_tag = re.search(ur'\$(.*?)\$', node.source)
+        global_tag = re.search(ur'\$(.*?)\$', s)
         #search for \( \)
         regexp_brackets_global_tag = re.compile(ur'\\\((.*?)\\\)', re.DOTALL)
-        brackets_global_tag = re.search(regexp_brackets_global_tag, node.source)
+        brackets_global_tag = re.search(regexp_brackets_global_tag,s)
 
-        #get content between $ $
+        #get content between $ $ and remove them
         if global_tag:
             content = global_tag.group(1)
         elif brackets_global_tag:
             content = brackets_global_tag.group(1)
         else:
             content = ''
+
+        #removing inner starred commands
+        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
+        for star_tag in re.finditer(re_remove_star,s):
+            s = s.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
+                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
+
+        #get content between \begin{split}
+        s = s.replace("split", u"align")
+
         return '<math>'+ content +'</math>\n'
 
     do_ensuremath = do_math
@@ -463,17 +478,21 @@ class MediaWikiRenderer (Renderer):
         structure_label_tag = ''
         s = node.source
       
+        #replace split with align
+        s = s.replace("split", u"align")
+        #replace eqnarray,multline,alignat with align
+        s = s.replace('alignat',u'align')
+        s = s.replace('eqnarray',u'align')
+        s = s.replace('multline',u'align')
+
+        #removing inner starred commands
+        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
+        for star_tag in re.finditer(re_remove_star,s):
+            s = s.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
+                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
+            
         #search equation tag
         global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', node.source)
-        #search for split tag
-        re_global_split_tag = re.compile(ur'\\\bbegin\{(split)\}(.*?)\\\bend\{(split)\}', re.DOTALL)
-        global_split_tag = re.findall(re_global_split_tag, node.source)
-
-        #get content between \begin{split}
-        if global_split_tag:
-            for split_tag in global_split_tag:
-                s = s.replace("split", u"align")
-            
         #getting label and deleting label tag
         if global_label_tag:
             label_tag = global_label_tag.group(1)
@@ -483,7 +502,7 @@ class MediaWikiRenderer (Renderer):
             structure_label_tag = ''
         #deleting label tag
         s = s.replace(structure_label_tag, "")
-
+        
         # check if label tag exist. If it does,
         # insert the tag in output and tree
         if label_tag is not '':
@@ -500,6 +519,8 @@ class MediaWikiRenderer (Renderer):
     #using aliases
     do__align_star = do_align
     do__alignat_star = do_align
+    do__eqnarray_star = do_align
+    do__multline_star = do_align
 
 
     ###############################################
