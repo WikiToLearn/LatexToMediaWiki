@@ -57,6 +57,8 @@ class MediaWikiRenderer (Renderer):
         ####### TAGS ANALYSY
         #set for default tags
         self.def_tags = set()
+        #dictionary for tag usage
+        self.used_tags = {}
 
     def default(self, node):
         if node.nodeName in self.no_enter:

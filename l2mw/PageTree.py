@@ -122,7 +122,11 @@ class PageTree (object):
 	-base_path is the base path for all exported pages'''
 	def exportXML(self,base_path=''):
 		s = []
-		s.append('<mediawiki xml:lang="en">')
+		s.append('<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.10/"\
+		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \
+		    xsi:schemaLocation="http://www.mediawiki.org/xml/ \
+			export-0.10/ http://www.mediawiki.org/xml/export-0.10.xsd" \
+			version="0.10" xml:lang="it">')
 		#starting iteration
 		if base_path!='':
 			self.base_path = base_path+'/'
@@ -157,7 +161,9 @@ class PageTree (object):
 		s.append('\n<timestamp>'+ datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
 		s.append('</timestamp>')
 		s.append('\n<contributor><username>RotTeX</username></contributor>')
-		s.append('\n<text>'+ page.text+'\n</text>')
+		s.append('\n<model>wikitext</model>')
+		s.append('<format>text/x-wiki</format>')
+		s.append('\n<text xml:space="preserve">'+ page.text+'\n</text>')
 		s.append('\n</revision>\n</page>')
 		return '\n'.join(s)
 

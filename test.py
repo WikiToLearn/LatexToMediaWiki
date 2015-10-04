@@ -28,7 +28,7 @@ tex3.ownerDocument.config['files']['filename'] = 'test.mww'
 tex3.input(text2)
 document2 = tex3.parse()
 #initializing render with Document title
-rend2 = MediaWikiRenderer("Prova")
+rend2 = MediaWikiRenderer("Struttura della materia")
 #rendering process start
 rend2.render(document2)
 ##after rendering hooks
@@ -37,7 +37,7 @@ rend2.tree.collapseText(-1)
 #fixing refs
 rend2.tree.fixReferences()
 #xml exporting
-xml = rend2.tree.exportXML('Fisica')
+xml = rend2.tree.exportXML()
 o = open('test.mw','w')
 o.write(xml)
 
