@@ -60,11 +60,22 @@ class MediaWikiRenderer (Renderer):
         #dictionary for tag usage
         self.used_tags = {}
 
+    #####################################
+    #Utils for debug
+    def used_tag(self,tag):
+        if tag in self.used_tags:
+            self.used_tags[tag]+=1
+        else:
+            self.used_tags[tag]=1
+
+    ###################################
+    #defaul tags
     def default(self, node):
         if node.nodeName in self.no_enter:
             return u''
         s = []
         self.def_tags.add(node.nodeName)
+        self.used_tag('DEFAULT@'+ node.nodeName)
         s.append(unicode(node).lstrip())
         return u''.join(s)
 
@@ -88,32 +99,39 @@ class MediaWikiRenderer (Renderer):
         self.tree.exitPage()
 
     def do_part (self,node):
-        self.sectioning(node,'part')
+        self.used_tag('part')
+        self.sectioning(node,'PART')
         return u''
 
     def do_chapter (self,node):
+        self.used_tag('CHAPTER')
         self.sectioning(node,'chapter')
         return u''
 
     def do_section(self,node):
+        self.used_tag('SECTION')
         self.sectioning(node,'section')
         return u''
 
     def do_subsection(self,node):
+        self.used_tag('SUBSECTION')
         self.sectioning(node,'subsection')
         return u''
 
     def do_subsubsection(self,node):
+        self.used_tag('SUBSUBSECTION')
         self.sectioning(node,'subsubsection')
         return u''
 
     def do_paragraph(self,node):
+        self.used_tag('PARAGRAPH')
         self.sectioning(node,'paragraph')
         return u''
     #################################################
     
     #subparagraph are not node of the section tree
     def do_subparagraph(self,node):
+        self.used_tag('SUBPARAGRAPH')
         s =[]
         s.append('\n\'\'\'')
         s.append(unicode(node.attributes['title']))
@@ -123,6 +141,7 @@ class MediaWikiRenderer (Renderer):
     
     '''Enter point for parsing. Root page is already created'''
     def do_document(self,node):
+        self.used_tag('DOCUMENT')
         content = unicode(node)
         self.tree.addText(content)
         return u'%s' % content
@@ -137,6 +156,7 @@ class MediaWikiRenderer (Renderer):
 
     ''' Labels are managed bey PageTree'''
     def do_label(self,node):
+        self.used_tag('LABEL')
         #retriving label id
         l = node.attributes['label']
         self.label(l)
@@ -145,6 +165,7 @@ class MediaWikiRenderer (Renderer):
     '''All ref tag are substituted by normal ref tag.
     It'll be reparsed after text collapsing'''
     def do_ref(self,node):
+        self.used_tag('REF')
         r = node.attributes['label']
         return unicode('\\ref{'+r+'} ')
 
@@ -157,6 +178,7 @@ class MediaWikiRenderer (Renderer):
     #Formatting
     '''Paragraph'''
     def do_par(self, node):
+        self.used_tag('PAR')
         s = []
         s.append(u'\n\n')
         s.append(unicode(node).lstrip())
@@ -164,11 +186,20 @@ class MediaWikiRenderer (Renderer):
 
     '''Breaks line inside a paragraph'''
     def do_newline(self,node):
+        self.used_tag('NEWLINE')
         return u'<br/>'
     
     do__backslash = do_newline
 
+    def do_newpage(self,node):
+        self.used_tag('NEWPAGE')
+        s = []
+        s.append(u'')
+        s.append(unicode(node).lstrip())
+        return u''.join(s)
+
     def do_textbf(self,node):
+        self.used_tag('TEXTBF')
         s=[]
         s.append(u"\'\'\'")
         s.append(unicode(node).lstrip())
@@ -176,6 +207,7 @@ class MediaWikiRenderer (Renderer):
         return u''.join(s)
         
     def do_textit(self,node):
+        self.used_tag('TEXTIT')
         s=[]
         s.append(u"\'\'")
         s.append(unicode(node).lstrip())
@@ -187,13 +219,8 @@ class MediaWikiRenderer (Renderer):
     do_textsl = do_textit
     do_slshape = do_textit
    
-    def do_newpage(self,node):
-        s = []
-        s.append(u'')
-        s.append(unicode(node).lstrip())
-        return u''.join(s)
-
     def do_itemize(self,node):
+        self.used_tag('ITEMIZE')
         s = []
         self.list_level+=u'*'
         for item in node.childNodes:
@@ -203,6 +230,7 @@ class MediaWikiRenderer (Renderer):
         return u'\n'.join(s)
 
     def do_enumerate(self,node):
+        self.used_tag('ENUMERATE')
         s = []
         self.list_level+=u'#'
         for item in node.childNodes:
@@ -212,6 +240,7 @@ class MediaWikiRenderer (Renderer):
         return u'\n'.join(s)
     
     def do_description(self,node):
+        self.used_tag('DESCRIPTION')
         s = []
         for item in node.childNodes:
             t=unicode(item).lstrip()
@@ -243,6 +272,7 @@ class MediaWikiRenderer (Renderer):
         return u'&'
 
     def do_quotation(self, node):
+        self.used_tag('QUOTATION')
         s = []
         s.append(u'<blockquote>')
         s.append(unicode(node)).lstring()
@@ -253,6 +283,7 @@ class MediaWikiRenderer (Renderer):
     do_verse=do_quotation
 
     def do_centering(self, node):
+        self.used_tag('CENTERING')
         s = []
         s.append(u'<div style="text-align:center;">')
         s.append(unicode(node).lstrip())
@@ -262,6 +293,7 @@ class MediaWikiRenderer (Renderer):
     do_center = do_centering
 
     def do_flushright(self, node):
+        self.used_tag('FLUSHRIGHT')
         s = []
         s.append(u'<div style="text-align:right;">')
         s.append(unicode(node).lstrip())
@@ -269,9 +301,11 @@ class MediaWikiRenderer (Renderer):
         return u''.join(s)
 
     def do_flushleft(self, node):
+        self.used_tag('FLUSHLEFT')
         return unicode(node).lstrip()
 
     def do_footnote(self,node):
+        self.used_tag('FOOTNOTE')
         s=[]
         s.append(u"<ref>")
         s.append(unicode(node).lstrip())
@@ -279,14 +313,17 @@ class MediaWikiRenderer (Renderer):
         return u''.join(s)
 
     def do_hrulefill(self,node):
+        self.used_tag('HRULEFILL')
         return u'----'  
 
     do_rule=do_hrulefill   
 
     def do_textrm(self, node):
+        self.used_tag('TEXTRM')
         return unicode(node)
 
     def do_small(self, node):
+        self.used_tag('SMALL')
         s = []
         s.append(u'<small>')
         s.append(unicode(node).lstrip())
@@ -297,6 +334,7 @@ class MediaWikiRenderer (Renderer):
     do_scriptsize=do_small
     
     def do_underline(self, node):
+        self.used_tag('UNDERLINE')
         s = []
         s.append(u'<u>')
         s.append(unicode(node).lstrip())
@@ -306,6 +344,7 @@ class MediaWikiRenderer (Renderer):
     do_underbar=do_underline
 
     def do_texttt(self,node):
+        self.used_tag('TEXTTT')
         s=[]
         s.append(u"<tt>")
         s.append(unicode(node).lstrip())
@@ -313,6 +352,7 @@ class MediaWikiRenderer (Renderer):
         return u''.join(s)  
 
     def do_verbatim(self,node):
+        self.used_tag('VERBATIM')
         s=[]
         s.append(u'<nowiki>')
         s.append(unicode(node.source)).lstrip()
@@ -323,6 +363,7 @@ class MediaWikiRenderer (Renderer):
     #figures and tables
     '''The figure environment is handled with regexs. '''
     def do_figure(self,node):
+        self.used_tag('FIGURE')
         file_path=''
         caption = ''
         label=''
@@ -350,6 +391,7 @@ class MediaWikiRenderer (Renderer):
 
     '''The Table environment is handled with regex'''
     def do_table(self,node):
+        self.used_tag('TABLE')
         caption = ''
         label = ''
         #searching label
@@ -381,6 +423,7 @@ class MediaWikiRenderer (Renderer):
     Other \begin{math_environment} that are not inside a displaymath 
     have to be handled by specific methods'''
     def handleDisplayMath(self, node): 
+        self.used_tag('DISPLAY_MATH')
         begin_tag = ''
         end_Tag = ''     
         split_tag = ''
@@ -442,6 +485,7 @@ class MediaWikiRenderer (Renderer):
 
     '''Handles inline math ( $..$ \( \) ) '''
     def do_math(self, node):
+        self.used_tag('MATH')
         content = ''
         s = node.source
         #search content between $ $
@@ -474,6 +518,7 @@ class MediaWikiRenderer (Renderer):
     '''Support for align type tags. 
     They are outside math modes an supported directly'''
     def do_align(self, node):
+        self.used_tag('MATH_ALIGN')
         split_tag = ''
         label_tag = ''
         begin_tag = ''

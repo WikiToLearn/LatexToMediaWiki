@@ -41,7 +41,7 @@ xml = rend2.tree.exportXML()
 o = open('test.mw','w')
 o.write(xml)
 
-
+print(rend2.used_tags)
 #DEBUg PRINTING
 #print(str(rend.tree.index))
 # for k in rend2.tree.pages:
