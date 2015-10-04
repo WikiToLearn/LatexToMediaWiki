@@ -32,7 +32,7 @@ def execute_mediawiki_parser(input_path, output_path,title,base_path,collapse_le
 	#exporting XML
 	xml = rend.tree.exportXML()
 	#writing to output
-	o = open(output_path,'w')
+	o = open(output_path+".mw",'w')
 	o.write(xml)
 	o.close()
 	#writing debug info
@@ -42,6 +42,21 @@ def execute_mediawiki_parser(input_path, output_path,title,base_path,collapse_le
 	for key in sorted(rend.used_tags):
 		d.write(key+ ": "+str(rend.used_tags[key])+'\n')
 	d.close()
+
+'''Function that execute a xml_parser with given parameters'''
+def execute_xml_parser(input_path, output_path,title):
+	f = open(input_path,'r')
+	text = f.read().decode('utf-8')
+	#tex object
+	tex = TeX()
+	tex.input(text)
+	tex.ownerDocument.config['files']['filename'] = output_path+".xml"
+	#parsing DOM
+	document = tex.parse()
+	#renderer creation
+	rend = XMLRenderer()
+	#starting rendering
+	rend.render(document)\
 
 
 #reading JSON configs
@@ -57,5 +72,7 @@ for p in process_data:
 		if r=='mediawiki':
 			execute_mediawiki_parser(input_path,output_path,\
 				title,base_path,collapse_level)
+		elif r =="xml":
+			execute_xml_parser(input_path,output_path,title)
 
 
