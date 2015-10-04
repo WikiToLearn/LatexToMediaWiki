@@ -55,8 +55,6 @@ class MediaWikiRenderer (Renderer):
         self.list_level=u'' 
 
         ####### TAGS ANALYSY
-        #set for default tags
-        self.def_tags = set()
         #dictionary for tag usage
         self.used_tags = {}
 
@@ -71,11 +69,12 @@ class MediaWikiRenderer (Renderer):
     ###################################
     #defaul tags
     def default(self, node):
+        
         if node.nodeName in self.no_enter:
+            self.used_tag('NO-ENTER@'+ node.nodeName)
             return u''
-        s = []
-        self.def_tags.add(node.nodeName)
         self.used_tag('DEFAULT@'+ node.nodeName)
+        s = []
         s.append(unicode(node).lstrip())
         return u''.join(s)
 
@@ -99,7 +98,7 @@ class MediaWikiRenderer (Renderer):
         self.tree.exitPage()
 
     def do_part (self,node):
-        self.used_tag('part')
+        self.used_tag('PART')
         self.sectioning(node,'PART')
         return u''
 

@@ -21,6 +21,7 @@ class PageTree (object):
 		self.pages = {}
 		self.media_urls = {}
 		self.labels = {}
+		#lists of figures and tables
 		self.figures = []
 		self.tables = []
 		#ROOT PAGE
@@ -97,13 +98,15 @@ class PageTree (object):
 
 	''' This method collapse the text contained in subpages 
 	in the pages with level > level_min.
-	Tin pages with level<level_min is inserted an index of subpages. '''
+	The pages with level<level_min is inserted an index of subpages. '''
 	def collapseText(self,level_max):
 		self.collapse_level = level_max
 		#collapsing text
 		self.pages[self.doc_title].collapseText(level_max,self.pages)
 		#collapsing mediawiki url
 		self.pages[self.doc_title].collapseMediaURL(level_max,self.pages,self.media_urls,'',{})
+		
+		#FIXING URLS FROM INTERNAL TO MEDIAWIKIURL
 		#fixing labels with mediawikiurls
 		for l in self.labels:
 			self.labels[l] = self.media_urls[self.labels[l]]

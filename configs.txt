@@ -1,0 +1,8 @@
+[{
+	"renderers": ["mediawiki"],
+	"input" : "tex_sources/DispenseStruttura.tex",
+	"output" : "DStruttura.xml",
+	"title": "Struttura",
+	"base_path": "",
+	"collapse_level":"2"
+}]

@@ -1,5 +1,9 @@
+
 ##test output files
 *.tex
+*.json
+*.parsex
+*.debug
 *.xml
 *.mw
 *.mww
