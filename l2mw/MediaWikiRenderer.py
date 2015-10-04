@@ -412,6 +412,22 @@ class MediaWikiRenderer (Renderer):
         #return warning text for table
         return unicode('[[Tabella:'+label+'_'+caption+']]')
 
+    '''Counter for orphan (outside table) tabular'''
+    tabular_counter = 0
+
+    '''Tabular environment should be inside a table environment.
+    If not, the table is marks'''
+    def do_tabular(self,node):
+        self.tabular_counter+=1
+        self.used_tag('TABULAR')    
+        label = 'table'+str(self.tabular_counter)
+        #creating table
+        t = Table(label,label)
+        #adding table to the tree
+        self.tree.addTable(t)
+        #return warning text for table
+        return unicode('[[Tabella:'+label+'_'+label+']]')
+
 
     ###################################################
     #Math tags
