@@ -1,6 +1,8 @@
 from Page import Page
 import datetime
 import time
+import re
+from xml.sax.saxutils import escape
 
 
 ''' Class that memorize the pages' structure and content during parsing '''
@@ -26,7 +28,7 @@ class PageTree (object):
 		self.tables = []
 		#ROOT PAGE
 		self.index[doc_title]={}
-		r = Page(doc_title,doc_title,'root',-1)
+		r = Page(doc_title,doc_title,doc_title,'root',-1)
 		self.pages[doc_title]= r
 		#indexes
 		self.page_stack = []
@@ -40,11 +42,15 @@ class PageTree (object):
 	''' This method creates a new page and enters 
 	in his enviroment setting current variables'''
 	def createPage(self, title,page_type):
+		title_name = title[:]
+		#remove math tag
+		title = self.getNormalizedUrl(title)
+		#new url
 		newurl = self.current_url+"/"+title
 		#finding level
 		level = len(self.page_stack)
 		#create new page	
-		p = Page(title,newurl,page_type,level)
+		p = Page(title,title_name,newurl,page_type,level)
 		#update index
 		cindex = self.index
 		for i in range(0,len(self.page_stack)):
@@ -61,6 +67,13 @@ class PageTree (object):
 		self.current= title
 		self.current_url= newurl
 
+	def getNormalizedUrl(self,title):
+		mre = re.search('<\s*math\s*>(.*?)<\s*\/\s*math\s*>',title,re.DOTALL)
+		if mre:
+			return title.replace(mre.group(0),mre.group(1))
+		else:
+			return title
+
 	'''This method insert text in the current page   '''
 	def addText(self,text):
 		#print('ADDING TEXT TO URL='+unicode(self.current_url)+' | ADDING TEXT='+unicode(text) +\
@@ -70,7 +83,8 @@ class PageTree (object):
 	'''This method insert a page in the current page's index. It's used when 
  	subsection is encountered'''
 	def addToSubpageIndex(self,title):
-		self.pages[self.current_url].addIndex(self.current_url+'/'+title)
+		self.pages[self.current_url].addIndex(self.current_url+'/'+\
+			self.getNormalizedUrl(title))
 
 	'''Return to the parent page enviroment'''
 	def exitPage(self):
@@ -126,10 +140,38 @@ class PageTree (object):
 	def exportXML(self,base_path=''):
 		s = []
 		s.append('<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.10/"\
-		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \
-		    xsi:schemaLocation="http://www.mediawiki.org/xml/ \
-			export-0.10/ http://www.mediawiki.org/xml/export-0.10.xsd" \
-			version="0.10" xml:lang="it">')
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \
+		 xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.10/\
+		  http://www.mediawiki.org/xml/export-0.10.xsd" version="0.10" \
+		  xml:lang="it">\
+			<siteinfo>\
+			<sitename>WikiToLearn - collaborative textbooks</sitename>\
+			<dbname>itwikitolearn</dbname>\
+			<base>http://it.wikitolearn.org/Pagina_principale</base>\
+			<generator>MediaWiki 1.25.2</generator>\
+			<case>first-letter</case>\
+			<namespaces>\
+			<namespace key="-2" case="first-letter">Media</namespace>\
+			<namespace key="-1" case="first-letter">Speciale</namespace>\
+			<namespace key="0" case="first-letter"/>\
+			<namespace key="1" case="first-letter">Discussione</namespace>\
+			<namespace key="2" case="first-letter">Utente</namespace>\
+			<namespace key="3" case="first-letter">Discussioni utente</namespace>\
+			<namespace key="4" case="first-letter">Project</namespace>\
+			<namespace key="5" case="first-letter">Discussioni Project</namespace>\
+			<namespace key="6" case="first-letter">File</namespace>\
+			<namespace key="7" case="first-letter">Discussioni file</namespace>\
+			<namespace key="8" case="first-letter">MediaWiki</namespace>\
+			<namespace key="9" case="first-letter">Discussioni MediaWiki</namespace>\
+			<namespace key="10" case="first-letter">Template</namespace>\
+			<namespace key="11" case="first-letter">Discussioni template</namespace>\
+			<namespace key="12" case="first-letter">Aiuto</namespace>\
+			<namespace key="13" case="first-letter">Discussioni aiuto</namespace>\
+			<namespace key="14" case="first-letter">Categoria</namespace>\
+			<namespace key="15" case="first-letter">Discussioni categoria</namespace>\
+			<namespace key="2600" case="first-letter">Argomento</namespace>\
+			</namespaces>\
+			</siteinfo>')
 		#starting iteration
 		if base_path!='':
 			self.base_path = base_path+'/'
@@ -156,14 +198,16 @@ class PageTree (object):
 
 	'''Return the mediawiki XML of a single page'''
 	def getPageXML(self,page):
+		page.text = escape(page.text)
+		page.title= escape(page.title)
 		s =[]
-		s.append('<page>\n<title>'+self.base_path+page.url+'</title>')
+		s.append('<page>\n<title>'+escape(self.base_path+page.url)+'</title>')
 		s.append('\n<restrictions></restrictions>')
 		s.append('\n<revision>')
 		ts = time.time()
 		s.append('\n<timestamp>'+ datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
 		s.append('</timestamp>')
-		s.append('\n<contributor><username>RotTeX</username></contributor>')
+		s.append('\n<contributor><username>Valsdav</username><id>1820</id></contributor>')
 		s.append('\n<model>wikitext</model>')
 		s.append('<format>text/x-wiki</format>')
 		s.append('\n<text xml:space="preserve">'+ page.text+'\n</text>')

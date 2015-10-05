@@ -8,8 +8,9 @@ class Page(object):
 	-self.level memorize the level of the page.(root=-1))
 	-self.url contains the unique internal url of the page
 	-self.type is 'root',part,chapter,section,subsection,subsubection,paragraph.'''
-	def __init__(self,title,url,page_type,level):
+	def __init__(self,title,title_name,url,page_type,level):
 		self.title = title
+		self.title_name = title_name
 		self.url = url
 		self.type = page_type
 		#contains the page text
@@ -37,7 +38,7 @@ class Page(object):
 			if self.subpages:
 				self.text+='\n\n==Sottopagine=='
 				for p in self.subpages:
-					self.text += '\n*[['+p+']]'
+					self.text += '\n*[['+p+'|'+pages_dict[p].title_name+']]'
 			#added refs tags to show footnotes
 			self.text+='\n<references/>'
 		else:
@@ -51,7 +52,7 @@ class Page(object):
 				self.text+='\n<references/>'
 			elif self.level>max_level:
 				#Creation of current page'title
-				tit = '\n'+'='*(self.level-max_level+1)+self.title+'='*(self.level-max_level+1)
+				tit = '\n'+'='*(self.level-max_level+1)+self.title_name+'='*(self.level-max_level+1)
 				self.text = tit+ "\n"+ self.text
 				#return the text
 				return self.text
@@ -88,7 +89,6 @@ class Page(object):
 					mediaurl_dic,last_url,url_dic)
 
 
-
 	'''This method insert the right mediawikiurl in 
 	the \ref tags after the collapsing'''
 	def fixReferences(self, labels, pages):
@@ -101,6 +101,7 @@ class Page(object):
 	def __str__(self):
 		s =[]
 		s.append('title='+self.title)
+		s.append('title_name'+self.title_name)
 		s.append('url='+self.url)
 		s.append('media_url='+ self.media_url)
 		s.append('subpages='+str(self.subpages))

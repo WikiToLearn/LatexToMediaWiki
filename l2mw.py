@@ -20,7 +20,7 @@ def execute_mediawiki_parser(input_path, output_path,title,base_path,collapse_le
 	tex.ownerDocument.config['files']['filename'] = "." +title+".parsex"
 	#parsing DOM
 	document = tex.parse()
-	#renderer creation
+	#renderer creation\
 	rend = MediaWikiRenderer(title)
 	#starting rendering
 	rend.render(document)

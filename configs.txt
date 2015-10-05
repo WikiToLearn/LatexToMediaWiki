@@ -1,8 +1,8 @@
 [{
-	"renderers": ["mediawiki","xml"],
+	"renderers": ["mediawiki"],
 	"input" : "tex_sources/DispenseStruttura.tex",
 	"output" : "DStruttura",
-	"title": "Struttura",
+	"title": "Struttura_della_materia",
 	"base_path": "",
 	"collapse_level":"2"
 }]
