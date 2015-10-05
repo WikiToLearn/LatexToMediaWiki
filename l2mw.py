@@ -10,8 +10,8 @@ import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
-'''Function that execute a mediawiki_parser with given parameters'''
-def execute_mediawiki_parser(input_path, output_path,title,base_path,collapse_level):
+'''Function that execute a mediawiki_bparser with given parameters'''
+def execute_mediawiki_parser(input_path, output_path,title,collapse_level):
 	f = open(input_path,'r')
 	text = f.read().decode('utf-8')
 	#tex object
@@ -42,6 +42,8 @@ def execute_mediawiki_parser(input_path, output_path,title,base_path,collapse_le
 	for key in sorted(rend.used_tags):
 		d.write(key+ ": "+str(rend.used_tags[key])+'\n')
 	d.close()
+	#exporting tables
+	r#end.tree.exportFiguresTables()
 
 '''Function that execute a xml_parser with given parameters'''
 def execute_xml_parser(input_path, output_path,title):
@@ -70,8 +72,10 @@ for p in process_data:
 	renderers = p['renderers']
 	for r in renderers:
 		if r=='mediawiki':
+			#base path is added to title (hack)
+			title = base_path+ "/"+ title
 			execute_mediawiki_parser(input_path,output_path,\
-				title,base_path,collapse_level)
+				title,collapse_level)
 		elif r =="xml":
 			execute_xml_parser(input_path,output_path,title)
 

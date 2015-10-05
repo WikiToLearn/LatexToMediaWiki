@@ -137,7 +137,7 @@ class PageTree (object):
 
 	'''Entry point for XML exporting
 	-base_path is the base path for all exported pages'''
-	def exportXML(self,base_path=''):
+	def exportXML(self):
 		s = []
 		s.append('<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.10/"\
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \
@@ -172,10 +172,6 @@ class PageTree (object):
 			<namespace key="2600" case="first-letter">Argomento</namespace>\
 			</namespaces>\
 			</siteinfo>')
-		#starting iteration
-		if base_path!='':
-			self.base_path = base_path+'/'
-		else: self.base_path = ''
 		self._exportXML(s,-1,self.index,'')
 		s.append('</mediawiki>')
 		return '\n'.join(s)
@@ -201,7 +197,7 @@ class PageTree (object):
 		page.text = escape(page.text)
 		page.title= escape(page.title)
 		s =[]
-		s.append('<page>\n<title>'+escape(self.base_path+page.url)+'</title>')
+		s.append('<page>\n<title>'+escape(page.url)+'</title>')
 		s.append('\n<restrictions></restrictions>')
 		s.append('\n<revision>')
 		ts = time.time()
@@ -214,7 +210,7 @@ class PageTree (object):
 		s.append('\n</revision>\n</page>')
 		return '\n'.join(s)
 
-	def exportFiguresTables(self,base_path):
+	def exportFiguresTables(self):
 		f = open('ft_list',w)
 		for fig in self.figures:
 			f.write(str(fig))

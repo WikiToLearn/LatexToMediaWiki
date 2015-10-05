@@ -1,8 +1,8 @@
 [{
 	"renderers": ["mediawiki"],
-	"input" : "tex_sources/DispenseStruttura.tex",
-	"output" : "DStruttura",
-	"title": "Struttura_della_materia",
-	"base_path": "",
-	"collapse_level":"2"
+	"input" : "tex_sources/tdg_appunti.tex",
+	"output" : "tdg",
+	"title": "Teoria_della_misura",
+	"base_path": "Prova",
+	"collapse_level":"1"
 }]
