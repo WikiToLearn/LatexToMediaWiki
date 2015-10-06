@@ -345,9 +345,9 @@ class MediaWikiRenderer (Renderer):
     def do_texttt(self,node):
         self.used_tag('TEXTTT')
         s=[]
-        s.append(u"<tt>")
+        s.append(u"<code>")
         s.append(unicode(node).lstrip())
-        s.append(u"</tt>")
+        s.append(u"</code>")
         return u''.join(s)  
 
     def do_verbatim(self,node):
