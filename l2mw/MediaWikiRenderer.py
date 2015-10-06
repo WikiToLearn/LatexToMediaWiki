@@ -391,7 +391,7 @@ class MediaWikiRenderer (Renderer):
         if label:
             self.label(label)
         #return warning text for figure
-        return unicode('[[Figura:'+label+'_'+caption+'_'+file_path+']]')
+        return unicode('[[Image:'+label+'_'+caption+'_'+file_path+']]')
 
     '''The Table environment is handled with regex'''
     def do_table(self,node):

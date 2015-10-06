@@ -23,7 +23,7 @@ class Page(object):
 		self.media_url = ''
 
 	def addText(self,text):
-		self.text = escape(text)
+		self.text = text
 
 	def addIndex(self, ind):
 		self.subpages.append(ind)
