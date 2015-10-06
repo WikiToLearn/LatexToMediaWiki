@@ -354,7 +354,7 @@ class MediaWikiRenderer (Renderer):
         self.used_tag('VERBATIM')
         s=[]
         s.append(u'<nowiki>')
-        s.append(unicode(node.source)).lstrip()
+        s.append(unicode(node.source).lstrip())
         s.append(u'</nowiki>\n')
         return u''.join(s)
         
