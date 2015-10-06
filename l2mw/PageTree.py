@@ -135,6 +135,7 @@ class PageTree (object):
 	def fixReferences(self):
 		self.pages[self.doc_title].fixReferences(self.labels,self.pages)
 
+	'''Method that creates the index in the root page'''
 	def createIndex(self,max_level):
 		ind = ''
 		base_page = self.pages[self.doc_title]

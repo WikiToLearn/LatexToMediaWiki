@@ -75,7 +75,8 @@ for p in process_data:
 	for r in renderers:
 		if r=='mediawiki':
 			#base path is added to title (hack)
-			title = base_path+ "/"+ title
+			if base_path!='':
+				title = base_path+ "/"+ title
 			execute_mediawiki_parser(input_path,output_path,\
 				title,collapse_level)
 		elif r =="xml":

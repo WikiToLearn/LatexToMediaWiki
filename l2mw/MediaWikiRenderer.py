@@ -180,7 +180,7 @@ class MediaWikiRenderer (Renderer):
         self.used_tag('PAR')
         s = []
         s.append(u'\n\n')
-        s.append(unicode(node))
+        s.append(unicode(node).lstrip())
         return u''.join(s)
 
     '''Breaks line inside a paragraph'''
