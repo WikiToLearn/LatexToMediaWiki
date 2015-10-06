@@ -1,8 +1,8 @@
 [{
 	"renderers": ["mediawiki"],
-	"input" : "tex_sources/tdg_appunti.tex",
-	"output" : "tdg",
-	"title": "Teoria_della_misura",
-	"base_path": "Prova",
-	"collapse_level":"1"
+	"input" : "tex_sources/Matematica_Fisica.tex",
+	"output" : "MatePerFisica",
+	"title": "Matematica_per_la_fisica",
+	"base_path": "TexImport",
+	"collapse_level":"2"
 }]

@@ -135,6 +135,22 @@ class PageTree (object):
 	def fixReferences(self):
 		self.pages[self.doc_title].fixReferences(self.labels,self.pages)
 
+	def createIndex(self,max_level):
+		ind = ''
+		base_page = self.pages[self.doc_title]
+		base_page.text+= '\n\n==Capitoli==\n'
+		base_page.text+= self._createIndex(self.doc_title,'*',max_level)
+
+	def _createIndex(self,page,ind,max_level):
+		index = []
+		for sub in self.pages[page].subpages:
+			index.append(ind+'[['+ sub+'|'+ self.pages[sub].title_name+']]')
+			if(self.pages[page].level<max_level-1):
+				index.append(self._createIndex(sub,ind+'*',max_level))
+		return u'\n'.join(index)
+
+
+
 	'''Entry point for XML exporting
 	-base_path is the base path for all exported pages'''
 	def exportXML(self):

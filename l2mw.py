@@ -29,6 +29,8 @@ def execute_mediawiki_parser(input_path, output_path,title,collapse_level):
 	rend.tree.collapseText(collapse_level)
 	#fixing refs
 	rend.tree.fixReferences()
+	#create index
+	rend.tree.createIndex(collapse_level)
 	#exporting XML
 	xml = rend.tree.exportXML()
 	#writing to output
