@@ -27,14 +27,6 @@ class Page(object):
 
 	def addIndex(self, ind):
 		self.subpages.append(ind)
-
-        def recurseSubPages(self, subpages):
-            for p in subpages:
-                try:
-                    #p.subpages:
-                    self.recurseSubPages(p.subpages)
-                except:
-                    self.text += '\n*[['+p+']]'
                     
 	''' This method insert the text of subpages in this page if his level is 
 	greater than the level parameter.
@@ -102,7 +94,8 @@ class Page(object):
 	the \ref tags after the collapsing'''
 	def fixReferences(self, labels, pages):
 		for label in re.findall(r'\\ref{(.*?)}', self.text): 
-			self.text = self.text.replace(unicode('\\ref{'+label+'}'),' ([[' + labels[label] + ']]) ')
+			self.text = self.text.replace(unicode('\\ref{'+label+'}'),\
+				' ([[' + labels[label] + ']]) ')
 		for sub in self.subpages:
 			pages[sub].fixReferences(labels,pages)
 			
