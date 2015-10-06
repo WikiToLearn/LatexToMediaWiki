@@ -180,7 +180,7 @@ class MediaWikiRenderer (Renderer):
         self.used_tag('PAR')
         s = []
         s.append(u'\n\n')
-        s.append(unicode(node).lstrip())
+        s.append(unicode(node))
         return u''.join(s)
 
     '''Breaks line inside a paragraph'''
@@ -353,13 +353,13 @@ class MediaWikiRenderer (Renderer):
     def do_verbatim(self,node):
         self.used_tag('VERBATIM')
         s=[]
-        s.append(u'<nowiki>')
+        s.append(u' <nowiki>')
         source = node.source
         source = source.replace("\\begin{verbatim}", "")
         source = source.replace("\\end{verbatim}", "")
         for line in source.split('\n'):
             s.append(" %s" % line)
-        s.append(u'</nowiki>\n')
+        s.append(u' </nowiki>\n')
         #print s
         return u'\n'.join(s)
         

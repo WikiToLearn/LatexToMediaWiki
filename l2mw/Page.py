@@ -22,11 +22,19 @@ class Page(object):
 		self.media_url = ''
 
 	def addText(self,text):
-		self.text = text
+		self.text = escape(text)
 
 	def addIndex(self, ind):
 		self.subpages.append(ind)
 
+        def recurseSubPages(self, subpages):
+            for p in subpages:
+                try:
+                    #p.subpages:
+                    self.recurseSubPages(p.subpages)
+                except:
+                    self.text += '\n*[['+p+']]'
+                    
 	''' This method insert the text of subpages in this page if his level is 
 	greater than the level parameter.
 	It requires the dictionary of pages.'''
@@ -36,9 +44,10 @@ class Page(object):
 				pages_dict[subpage].collapseText(max_level,pages_dict)
 			#the subpages'index is created
 			if self.subpages:
-				self.text+='\n\n==Sottopagine=='
-				for p in self.subpages:
-					self.text += '\n*[['+p+']]'
+				self.text+='\n\n==Subpages=='
+				self.recurseSubPages(self.subpages)
+				#for p in self.subpages:
+					#self.text += '\n*[['+p+']]'
 			#added refs tags to show footnotes
 			self.text+='\n<references/>'
 		else:
@@ -55,7 +64,7 @@ class Page(object):
 				tit = '\n'+'='*(self.level-max_level+1)+self.title+'='*(self.level-max_level+1)
 				self.text = tit+ "\n"+ self.text
 				#return the text
-				return escape(self.text)
+				return self.text
 
 	''' This method collapse internal url of pages in mediawiki_url'''
 	def collapseMediaURL(self,max_level,pages_dict,mediaurl_dic,last_url,url_dic):
