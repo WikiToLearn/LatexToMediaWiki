@@ -354,9 +354,14 @@ class MediaWikiRenderer (Renderer):
         self.used_tag('VERBATIM')
         s=[]
         s.append(u'<nowiki>')
-        s.append(unicode(node.source).lstrip())
+        source = node.source
+        source = source.replace("\\begin{verbatim}", "")
+        source = source.replace("\\end{verbatim}", "")
+        for line in source.split('\n'):
+            s.append(" %s" % line)
         s.append(u'</nowiki>\n')
-        return u''.join(s)
+        #print s
+        return u'\n'.join(s)
         
     ##########################################
     #figures and tables

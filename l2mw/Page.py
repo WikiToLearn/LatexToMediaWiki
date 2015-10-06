@@ -1,4 +1,5 @@
 import re
+from xml.sax.saxutils import escape
 
 ''' Class that manages the pages' content '''
 class Page(object):
@@ -54,7 +55,7 @@ class Page(object):
 				tit = '\n'+'='*(self.level-max_level+1)+self.title+'='*(self.level-max_level+1)
 				self.text = tit+ "\n"+ self.text
 				#return the text
-				return self.text
+				return escape(self.text)
 
 	''' This method collapse internal url of pages in mediawiki_url'''
 	def collapseMediaURL(self,max_level,pages_dict,mediaurl_dic,last_url,url_dic):
