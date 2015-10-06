@@ -1,8 +1,8 @@
 [{
 	"renderers": ["mediawiki","xml"],
-	"input" : "KDE-Frameworks-Cookbook.tex",
-	"output" : "KDE-frameworks.mw",
-	"title": "KDE_Frameworks",
+	"input" : "tex_sources/DispenseStruttura.tex",
+	"output" : "DStruttura",
+	"title": "Struttura_della_materia",
 	"base_path": "",
 	"collapse_level":"2"
 }]
