@@ -1,4 +1,5 @@
 import re
+from xml.sax.saxutils import escape
 
 ''' Class that manages the pages' content '''
 class Page(object):
@@ -22,11 +23,19 @@ class Page(object):
 		self.media_url = ''
 
 	def addText(self,text):
-		self.text = text
+		self.text = escape(text)
 
 	def addIndex(self, ind):
 		self.subpages.append(ind)
 
+        def recurseSubPages(self, subpages):
+            for p in subpages:
+                try:
+                    #p.subpages:
+                    self.recurseSubPages(p.subpages)
+                except:
+                    self.text += '\n*[['+p+']]'
+                    
 	''' This method insert the text of subpages in this page if his level is 
 	greater than the level parameter.
 	It requires the dictionary of pages.'''

@@ -1,8 +1,8 @@
 [{
-	"renderers": ["mediawiki"],
-	"input" : "tex_sources/Matematica_Fisica.tex",
-	"output" : "MatePerFisica",
-	"title": "Matematica_per_la_fisica",
-	"base_path": "TexImport",
+	"renderers": ["mediawiki","xml"],
+	"input" : "KDE-Frameworks-Cookbook.tex",
+	"output" : "KDE-frameworks.mw",
+	"title": "KDE_Frameworks",
+	"base_path": "",
 	"collapse_level":"2"
 }]
