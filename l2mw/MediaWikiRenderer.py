@@ -96,7 +96,14 @@ class MediaWikiRenderer (Renderer):
 
 
     def do_textDefault(self, node):
-        return unicode(node).lstrip()
+        if self.in_theorem:
+            m = node.search(r'\[(.*?)\]')
+            if m:
+                name = m.group(1)
+                node.replace(m.group(0),u'')
+                self.tree.addTheremName(name)
+        else:
+            return unicode(node).lstrip()
 
     ###############################
     #sectioning
@@ -626,10 +633,10 @@ class MediaWikiRenderer (Renderer):
             name = self.th_dict[node.nodeName]
             num = self.th_numb[node.nodeName]+1
             self.th_numb[node.nodeName]+=1
-            title =  name+" "+str(num)
+            title =  name.strip()+" "+str(num)
             #add theorem to PageTree
             self.tree.addTheorem(title)
-            return u"\n====="+ title+"====="
+            return u"\n===="+ title+ "====\n"
         else:
             self.in_theorem=False
             return u"\n"

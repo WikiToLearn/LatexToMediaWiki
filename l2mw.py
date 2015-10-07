@@ -11,7 +11,8 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 '''Function that execute a mediawiki_bparser with given parameters'''
-def execute_mediawiki_parser(input_path, output_path,title,collapse_level):
+def execute_mediawiki_parser(input_path, output_path,\
+				title,collapse_level,th_enabled):
 	f = open(input_path,'r')
 	text = f.read().decode('utf-8')
 	#tex object
@@ -23,8 +24,9 @@ def execute_mediawiki_parser(input_path, output_path,title,collapse_level):
 	#renderer creation\
 	rend = MediaWikiRenderer(title)
 	#reading theorem dictionary config
-	ths = read_theorem_dict(input_path + '.thms')
-	rend.init_theorems(ths)
+	if th_enabled:
+		ths = read_theorem_dict(input_path + '.thms')
+		rend.init_theorems(ths)
 	#starting rendering
 	rend.render(document)
 	#after rendering work
@@ -63,7 +65,7 @@ def execute_xml_parser(input_path, output_path,title):
 	#renderer creation
 	rend = XMLRenderer()
 	#starting rendering
-	rend.render(document)\
+	rend.render(document)
 
 
 def read_theorem_dict(file_p):
@@ -83,6 +85,7 @@ for p in process_data:
 	title = p['title']
 	base_path = p['base_path']
 	collapse_level= int(p['collapse_level'])
+	th_enabled = int(p['theorems'])
 	renderers = p['renderers']
 	for r in renderers:
 		if r=='mediawiki':
@@ -90,7 +93,7 @@ for p in process_data:
 			if base_path!='':
 				title = base_path+ "/"+ title
 			execute_mediawiki_parser(input_path,output_path,\
-				title,collapse_level)
+				title,collapse_level,th_enabled)
 		elif r =="xml":
 			execute_xml_parser(input_path,output_path,title)
 

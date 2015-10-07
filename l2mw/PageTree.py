@@ -112,6 +112,7 @@ class PageTree (object):
 		table.addPageUrl(self.current_url)
 
 	current_theorem = None
+	'''Method that insert a theorem in the page'''	
 	def addTheorem(self, title):
 		t = Theorem(title,"", self.current_url)
 		self.current_theorem= t
@@ -119,6 +120,9 @@ class PageTree (object):
 
 	def addTheoremLabel(self,label):
 		self.current_theorem.label = label
+
+	def addTheoremName(self,name):
+		self.current_theorem.title += ' ('+name+')'
 
 
 	''' This method collapse the text contained in subpages 
