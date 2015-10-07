@@ -174,7 +174,12 @@ class MediaWikiRenderer (Renderer):
         self.used_tag('LABEL')
         #retriving label id
         l = node.attributes['label']
-        self.label(l)
+        #check if you are inside a theorem
+        if self.in_theorem:
+            self.tree.addTheoremLabel(l)
+        else:
+            #if not in a theorem
+            self.label(l)
         return u''
 
     '''All ref tag are substituted by normal ref tag.
@@ -616,11 +621,15 @@ class MediaWikiRenderer (Renderer):
 
     def theorem(self,node):
         if not self.in_theorem:
+            self.in_theorem= True
+            #reading attributes
             name = self.th_dict[node.nodeName]
             num = self.th_numb[node.nodeName]+1
             self.th_numb[node.nodeName]+=1
-            self.in_theorem= True
-            return u"\n====="+ name+" "+str(num)+"====="
+            title =  name+" "+str(num)
+            #add theorem to PageTree
+            self.tree.addTheorem(title)
+            return u"\n====="+ title+"====="
         else:
             self.in_theorem=False
             return u"\n"
