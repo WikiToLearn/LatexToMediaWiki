@@ -22,6 +22,9 @@ def execute_mediawiki_parser(input_path, output_path,title,collapse_level):
 	document = tex.parse()
 	#renderer creation\
 	rend = MediaWikiRenderer(title)
+	#reading theorem dictionary config
+	ths = read_theorem_dict(input_path + '.thms')
+	rend.init_theorems(ths)
 	#starting rendering
 	rend.render(document)
 	#after rendering work
@@ -55,12 +58,21 @@ def execute_xml_parser(input_path, output_path,title):
 	tex = TeX()
 	tex.input(text)
 	tex.ownerDocument.config['files']['filename'] = output_path+".xml"
-	#parsing DOM
+	#parsing DOMb
 	document = tex.parse()
 	#renderer creation
 	rend = XMLRenderer()
 	#starting rendering
 	rend.render(document)\
+
+
+def read_theorem_dict(file_p):
+	f = open(file_p,'r')
+	th = {}
+	for a in f:
+		m = a.split(':')
+		th[m[0]]=m[1]
+	return th
 
 
 #reading JSON configs

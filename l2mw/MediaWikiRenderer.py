@@ -5,7 +5,7 @@ from PageTree import *
 class MediaWikiRenderer (Renderer):
 
     outputType = unicode
-    fileExtension = '.xml'
+    fileExtension = '.mw'
     lineWidth = 76
 
     aliases = {
@@ -32,9 +32,11 @@ class MediaWikiRenderer (Renderer):
     }
 
     '''List of nodes not to explore'''
-    no_enter = ['titlepage','maketitle',
+    no_enter = ['titlepage','tableofcontents','pagestyle','maketitle',
             'numberwithin','geometry']
 
+    ##############################################################
+    #initialization
     def __init__(self, doc_title,*args, **kwargs):
         Renderer.__init__(self, *args, **kwargs)
         #document title
@@ -53,10 +55,24 @@ class MediaWikiRenderer (Renderer):
         self.tree = PageTree(doc_title)
         #parameter for list formatting
         self.list_level=u'' 
+        #parameter for theorem handling
+        self.in_theorem=False
 
         ####### TAGS ANALYSY
         #dictionary for tag usage
         self.used_tags = {}
+
+    '''function that register user defined theorem 
+    to the theorem function. Moreover it register a dictionary
+    for theorem numbering'''
+    def init_theorems(self, th_dict):
+        self.th_dict= th_dict
+        self.th_numb={}
+        for key in th_dict:
+            #adding key in theorem numbering dict
+            self.th_numb[key]=0
+            #assigning key to theorem function
+            self[key]=self.theorem
 
     #####################################
     #Utils for debug
@@ -596,5 +612,19 @@ class MediaWikiRenderer (Renderer):
 
 
     ###############################################
-    
-    
+    #Theorems handling
+
+    def theorem(self,node):
+        if(self.in_theorem):
+            return u'</theorem>'
+        else:
+            return u'\n<theorem>'
+            self.in_theorem=True
+
+    '''Proof tag is handle directly'''
+    def do_proof(self,node):
+        if(self.in_theorem):
+            return u'</proof>'
+        else:
+            return u'\n<proof>'
+            self.in_theorem=True

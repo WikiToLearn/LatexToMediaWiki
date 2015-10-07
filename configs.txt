@@ -1,8 +1,8 @@
 [{
-	"renderers": ["mediawiki"],
-	"input" : "KDE-Frameworks-Cookbook.tex",
-	"output" : "KDE-frameworks.mw",
-	"title": "KDE_Frameworks",
+	"renderers": ["mediawiki","xml"],
+	"input" : "tex_sources/test2.tex",
+	"output" : "tex_output/test",
+	"title": "test",
 	"base_path": "",
-	"collapse_level":"2"
+	"collapse_level":"1"
 }]
