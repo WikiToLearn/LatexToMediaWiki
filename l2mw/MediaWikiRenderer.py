@@ -615,16 +615,12 @@ class MediaWikiRenderer (Renderer):
     #Theorems handling
 
     def theorem(self,node):
-        if(self.in_theorem):
-            return u'</theorem>'
+        if not self.in_theorem:
+            name = self.th_dict[node.nodeName]
+            num = self.th_numb[node.nodeName]+1
+            self.th_numb[node.nodeName]+=1
+            self.in_theorem= True
+            return u"\n====="+ name+" "+str(num)+"====="
         else:
-            return u'\n<theorem>'
-            self.in_theorem=True
-
-    '''Proof tag is handle directly'''
-    def do_proof(self,node):
-        if(self.in_theorem):
-            return u'</proof>'
-        else:
-            return u'\n<proof>'
-            self.in_theorem=True
+            self.in_theorem=False
+            return u"\n"
