@@ -26,6 +26,7 @@ class PageTree (object):
 		#lists of figures and tables
 		self.figures = []
 		self.tables = []
+		self.theorems =[]
 		#ROOT PAGE
 		self.index[doc_title]={}
 		r = Page(doc_title,doc_title,doc_title,'root',-1)
@@ -110,6 +111,16 @@ class PageTree (object):
 		self.tables.append(table)
 		table.addPageUrl(self.current_url)
 
+	current_theorem = None
+	'''Method that insert a theorem in the page'''	
+	def addTheorem(self, title,label=''):
+		t = Theorem(title,"", self.current_url)
+		self.current_theorem= t
+		self.theorems.append(t)
+
+	def addTheoremLabel(self,label):
+		self.current_theorem.label = label
+
 	''' This method collapse the text contained in subpages 
 	in the pages with level > level_min.
 	The pages with level<level_min is inserted an index of subpages. '''
@@ -124,12 +135,19 @@ class PageTree (object):
 		#fixing labels with mediawikiurls
 		for l in self.labels:
 			self.labels[l] = self.media_urls[self.labels[l]]
-		#fixing figures urls
+		#fixing figures mediaurls
 		for f in self.figures:
 			f.page_url = self.media_urls[f.page_url]
-		#fixing tables urls
+		#fixing tables mediaurls
 		for t in self.tables:
 			t.page_url = self.media_urls[t.page_url]
+		#fixing tables media_url
+		for thm in self.theorems:
+			murl = self.media_urls[thm.internal_url]
+			murl +=  "#"+thm.title
+			thm.media_url= murl
+			#adding label to dict
+			self.labels[thm.label]= murl
 
 	'''Method that starts the rendering of refs'''
 	def fixReferences(self):
@@ -149,8 +167,6 @@ class PageTree (object):
 			if(self.pages[page].level<max_level-1):
 				index.append(self._createIndex(sub,ind+'*',max_level))
 		return u'\n'.join(index)
-
-
 
 	'''Entry point for XML exporting
 	-base_path is the base path for all exported pages'''
@@ -272,3 +288,11 @@ class Table(object):
 		s.append('|caption@'+ self.caption)
 		s.append('|pageurl@'+self.page_url)
 		return u''.join(s)
+
+class Theorem(object):
+
+	def __init__(self,title, label, internal_url):
+		self.title = title
+		self.label = label
+		self.internal_url = internal_url
+		self.media_url = ''

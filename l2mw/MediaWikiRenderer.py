@@ -85,7 +85,6 @@ class MediaWikiRenderer (Renderer):
     ###################################
     #defaul tags
     def default(self, node):
-        
         if node.nodeName in self.no_enter:
             self.used_tag('NO-ENTER@'+ node.nodeName)
             return u''
@@ -96,7 +95,9 @@ class MediaWikiRenderer (Renderer):
 
 
     def do_textDefault(self, node):
-        return unicode(node).lstrip()
+        self.used_tag('TEXT-DEFAULT')
+        text = unicode(node).lstrip()
+        return text        
 
     ###############################
     #sectioning
@@ -174,7 +175,11 @@ class MediaWikiRenderer (Renderer):
         self.used_tag('LABEL')
         #retriving label id
         l = node.attributes['label']
-        self.label(l)
+        #check if you are inside a theorem
+        if self.in_theorem:
+            self.tree.addTheoremLabel(l)
+        else:
+            self.label(l)
         return u''
 
     '''All ref tag are substituted by normal ref tag.
@@ -645,18 +650,32 @@ class MediaWikiRenderer (Renderer):
 
     ###############################################
     #Theorems handling
-
+    '''Methods that handles theorems defined in the .thms config file.
+    It extracts name and create a indexable title (====)'''
     def theorem(self,node):
-        if(self.in_theorem):
-            return u'</theorem>'
+        if not self.in_theorem:
+            self.in_theorem= True
+            th = node.nodeName
+            #reading attributes
+            th_id = self.th_dict[th]
+            num = self.th_numb[th]+1
+            self.th_numb[th]+=1
+            title = th_id.strip()+" "+str(num)
+            #searching in the content the theorem name
+            nextn = node.nextSibling.textContent
+            print nextn
+            th_name=''
+            m = re.search(r'\[(.*?)\]',nextn)
+            if m:  
+                th_name = m.group(1)
+                nextn.replace('['+th_name+']',u'')
+            print(nextn)
+ 
+            #adding theorem name to title
+            title += "(''"+th_name+"'')"
+            #add theorem to PageTree
+            self.tree.addTheorem(title)
+            return u"\n===="+ title+ "====\n"
         else:
-            return u'\n<theorem>'
-            self.in_theorem=True
-
-    '''Proof tag is handle directly'''
-    def do_proof(self,node):
-        if(self.in_theorem):
-            return u'</proof>'
-        else:
-            return u'\n<proof>'
-            self.in_theorem=True
+            self.in_theorem=False
+            return u"\n"

@@ -31,6 +31,6 @@ class XMLRenderer(Renderer):
         return u'\n'.join(s)
 
     def textDefault(self,node):
-        return unicode(node).lstrip()
+        return '<t>'+unicode(node).lstrip()+'</t>'
 
     

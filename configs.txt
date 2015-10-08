@@ -1,8 +1,9 @@
 [{
-	"renderers": ["mediawiki","xml"],
-	"input" : "tex_sources/DispenseStruttura.tex",
+	"renderers": ["xml","mediawiki"],
+	"input" : "tex_sources/test2.tex",
 	"output" : "tex_output/test",
 	"title": "test",
 	"base_path": "",
-	"collapse_level":"1"
+	"collapse_level":"2",
+	"theorems":"1"
 }]
