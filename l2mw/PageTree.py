@@ -113,17 +113,13 @@ class PageTree (object):
 
 	current_theorem = None
 	'''Method that insert a theorem in the page'''	
-	def addTheorem(self, title):
+	def addTheorem(self, title,label=''):
 		t = Theorem(title,"", self.current_url)
 		self.current_theorem= t
 		self.theorems.append(t)
 
 	def addTheoremLabel(self,label):
 		self.current_theorem.label = label
-
-	def addTheoremName(self,name):
-		self.current_theorem.title += ' ('+name+')'
-
 
 	''' This method collapse the text contained in subpages 
 	in the pages with level > level_min.
@@ -150,7 +146,6 @@ class PageTree (object):
 			murl = self.media_urls[thm.internal_url]
 			murl +=  "#"+thm.title
 			thm.media_url= murl
-			print(thm.media_url,thm.label)
 			#adding label to dict
 			self.labels[thm.label]= murl
 
@@ -172,8 +167,6 @@ class PageTree (object):
 			if(self.pages[page].level<max_level-1):
 				index.append(self._createIndex(sub,ind+'*',max_level))
 		return u'\n'.join(index)
-
-
 
 	'''Entry point for XML exporting
 	-base_path is the base path for all exported pages'''
