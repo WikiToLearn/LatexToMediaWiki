@@ -232,8 +232,16 @@ class PageTree (object):
 		#text fixing before export
 		page.text = escape(page.text)
 		page.title= escape(page.title)
+		#fix for double apostrophes quotes
+		page.text = page.text.decode('utf-8')
+		s = re.findall(u'(\`\`)\s?(.*?)\s?(\'\')', page.text, re.DOTALL)
+		for item in s:
+			page.text = page.text.replace(unicode(item[0]),'"')
+		 	page.text = page.text.replace(unicode(item[2]),'"')
+		 	
 		#apostrophe fixed
-		page.text = page.text.decode('utf-8').replace(u'’',u"'")
+		page.text = page.text.replace(u'’',u"'")
+		page.text = page.text.replace(u'`',u"'")
 		#construction of page xml
 		s =[]
 		s.append('<page>\n<title>'+escape(page.url)+'</title>')
