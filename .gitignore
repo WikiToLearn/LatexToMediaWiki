@@ -7,8 +7,9 @@
 *.xml
 *.mw
 *.mww
-.directory
-.paux
+*.directory
+*.paux
+*.txt
 tex_sources/*
 
 #python compiled
