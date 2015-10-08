@@ -1,9 +1,9 @@
 [{
-	"renderers": ["xml","mediawiki"],
-	"input" : "tex_sources/test2.tex",
-	"output" : "tex_output/test",
-	"title": "test",
+	"renderers": ["mediawiki"],
+	"input" : "tex_sources/DispenseStruttura.tex",
+	"output" : "tex_output/DStruttura",
+	"title": "Struttura_della_materia",
 	"base_path": "",
 	"collapse_level":"2",
-	"theorems":"1"
+	"theorems":"0"
 }]

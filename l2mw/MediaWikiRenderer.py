@@ -604,7 +604,7 @@ class MediaWikiRenderer (Renderer):
             s_tag = '<dmath>'
         return s_tag + s + '</dmath>'
 
-        ''' Support for gather alignment style '''
+    ''' Support for gather alignment style '''
     def do_gather(self, node):
         s = node.source
         text = None

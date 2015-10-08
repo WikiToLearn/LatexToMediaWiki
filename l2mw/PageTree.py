@@ -1,3 +1,4 @@
+# encoding: utf-8
 from Page import Page
 import datetime
 import time
@@ -225,10 +226,15 @@ class PageTree (object):
 				else:
 					self._exportXML(text,lev+1,cur_dict[key],cur_url+"/"+key)
 
+
 	'''Return the mediawiki XML of a single page'''
 	def getPageXML(self,page):
+		#text fixing before export
 		page.text = escape(page.text)
 		page.title= escape(page.title)
+		#apostrophe fixed
+		page.text = page.text.decode('utf-8').replace(u'’',u"'")
+		#construction of page xml
 		s =[]
 		s.append('<page>\n<title>'+escape(page.url)+'</title>')
 		s.append('\n<restrictions></restrictions>')
