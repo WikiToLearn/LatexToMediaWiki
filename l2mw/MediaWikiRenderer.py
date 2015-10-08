@@ -620,21 +620,13 @@ class MediaWikiRenderer (Renderer):
         exists_text = re.search(ur'\\begin{(.*?)}(.*?)\\end{(.*?)}', s, re.DOTALL)
         if exists_text:
             text = exists_text.group(2)
-            print exists_text #debug purpose only
             lines = text.split("\\\\")
-            print "LINES: %s" % (lines) #debug purpose only
             for line in lines:
                 new_text += unicode("<dmath>" + line + "</dmath> \n")
-            print "NEW TEXT: %s" % (new_text)
         else:
             new_text = ""
 
         return new_text 
-
-
-
-
-
 
     do_eqnarray = do_align
     do_multline = do_align
