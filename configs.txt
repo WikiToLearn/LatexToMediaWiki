@@ -1,6 +1,6 @@
 [{
 	"renderers": ["mediawiki","xml"],
-	"input" : "tex_sources/test2.tex",
+	"input" : "tex_sources/DispenseStruttura.tex",
 	"output" : "tex_output/test",
 	"title": "test",
 	"base_path": "",

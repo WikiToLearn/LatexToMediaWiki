@@ -599,16 +599,48 @@ class MediaWikiRenderer (Renderer):
             s_tag = '<dmath>'
         return s_tag + s + '</dmath>'
 
+        ''' Support for gather alignment style '''
+    def do_gather(self, node):
+        s = node.source
+        text = None
+        new_text = ''
+        
+        #removing inner starred commands
+        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
+        for star_tag in re.finditer(re_remove_star,s):
+            s = s.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
+                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
+
+        self.used_tag("MATH_GATHER")
+        exists_text = re.search(ur'\\begin{(.*?)}(.*?)\\end{(.*?)}', s, re.DOTALL)
+        if exists_text:
+            text = exists_text.group(2)
+            print exists_text #debug purpose only
+            lines = text.split("\\\\")
+            print "LINES: %s" % (lines) #debug purpose only
+            for line in lines:
+                new_text += unicode("<dmath>" + line + "</dmath> \n")
+            print "NEW TEXT: %s" % (new_text)
+        else:
+            new_text = ""
+
+        return new_text 
+
+
+
+
+
+
     do_eqnarray = do_align
     do_multline = do_align
     do_alignat =  do_align
-    do_gather = do_align
+    #do_gather = do_align
     #using aliases
     do__align_star = do_align
     do__alignat_star = do_align
     do__eqnarray_star = do_align
     do__multline_star = do_align
-    do__gather_star = do_align
+    do__gather_star = do_gather
 
 
     ###############################################
