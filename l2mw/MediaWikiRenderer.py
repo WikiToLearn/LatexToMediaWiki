@@ -189,7 +189,8 @@ class MediaWikiRenderer (Renderer):
         return unicode('\\ref{'+r+'} ')
 
     do_pageref = do_ref
-
+    do_vref = do_ref
+    do_eqref = do_ref
 
     ################################################
     #Formatting
