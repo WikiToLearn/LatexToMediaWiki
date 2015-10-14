@@ -1,5 +1,6 @@
 import string,re
 from plasTeX.Renderers import Renderer
+from plasTeX import Command, Environment
 from PageTree import *
 
 class MediaWikiRenderer (Renderer):
@@ -71,8 +72,6 @@ class MediaWikiRenderer (Renderer):
         for key in th_dict:
             #adding key in theorem numbering dict
             self.th_numb[key]=0
-            #assigning key to theorem function
-            self[key]=self.theorem
 
     #####################################
     #Utils for debug
@@ -571,7 +570,6 @@ class MediaWikiRenderer (Renderer):
         s = s.replace('alignat',u'align')
         s = s.replace('eqnarray',u'align')
         s = s.replace('multline',u'align')
-        s = s.replace('gather',u'align')
 
         #removing inner starred commands
         re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
@@ -629,7 +627,6 @@ class MediaWikiRenderer (Renderer):
     do_eqnarray = do_align
     do_multline = do_align
     do_alignat =  do_align
-    #do_gather = do_align
     #using aliases
     do__align_star = do_align
     do__alignat_star = do_align
@@ -642,30 +639,24 @@ class MediaWikiRenderer (Renderer):
     #Theorems handling
     '''Methods that handles theorems defined in the .thms config file.
     It extracts name and create a indexable title (====)'''
-    def theorem(self,node):
-        if not self.in_theorem:
-            self.in_theorem= True
-            th = node.nodeName
-            #reading attributes
-            th_id = self.th_dict[th]
-            num = self.th_numb[th]+1
-            self.th_numb[th]+=1
-            title = th_id.strip()+" "+str(num)
-            #searching in the content the theorem name
-            nextn = node.nextSibling.textContent
-            print nextn
-            th_name=''
-            m = re.search(r'\[(.*?)\]',nextn)
-            if m:  
-                th_name = m.group(1)
-                nextn.replace('['+th_name+']',u'')
-            print(nextn)
- 
-            #adding theorem name to title
-            title += "(''"+th_name+"'')"
-            #add theorem to PageTree
-            self.tree.addTheorem(title)
-            return u"\n===="+ title+ "====\n"
-        else:
-            self.in_theorem=False
-            return u"\n"
+    def do_theorem(self,node):
+        self.in_theorem= True
+        th_id = node.attributes['th_id']
+        th_name = ''
+        if 'th_name' in node.attributes:
+            th_name = node.attributes['th_name']
+        #reading attributes
+        th_title = self.th_dict[th_id]
+        num = self.th_numb[th_id]+1
+        #update theorem numbering
+        self.th_numb[th_id]+=1
+        #creating title
+        title = th_title.strip()+" "+str(num)
+        #adding theorem name to title
+        if th_name != '':
+            title += " (''"+th_name+"'')"
+        #add theorem to PageTree
+        self.tree.addTheorem(title)
+        return u"\n===="+ title+ "====\n"
+   
+

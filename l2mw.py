@@ -50,7 +50,7 @@ def execute_mediawiki_parser(input_path, output_path,\
 		d.write(key+ ": "+str(rend.used_tags[key])+'\n')
 	d.close()
 	#exporting tables
-	r#end.tree.exportFiguresTables()
+	#end.tree.exportFiguresTables()
 
 '''Function that execute a xml_parser with given parameters'''
 def execute_xml_parser(input_path, output_path,title):
