@@ -157,7 +157,7 @@ class MediaWikiRenderer (Renderer):
     '''Enter point for parsing. Root page is already created'''
     def do_document(self,node):
         self.used_tag('DOCUMENT')
-        content = unicode(node)
+        content = unicode(node).lstrip()
         self.tree.addText(content)
         return u'%s' % content
 
@@ -603,6 +603,7 @@ class MediaWikiRenderer (Renderer):
 
     ''' Support for gather alignment style '''
     def do_gather(self, node):
+        self.used_tag("MATH_GATHER")
         s = node.source
         text = None
         new_text = ''
@@ -612,8 +613,7 @@ class MediaWikiRenderer (Renderer):
         for star_tag in re.finditer(re_remove_star,s):
             s = s.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
                 star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
-
-        self.used_tag("MATH_GATHER")
+       
         exists_text = re.search(ur'\\begin{(.*?)}(.*?)\\end{(.*?)}', s, re.DOTALL)
         if exists_text:
             text = exists_text.group(2)
@@ -641,6 +641,7 @@ class MediaWikiRenderer (Renderer):
     '''Methods that handles theorems defined in the .thms config file.
     It extracts name and create a indexable title (====)'''
     def do_theorem(self,node):
+        self.used_tag("THEOREM")
         self.in_theorem= True
         th_id = node.attributes['th_id']
         th_name = ''
@@ -658,6 +659,12 @@ class MediaWikiRenderer (Renderer):
             title += " (''"+th_name+"'')"
         #add theorem to PageTree
         self.tree.addTheorem(title)
-        return u"\n===="+ title+ "====\n"
+        s =[]
+        s.append("\n===="+ title+ "====")
+        #elaborating childnodes
+        s.append(unicode(node).lstrip()+'\n')
+        #exiting theorem env
+        self.in_theorem=False
+        return u'\n'.join(s)
    
 

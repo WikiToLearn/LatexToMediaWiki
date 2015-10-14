@@ -12,21 +12,23 @@ sys.setdefaultencoding("utf-8")
 
 '''Function that execute a mediawiki_bparser with given parameters'''
 def execute_mediawiki_parser(input_path, output_path,\
-				title,collapse_level,th_enabled):
+				title,collapse_level):
 	f = open(input_path,'r')
 	text = f.read().decode('utf-8')
+	###preparser operations
+	#reading theorems
+	#the preparser result is a tuple of (tex, th_dict)
+	preparser_result = preparseTheorems(text)
 	#tex object
 	tex = TeX()
-	tex.input(text)
+	tex.input(preparser_result[0])
 	tex.ownerDocument.config['files']['filename'] = "." +title+".parsex"
 	#parsing DOM
 	document = tex.parse()
 	#renderer creation\
 	rend = MediaWikiRenderer(title)
-	#reading theorem dictionary config
-	if th_enabled:
-		ths = read_theorem_dict(input_path + '.thms')
-		rend.init_theorems(ths)
+	#inserting theorem dictionary in renderer
+	rend.init_theorems(preparser_result[1])
 	#starting rendering
 	rend.render(document)
 	#after rendering work
@@ -56,9 +58,11 @@ def execute_mediawiki_parser(input_path, output_path,\
 def execute_xml_parser(input_path, output_path,title):
 	f = open(input_path,'r')
 	text = f.read().decode('utf-8')
+	#the preparser result is a tuple of (tex, th_dict)
+	preparser_result = preparseTheorems(text)
 	#tex object
 	tex = TeX()
-	tex.input(text)
+	tex.input(preparser_result[0])
 	tex.ownerDocument.config['files']['filename'] = output_path+".xml"
 	#parsing DOMb
 	document = tex.parse()
@@ -66,15 +70,6 @@ def execute_xml_parser(input_path, output_path,title):
 	rend = XMLRenderer()
 	#starting rendering
 	rend.render(document)
-
-
-def read_theorem_dict(file_p):
-	f = open(file_p,'r')
-	th = {}
-	for a in f:
-		m = a.split(':')
-		th[m[0]]=m[1]
-	return th
 
 
 #reading JSON configs
@@ -85,7 +80,6 @@ for p in process_data:
 	title = p['title']
 	base_path = p['base_path']
 	collapse_level= int(p['collapse_level'])
-	th_enabled = int(p['theorems'])
 	renderers = p['renderers']
 	for r in renderers:
 		if r=='mediawiki':
@@ -93,7 +87,7 @@ for p in process_data:
 			if base_path!='':
 				title = base_path+ "/"+ title
 			execute_mediawiki_parser(input_path,output_path,\
-				title,collapse_level,th_enabled)
+				title,collapse_level)
 		elif r =="xml":
 			execute_xml_parser(input_path,output_path,title)
 
