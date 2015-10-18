@@ -5,10 +5,10 @@ the theorems environments used. It memorizes them and it normalize them with
 our theorem env'''
 def preparseTheorems(tex):
 	th_dict = {}
-	p = re.compile(ur'\\newtheorem\{(.*?)\}\{(.*?)\}')
+	p = re.compile(ur'\\newtheorem\*?\{(.*?)\}(\[.*?\])?\{(.*?)\}')
 	for match in re.finditer(p,tex):
-		print('MATCHED_THM:', match.group(1),match.group(2))
-		th_dict[match.group(1)]= match.group(2)
+		print('MATCHED_THM:', match.group(1),match.group(3))
+		th_dict[match.group(1)]= match.group(3)
 	
 	#now we search for every theorem \beging{th_id} and \end{th_id}
 	#and we substitue them with \begin{theorem}{th_id} and \begin{theorem}

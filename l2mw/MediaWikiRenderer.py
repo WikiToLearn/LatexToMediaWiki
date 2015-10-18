@@ -391,7 +391,7 @@ class MediaWikiRenderer (Renderer):
         caption = ''
         label=''
         #searchin includegraphics
-        graphics_search = re.search(ur'\\includegraphics(\[.*\])*{(.*?)}',node.source)
+        graphics_search = re.search(ur'\\includegraphics(\[.*?\])*{(.*?)}',node.source)
         if graphics_search: 
             file_path= graphics_search.group(2)
         #searching label
@@ -410,7 +410,10 @@ class MediaWikiRenderer (Renderer):
         if label:
             self.label(label)
         #return warning text for figure
-        return unicode('[[Image:'+label+'_'+caption+'_'+file_path+']]')
+        if caption != '':
+            return unicode('[[File:'+file_path+'|frame|'+caption+']]')
+        else:
+            return unicode('[[File:'+file_path+']]')
 
     '''The Table environment is handled with regex'''
     def do_table(self,node):
@@ -650,10 +653,13 @@ class MediaWikiRenderer (Renderer):
         #reading attributes
         th_title = self.th_dict[th_id]
         num = self.th_numb[th_id]+1
-        #update theorem numbering
-        self.th_numb[th_id]+=1
         #creating title
-        title = th_title.strip()+" "+str(num)
+        title = th_title.strip()
+        #update theorem numbering
+        if th_id.endswith('*'):
+            self.th_numb[th_id]+=1
+            #cadding numb to title
+            title += " "+str(num)
         #adding theorem name to title
         if th_name != '':
             title += " (''"+th_name+"'')"
@@ -667,4 +673,6 @@ class MediaWikiRenderer (Renderer):
         self.in_theorem=False
         return u'\n'.join(s)
    
+    def do_proof(self,node):
+        pass
 
