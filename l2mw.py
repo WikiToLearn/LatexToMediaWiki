@@ -44,6 +44,8 @@ def execute_mediawiki_parser(input_path, output_path,\
 	o = open(output_path+".mw",'w')
 	o.write(xml)
 	o.close()
+	#writing single pages
+	rend.tree.exportXML_single_pages(output_path+'_pages')
 	#writing debug info
 	d = open(output_path+".debug",'w')
 	#used_tags

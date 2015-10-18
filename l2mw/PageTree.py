@@ -257,6 +257,16 @@ class PageTree (object):
 		s.append('\n</revision>\n</page>')
 		return '\n'.join(s)
 
+	'''Function that export pages in separated files'''
+	def exportXML_single_pages(self,base_path=''):
+		for p in self.pages:
+			page = self.pages[p]
+			if page.level <= self.collapse_level:
+				xml = self.getPageXML(page)
+				f = open(base_path+'/'+page.title+".xml",'w')
+				f.write(xml)
+				f.close()
+
 	def exportFiguresTables(self):
 		f = open('ft_list',w)
 		for fig in self.figures:
@@ -264,7 +274,6 @@ class PageTree (object):
 		for t in self.tables:
 			f.write(str(t))
 		f.close()
-
 
 class Figure(object):
 
