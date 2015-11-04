@@ -648,7 +648,7 @@ class MediaWikiRenderer (Renderer):
         self.in_theorem= True
         th_id = node.attributes['th_id']
         th_name = ''
-        if 'th_name' in node.attributes:
+        if node.attributes['th_name']!=None:
             th_name = node.attributes['th_name']
         #reading attributes
         th_title = self.th_dict[th_id]
@@ -674,5 +674,17 @@ class MediaWikiRenderer (Renderer):
         return u'\n'.join(s)
    
     def do_proof(self,node):
-        pass
+        self.used_tag('PROOF')
+        proof_name = ''
+        if node.attributes['proof_name']!=None:
+            proof_name = node.attributes['proof_name']
+        s=[]
+        s.append("''Dimostrazione ")
+        if proof_name!="":
+            s.append("("+proof_name+")")
+        s.append("''   ")
+        s.append(unicode(node).lstrip())  
+        s.append('\n') 
+        return u''.join(s)
+
 

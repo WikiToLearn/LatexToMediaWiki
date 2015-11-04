@@ -69,10 +69,11 @@ class PageTree (object):
 		self.current= title
 		self.current_url= newurl
 
+	'''Function that removes math from title'''
 	def getNormalizedUrl(self,title):
 		mre = re.search('<\s*math\s*>(.*?)<\s*\/\s*math\s*>',title,re.DOTALL)
 		if mre:
-			return title.replace(mre.group(0),mre.group(1))
+			return title.replace(mre.group(0),"")
 		else:
 			return title
 
