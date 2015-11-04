@@ -11,8 +11,14 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 '''Function that execute a mediawiki_bparser with given parameters'''
-def execute_mediawiki_parser(input_path, output_path,\
-				title,collapse_level):
+def execute_mediawiki_parser(config):
+	#data
+	input_path= config['input_path']
+	output_path = config['output_path']
+	title = config['title']
+	collapse_level = int(config['collapse_level'])
+
+	#process
 	f = open(input_path,'r')
 	text = f.read().decode('utf-8')
 	###preparser operations
@@ -44,8 +50,10 @@ def execute_mediawiki_parser(input_path, output_path,\
 	o = open(output_path+".mw",'w')
 	o.write(xml)
 	o.close()
-	#writing single pages
-	rend.tree.exportXML_single_pages(output_path+'_pages')
+	#check if we have to export single pages
+	if(config['export_pages']):
+		#writing single pages
+		rend.tree.exportXML_single_pages(output_path+'_pages')
 	#writing debug info
 	d = open(output_path+".debug",'w')
 	#used_tags
@@ -57,7 +65,13 @@ def execute_mediawiki_parser(input_path, output_path,\
 	#end.tree.exportFiguresTables()
 
 '''Function that execute a xml_parser with given parameters'''
-def execute_xml_parser(input_path, output_path,title):
+def execute_xml_parser(config):
+	#data
+	input_path= config['input_path']
+	output_path = config['output_path']
+	title = config['title']
+
+	#process
 	f = open(input_path,'r')
 	text = f.read().decode('utf-8')
 	#the preparser result is a tuple of (tex, th_dict)
@@ -76,21 +90,22 @@ def execute_xml_parser(input_path, output_path,title):
 
 #reading JSON configs
 process_data = json.loads(open('configs.txt').read())
+config={}
 for p in process_data:
-	input_path = p['input']
-	output_path = p['output']
-	title = p['title']
-	base_path = p['base_path']
-	collapse_level= int(p['collapse_level'])
-	renderers = p['renderers']
-	for r in renderers:
+	config['input_path'] = p['input']
+	config['output_path'] = p['output']
+	config['title'] = p['title']
+	config['base_path'] = p['base_path']
+	config['collapse_level']= int(p['collapse_level'])
+	config['renderers'] = p['renderers']
+	config['export_pages'] = bool(p['export_pages'])
+	for r in config['renderers']:
 		if r=='mediawiki':
 			#base path is added to title (hack)
-			if base_path!='':
-				title = base_path+ "/"+ title
-			execute_mediawiki_parser(input_path,output_path,\
-				title,collapse_level)
+			if config['base_path']!='':
+				title = config['base_path']+ "/"+ config['title']
+			execute_mediawiki_parser(config)
 		elif r =="xml":
-			execute_xml_parser(input_path,output_path,title)
+			execute_xml_parser(config)
 
 
