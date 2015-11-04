@@ -33,4 +33,5 @@ class XMLRenderer(Renderer):
     def textDefault(self,node):
         return unicode(node).lstrip()
 
+ 
     
