@@ -4,8 +4,7 @@ class theorem(Environment):
     args = 'th_id:str [th_name:str]' 
 
 class proof(Environment):
-	pass
-
+	args = '[proof_name:str]'
 
 class vref(Command):
     args='label'
