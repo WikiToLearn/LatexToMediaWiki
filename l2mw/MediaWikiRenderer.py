@@ -549,7 +549,14 @@ class MediaWikiRenderer (Renderer):
 
         return '<math>'+ content +'</math>'
 
-    do_ensuremath = do_math
+    def do_ensuremath(self,node):
+        self.used_tag('ENSURE_MATH')
+        s = node.source
+        #removing \ensumemath{}
+        s = get_content_greedy(s,'\\ensuremath')
+        #check math content
+        s = self.math_check(s)
+        return '<math>'+ s +'</math>'
 
     '''Support for align type tags. 
     They are outside math modes an supported directly'''
@@ -624,6 +631,10 @@ class MediaWikiRenderer (Renderer):
        
         #removing \boxed command
         mtxt = remove_command_greedy(mtxt,'\\boxed')
+
+        #removing \ensuremath from macros
+        mtxt = remove_command_greedy(mtxt,'\\ensuremath')
+
         return mtxt
 
     do_eqnarray = do_align
