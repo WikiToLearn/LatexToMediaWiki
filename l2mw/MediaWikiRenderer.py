@@ -208,6 +208,7 @@ class MediaWikiRenderer (Renderer):
         return u'<br/>'
     
     do__backslash = do_newline
+    do_linebreak = do_newline
 
     def do_newpage(self,node):
         self.used_tag('NEWPAGE')
@@ -360,6 +361,7 @@ class MediaWikiRenderer (Renderer):
         return u''.join(s)
     
     do_underbar=do_underline
+    do_uline = do_underline
 
     def do_texttt(self,node):
         self.used_tag('TEXTTT')
@@ -458,7 +460,7 @@ class MediaWikiRenderer (Renderer):
     ###################################################
     #Math tags
 
-    '''Handles math insede a displaymath mode:
+    '''Handles math inside a displaymath mode:
     -it removes $$ and \[ \].
     -it remove \begin and \end so it has to be used 
     only for \begin{equation} and \begin{displaymath}.
@@ -494,11 +496,8 @@ class MediaWikiRenderer (Renderer):
         #replace split with align
         s = s.replace("split", u"align")
 
-        #removing inner starred commands
-        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
-        for star_tag in re.finditer(re_remove_star,s):
-            s = s.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
-                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
+        #check math content
+        s = self.math_check(s)
         
         #searching for label
         global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', s)
@@ -544,11 +543,8 @@ class MediaWikiRenderer (Renderer):
         else:
             content = ''
 
-        #removing inner starred commands
-        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
-        for star_tag in re.finditer(re_remove_star,s):
-            s = s.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
-                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
+        #check math content
+        s = self.math_check(s)
 
         #get content between \begin{split}
         s = s.replace("split", u"align")
@@ -575,11 +571,8 @@ class MediaWikiRenderer (Renderer):
         s = s.replace('eqnarray',u'align')
         s = s.replace('multline',u'align')
 
-        #removing inner starred commands
-        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
-        for star_tag in re.finditer(re_remove_star,s):
-            s = s.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
-                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
+        #check math content
+        s = self.math_check(s)
             
         #search equation tag
         global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', node.source)
@@ -611,11 +604,8 @@ class MediaWikiRenderer (Renderer):
         text = None
         new_text = ''
         
-        #removing inner starred commands
-        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
-        for star_tag in re.finditer(re_remove_star,s):
-            s = s.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
-                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
+        #check math content
+        s = self.math_check(s)
        
         exists_text = re.search(ur'\\begin{(.*?)}(.*?)\\end{(.*?)}', s, re.DOTALL)
         if exists_text:
@@ -625,8 +615,21 @@ class MediaWikiRenderer (Renderer):
                 new_text += unicode("<dmath>" + line + "</dmath> \n")
         else:
             new_text = ""
-
         return new_text 
+
+    def math_check(self,mtxt):
+         #removing inner starred commands
+        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
+        for star_tag in re.finditer(re_remove_star,mtxt):
+            mtxt = mtxt.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
+                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
+        #removing inner \ensuremath comands 
+
+        re_ensure_math = re.compile(ur'\\ensuremath{(.*)}',re.DOTALL)
+        for ensure_tag in re.finditer(re_ensure_math,mtxt):
+            mtxt = mtxt.replace(ensure_tag.group(0),ensure_tag.group(1))
+
+        return mtxt
 
     do_eqnarray = do_align
     do_multline = do_align
@@ -646,33 +649,39 @@ class MediaWikiRenderer (Renderer):
     def do_theorem(self,node):
         self.used_tag("THEOREM")
         self.in_theorem= True
-        th_id = node.attributes['th_id']
-        th_name = ''
-        if node.attributes['th_name']!=None:
-            th_name = node.attributes['th_name']
-        #reading attributes
-        th_title = self.th_dict[th_id]
-        num = self.th_numb[th_id]+1
-        #creating title
-        title = th_title.strip()
-        #update theorem numbering
-        if th_id.endswith('*'):
-            self.th_numb[th_id]+=1
-            #cadding numb to title
-            title += " "+str(num)
-        #adding theorem name to title
-        if th_name != '':
-            title += " (''"+th_name+"'')"
-        #add theorem to PageTree
-        self.tree.addTheorem(title)
-        s =[]
-        s.append("\n===="+ title+ "====")
-        #elaborating childnodes
-        s.append(unicode(node).lstrip()+'\n')
-        #exiting theorem env
-        self.in_theorem=False
-        return u'\n'.join(s)
-   
+        try:
+    
+            th_id = node.attributes['th_id']
+            th_name = ''
+            if node.attributes['th_name']!=None:
+                th_name = node.attributes['th_name']
+            #reading attributes
+            th_title = self.th_dict[th_id]
+            num = self.th_numb[th_id]+1
+            #creating title
+            title = th_title.strip()
+            #update theorem numbering
+            if th_id.endswith('*'):
+                self.th_numb[th_id]+=1
+                #cadding numb to title
+                title += " "+str(num)
+            #adding theorem name to title
+            if th_name != '':
+                title += " (''"+th_name+"'')"
+            #add theorem to PageTree
+            self.tree.addTheorem(title)
+            s =[]
+            s.append("\n===="+ title+ "====")
+            #elaborating childnodes
+            s.append(unicode(node).lstrip()+'\n')
+            #exiting theorem env
+            self.in_theorem=False
+            return u'\n'.join(s)
+
+        except Exception, e:
+            print(node.source)
+            return u""
+
     def do_proof(self,node):
         self.used_tag('PROOF')
         proof_name = ''
