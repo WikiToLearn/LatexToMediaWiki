@@ -29,27 +29,3 @@ def preparseTheorems(tex,print_path):
 		o.close()
 	return (tex, th_dict)
 
-
-def greedy_remove_command(tex,command):
-	result=''
-	tokens = tex.split(command)
-	#Remove the fist token that doesn't contain data and save it
-	result+= tokens[0]
-	tokens = tokens[1:]
-	#analyzing each token
-	for tok in tokens:
-		level = 0
-		pos = -1
-		for ch in tok:
-			pos+=1
-			if ch=='{':
-				level+=1
-			elif ch=='}':
-				level-=1
-			#now check if we are returned to 0 level
-			if level ==0:
-				#we can get che content of outer {}
-				result+=tok[1:pos] + ' '+ tok[pos+1:]
-				break;
-	return result;
-
