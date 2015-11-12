@@ -103,8 +103,8 @@ for p in process_data:
 	config['base_path'] = p['base_path']
 	config['collapse_level']= int(p['collapse_level'])
 	config['renderers'] = p['renderers']
-	config['export_pages'] = bool(p['export_pages'])
-	config['print_preparsed_tex']= bool(p['print_preparsed_tex'])
+	config['export_pages'] = bool(int(p['export_pages']))
+	config['print_preparsed_tex']= bool(int(p['print_preparsed_tex']))
 	for r in config['renderers']:
 		if r=='mediawiki':
 			#base path is added to title (hack)
