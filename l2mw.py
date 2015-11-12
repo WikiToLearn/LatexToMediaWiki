@@ -24,11 +24,14 @@ def execute_mediawiki_parser(config):
 	###preparser operations
 	#reading theorems
 	#the preparser result is a tuple of (tex, th_dict)
-	preparser_result = preparseTheorems(text)
+	preparser_export_path= ''
+	if(config['print_preparsed_tex']):
+		preparser_export_path = output_path+".pre"
+	preparser_result = preparseTheorems(text,preparser_export_path)
 	#tex object
 	tex = TeX()
 	tex.input(preparser_result[0])
-	tex.ownerDocument.config['files']['filename'] = "." +title+".parsex"
+	#tex.ownerDocument.config['files']['filename'] = "." +title+".parsex"
 	#parsing DOM
 	document = tex.parse()
 	#renderer creation\
@@ -75,11 +78,13 @@ def execute_xml_parser(config):
 	f = open(input_path,'r')
 	text = f.read().decode('utf-8')
 	#the preparser result is a tuple of (tex, th_dict)
-	preparser_result = preparseTheorems(text)
+	preparser_export_path= ''
+	if(config['print_preparsed_tex']):
+		preparser_export_path = output_path+".pre"
+	preparser_result = preparseTheorems(text,preparser_export_path)
 	#tex object
 	tex = TeX()
 	tex.input(preparser_result[0])
-	tex.ownerDocument.config['files']['filename'] = output_path+".xml"
 	#parsing DOMb
 	document = tex.parse()
 	#renderer creation
@@ -99,6 +104,7 @@ for p in process_data:
 	config['collapse_level']= int(p['collapse_level'])
 	config['renderers'] = p['renderers']
 	config['export_pages'] = bool(p['export_pages'])
+	config['print_preparsed_tex']= bool(p['print_preparsed_tex'])
 	for r in config['renderers']:
 		if r=='mediawiki':
 			#base path is added to title (hack)
