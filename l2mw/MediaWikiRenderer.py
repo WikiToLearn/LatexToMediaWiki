@@ -401,7 +401,7 @@ class MediaWikiRenderer (Renderer):
         if label_search:
             label = label_search.group(1)
         #searching caption
-        caption = get_content_greedy(node.source, '\caption')
+        caption = get_content_greedy(node.source, '\\caption')
         #creating figure
         f = Figure(label,caption,file_path)
         #adding figure to tree
@@ -621,12 +621,9 @@ class MediaWikiRenderer (Renderer):
         for star_tag in re.finditer(re_remove_star,mtxt):
             mtxt = mtxt.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
                 star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
-        #removing inner \ensuremath comands 
-
-        re_ensure_math = re.compile(ur'\\ensuremath{(.*)}',re.DOTALL)
-        for ensure_tag in re.finditer(re_ensure_math,mtxt):
-            mtxt = mtxt.replace(ensure_tag.group(0),ensure_tag.group(1))
-
+       
+        #removing \boxed command
+        mtxt = remove_command_greedy(mtxt,'\\boxed')
         return mtxt
 
     do_eqnarray = do_align
@@ -677,7 +674,7 @@ class MediaWikiRenderer (Renderer):
             return u'\n'.join(s)
 
         except Exception, e:
-            print(node.source)
+            print("THEOREM ERROR",node.source)
             return u""
 
     def do_proof(self,node):
