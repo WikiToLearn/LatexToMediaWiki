@@ -2,12 +2,12 @@ import string,re
 from plasTeX.Renderers import Renderer
 from plasTeX import Command, Environment
 from PageTree import *
+from utility import *
 
 class MediaWikiRenderer (Renderer):
 
     outputType = unicode
     fileExtension = '.mw'
-    lineWidth = 76
 
     aliases = {
         'superscript': 'active::^',
@@ -401,9 +401,7 @@ class MediaWikiRenderer (Renderer):
         if label_search:
             label = label_search.group(1)
         #searching caption
-        caption_search = re.search(ur'\\caption{(.*?)}',node.source)
-        if caption_search:
-            caption = caption_search.group(1)
+        caption = get_content_greedy(node.source, '\caption')
         #creating figure
         f = Figure(label,caption,file_path)
         #adding figure to tree
