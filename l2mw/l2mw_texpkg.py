@@ -11,3 +11,6 @@ class vref(Command):
 
 class eqref(Command):
 	args = 'label'
+
+class cases(Environment):
+	pass
