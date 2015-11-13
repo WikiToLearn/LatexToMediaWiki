@@ -655,38 +655,32 @@ class MediaWikiRenderer (Renderer):
     def do_theorem(self,node):
         self.used_tag("THEOREM")
         self.in_theorem= True
-        try:
-    
-            th_id = node.attributes['th_id']
-            th_name = ''
-            if node.attributes['th_name']!=None:
-                th_name = node.attributes['th_name']
-            #reading attributes
-            th_title = self.th_dict[th_id]
-            num = self.th_numb[th_id]+1
-            #creating title
-            title = th_title.strip()
-            #update theorem numbering
-            if th_id.endswith('*'):
-                self.th_numb[th_id]+=1
-                #cadding numb to title
-                title += " "+str(num)
-            #adding theorem name to title
-            if th_name != '':
-                title += " (''"+th_name+"'')"
-            #add theorem to PageTree
-            self.tree.addTheorem(title)
-            s =[]
-            s.append("\n===="+ title+ "====")
-            #elaborating childnodes
-            s.append(unicode(node).lstrip()+'\n')
-            #exiting theorem env
-            self.in_theorem=False
-            return u'\n'.join(s)
-
-        except Exception, e:
-            print("THEOREM ERROR",node.source)
-            return u""
+        th_id = node.attributes['th_id']
+        th_name = ''
+        if node.attributes['th_name']!=None:
+            th_name = node.attributes['th_name']
+        #reading attributes
+        th_title = self.th_dict[th_id]
+        num = self.th_numb[th_id]+1
+        #creating title
+        title = th_title.strip()
+        #update theorem numbering
+        if th_id.endswith('*'):
+            self.th_numb[th_id]+=1
+            #cadding numb to title
+            title += " "+str(num)
+        #adding theorem name to title
+        if th_name != '':
+            title += " (''"+th_name+"'')"
+        #add theorem to PageTree
+        self.tree.addTheorem(title)
+        s =[]
+        s.append("\n===="+ title+ "====")
+        #elaborating childnodes
+        s.append(unicode(node).lstrip()+'\n')
+        #exiting theorem env
+        self.in_theorem=False
+        return u'\n'.join(s)
 
     def do_proof(self,node):
         self.used_tag('PROOF')
