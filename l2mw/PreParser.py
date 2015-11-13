@@ -3,7 +3,7 @@ import re
 '''Function that searches \newtheorem command in tex source to find
 the theorems environments used. It memorizes them and it normalize them with 
 our theorem env'''
-def preparseTheorems(tex):
+def preparseTheorems(tex,print_path):
 	th_dict = {}
 	p = re.compile(ur'\\newtheorem\*?\{(.*?)\}(\[.*?\])?\{(.*?)\}')
 	for match in re.finditer(p,tex):
@@ -22,6 +22,10 @@ def preparseTheorems(tex):
 		#for text after theorem
 		new_tag_close = u'\\end{theorem}\n'
 		tex = tex.replace(tag_close, new_tag_close)
-	return (tex, th_dict)
 
+	if(print_path != ""):
+		o = open(print_path,"w")
+		o.write(tex)
+		o.close()
+	return (tex, th_dict)
 

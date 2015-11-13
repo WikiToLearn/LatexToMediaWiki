@@ -2,12 +2,12 @@ import string,re
 from plasTeX.Renderers import Renderer
 from plasTeX import Command, Environment
 from PageTree import *
+from utility import *
 
 class MediaWikiRenderer (Renderer):
 
     outputType = unicode
     fileExtension = '.mw'
-    lineWidth = 76
 
     aliases = {
         'superscript': 'active::^',
@@ -208,6 +208,7 @@ class MediaWikiRenderer (Renderer):
         return u'<br/>'
     
     do__backslash = do_newline
+    do_linebreak = do_newline
 
     def do_newpage(self,node):
         self.used_tag('NEWPAGE')
@@ -360,6 +361,7 @@ class MediaWikiRenderer (Renderer):
         return u''.join(s)
     
     do_underbar=do_underline
+    do_uline = do_underline
 
     def do_texttt(self,node):
         self.used_tag('TEXTTT')
@@ -399,9 +401,7 @@ class MediaWikiRenderer (Renderer):
         if label_search:
             label = label_search.group(1)
         #searching caption
-        caption_search = re.search(ur'\\caption{(.*?)}',node.source)
-        if caption_search:
-            caption = caption_search.group(1)
+        caption = get_content_greedy(node.source, '\\caption')
         #creating figure
         f = Figure(label,caption,file_path)
         #adding figure to tree
@@ -458,7 +458,7 @@ class MediaWikiRenderer (Renderer):
     ###################################################
     #Math tags
 
-    '''Handles math insede a displaymath mode:
+    '''Handles math inside a displaymath mode:
     -it removes $$ and \[ \].
     -it remove \begin and \end so it has to be used 
     only for \begin{equation} and \begin{displaymath}.
@@ -494,11 +494,8 @@ class MediaWikiRenderer (Renderer):
         #replace split with align
         s = s.replace("split", u"align")
 
-        #removing inner starred commands
-        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
-        for star_tag in re.finditer(re_remove_star,s):
-            s = s.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
-                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
+        #check math content
+        s = self.math_check(s)
         
         #searching for label
         global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', s)
@@ -544,18 +541,22 @@ class MediaWikiRenderer (Renderer):
         else:
             content = ''
 
-        #removing inner starred commands
-        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
-        for star_tag in re.finditer(re_remove_star,s):
-            s = s.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
-                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
+        #check math content
+        s = self.math_check(s)
 
         #get content between \begin{split}
         s = s.replace("split", u"align")
 
         return '<math>'+ content +'</math>'
 
-    do_ensuremath = do_math
+    def do_ensuremath(self,node):
+        self.used_tag('ENSURE_MATH')
+        s = node.source
+        #removing \ensumemath{}
+        s = get_content_greedy(s,'\\ensuremath')
+        #check math content
+        s = self.math_check(s)
+        return '<math>'+ s +'</math>'
 
     '''Support for align type tags. 
     They are outside math modes an supported directly'''
@@ -575,11 +576,8 @@ class MediaWikiRenderer (Renderer):
         s = s.replace('eqnarray',u'align')
         s = s.replace('multline',u'align')
 
-        #removing inner starred commands
-        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
-        for star_tag in re.finditer(re_remove_star,s):
-            s = s.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
-                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
+        #check math content
+        s = self.math_check(s)
             
         #search equation tag
         global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', node.source)
@@ -611,11 +609,8 @@ class MediaWikiRenderer (Renderer):
         text = None
         new_text = ''
         
-        #removing inner starred commands
-        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
-        for star_tag in re.finditer(re_remove_star,s):
-            s = s.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
-                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
+        #check math content
+        s = self.math_check(s)
        
         exists_text = re.search(ur'\\begin{(.*?)}(.*?)\\end{(.*?)}', s, re.DOTALL)
         if exists_text:
@@ -625,8 +620,22 @@ class MediaWikiRenderer (Renderer):
                 new_text += unicode("<dmath>" + line + "</dmath> \n")
         else:
             new_text = ""
-
         return new_text 
+
+    def math_check(self,mtxt):
+         #removing inner starred commands
+        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
+        for star_tag in re.finditer(re_remove_star,mtxt):
+            mtxt = mtxt.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
+                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
+       
+        #removing \boxed command
+        mtxt = remove_command_greedy(mtxt,'\\boxed')
+
+        #removing \ensuremath from macros
+        mtxt = remove_command_greedy(mtxt,'\\ensuremath')
+
+        return mtxt
 
     do_eqnarray = do_align
     do_multline = do_align
@@ -672,7 +681,7 @@ class MediaWikiRenderer (Renderer):
         #exiting theorem env
         self.in_theorem=False
         return u'\n'.join(s)
-   
+
     def do_proof(self,node):
         self.used_tag('PROOF')
         proof_name = ''
