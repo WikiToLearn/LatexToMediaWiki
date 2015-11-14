@@ -4,7 +4,7 @@ from string import *
 
 '''This function remove a command live \command{content}, leaving 
 the command untouched, even if it contains nested brakets'''
-def remove_command_greedy(tex,command):
+def remove_command_greedy(tex,command,repl=''):
 	result=''
 	tokens = tex.split(command)
 	#Remove the fist token that doesn't contain data and save it
@@ -24,7 +24,7 @@ def remove_command_greedy(tex,command):
 			#now check if we are returned to 0 level
 			if level ==0:
 				#we can get che content of outer {}
-				result+=tok[1:pos] + ' '+ tok[pos+1:]
+				result+=repl+ tok[1:pos] + ' '+ tok[pos+1:]+repl
 				break;
 	return result;
 
