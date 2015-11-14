@@ -496,6 +496,7 @@ class MediaWikiRenderer (Renderer):
 
         #check math content
         s = self.math_check(s)
+        print(s)
         
         #searching for label
         global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', s)
@@ -542,10 +543,10 @@ class MediaWikiRenderer (Renderer):
             content = ''
 
         #check math content
-        s = self.math_check(s)
+        content = self.math_check(content)
 
         #get content between \begin{split}
-        s = s.replace("split", u"align")
+        content = content.replace("split", u"align")
 
         return '<math>'+ content +'</math>'
 
