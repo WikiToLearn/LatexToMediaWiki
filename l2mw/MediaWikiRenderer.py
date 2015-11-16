@@ -496,7 +496,6 @@ class MediaWikiRenderer (Renderer):
 
         #check math content
         s = self.math_check(s)
-        print(s)
         
         #searching for label
         global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', s)
