@@ -35,8 +35,8 @@ def execute_mediawiki_parser(config):
 	#parsing DOM
 	document = tex.parse()
 	#renderer creation\
-	configs = {'doc_title':title,'image_extension':'png'}
-	rend = MediaWikiRenderer(configs)
+	rend_conf = {'doc_title':title,'image_extension':config['images_ext']}
+	rend = MediaWikiRenderer(rend_conf)
 	#inserting theorem dictionary in renderer
 	rend.init_theorems(preparser_result[1])
 	#starting rendering
@@ -106,6 +106,7 @@ for p in process_data:
 	config['renderers'] = p['renderers']
 	config['export_pages'] = bool(int(p['export_pages']))
 	config['print_preparsed_tex']= bool(int(p['print_preparsed_tex']))
+	config['images_ext']= p['images_ext']
 	for r in config['renderers']:
 		if r=='mediawiki':
 			#base path is added to title (hack)
