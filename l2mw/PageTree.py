@@ -167,10 +167,10 @@ class PageTree (object):
 	def _createIndex(self,page,ind,max_level):
 		index = []
 		for sub in self.pages[page].subpages:
-			index.append(ind+'[['+ sub+'|'+ self.pages[sub].title_name+']]')
+			index.append(ind+'[['+ sub+'|'+ self.pages[sub].title_name+']]\n')
 			if(self.pages[page].level<max_level-1):
 				index.append(self._createIndex(sub,ind+'*',max_level))
-		return u'\n'.join(index)
+		return u''.join(index)
 
 	'''Entry point for XML exporting
 	-base_path is the base path for all exported pages'''
