@@ -27,7 +27,7 @@ def execute_mediawiki_parser(config):
 	preparser_export_path= ''
 	if(config['print_preparsed_tex']):
 		preparser_export_path = output_path+".pre"
-	preparser_result = preparseTheorems(text,preparser_export_path)
+	preparser_result = preparse_tex(text,preparser_export_path)
 	#tex object
 	tex = TeX()
 	tex.input(preparser_result[0])
@@ -81,7 +81,7 @@ def execute_xml_parser(config):
 	preparser_export_path= ''
 	if(config['print_preparsed_tex']):
 		preparser_export_path = output_path+".pre"
-	preparser_result = preparseTheorems(text,preparser_export_path)
+	preparser_result = preparse_tex(text,preparser_export_path)
 	#tex object
 	tex = TeX()
 	tex.input(preparser_result[0])
