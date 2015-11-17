@@ -85,7 +85,7 @@ def execute_xml_parser(config):
 	#tex object
 	tex = TeX()
 	tex.input(preparser_result[0])
-	#parsing DOMb
+	#parsing DOM
 	document = tex.parse()
 	#renderer creation
 	rend = XMLRenderer()

@@ -102,6 +102,7 @@ class MediaWikiRenderer (Renderer):
     #sectioning
     def sectioning(self, node,page_type):
         title = unicode(node.attributes['title'])
+        print("Section: "+ title)
         #adding index to parent
         self.tree.addToSubpageIndex(title)
         #creation of the new page
@@ -112,6 +113,7 @@ class MediaWikiRenderer (Renderer):
         self.tree.addText(text)
         #exiting the section
         self.tree.exitPage()
+        print("Exiting: " + title)
 
     def do_part (self,node):
         self.used_tag('PART')
