@@ -35,7 +35,8 @@ def execute_mediawiki_parser(config):
 	#parsing DOM
 	document = tex.parse()
 	#renderer creation\
-	rend = MediaWikiRenderer(title)
+	configs = {'doc_title':title,'image_extension':'png'}
+	rend = MediaWikiRenderer(configs)
 	#inserting theorem dictionary in renderer
 	rend.init_theorems(preparser_result[1])
 	#starting rendering

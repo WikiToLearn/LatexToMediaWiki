@@ -38,10 +38,12 @@ class MediaWikiRenderer (Renderer):
 
     ##############################################################
     #initialization
-    def __init__(self, doc_title,*args, **kwargs):
+    def __init__(self, configs,*args, **kwargs):
         Renderer.__init__(self, *args, **kwargs)
         #document title
-        self.doc_title = doc_title
+        self.configs = configs
+        self.doc_title = configs['doc_title']
+        self.image_extension = configs['image_extension']
         # Load dictionary with methods
         for key in dir(self):
             if key.startswith('do__'):
@@ -53,7 +55,7 @@ class MediaWikiRenderer (Renderer):
         self.footnotes = []
         self.blocks = []
         #tree object
-        self.tree = PageTree(doc_title)
+        self.tree = PageTree(self.doc_title)
         #parameter for list formatting
         self.list_level=u'' 
         #parameter for theorem handling
@@ -88,10 +90,8 @@ class MediaWikiRenderer (Renderer):
             self.used_tag('NO-ENTER@'+ node.nodeName)
             return u''
         self.used_tag('DEFAULT@'+ node.nodeName)
-        s = []
-        s.append(unicode(node).lstrip())
-        return u''.join(s)
-
+        #return content
+        return unicode(node).lstrip()
 
     def do_textDefault(self, node):
         self.used_tag('TEXT-DEFAULT')
@@ -102,7 +102,6 @@ class MediaWikiRenderer (Renderer):
     #sectioning
     def sectioning(self, node,page_type):
         title = unicode(node.attributes['title'])
-        print("Section: "+ title)
         #adding index to parent
         self.tree.addToSubpageIndex(title)
         #creation of the new page
@@ -113,7 +112,6 @@ class MediaWikiRenderer (Renderer):
         self.tree.addText(text)
         #exiting the section
         self.tree.exitPage()
-        print("Exiting: " + title)
 
     def do_part (self,node):
         self.used_tag('PART')
@@ -395,9 +393,10 @@ class MediaWikiRenderer (Renderer):
         caption = ''
         label=''
         #searchin includegraphics
-        graphics_search = re.search(ur'\\includegraphics(\[.*?\])*{(.*?)}',node.source)
+        graphics_search = re.search(ur'\\includegraphics\s(\[.*?\])*{(.*?)}',node.source)
         if graphics_search: 
             file_path= graphics_search.group(2)
+            file_path+='.'+ self.configs['image_extension']
         #searching label
         label_search = re.search(ur'\\label{(.*?)}',node.source)
         if label_search:
@@ -415,7 +414,7 @@ class MediaWikiRenderer (Renderer):
         if caption != '':
             return unicode('[[File:'+file_path+'|frame|'+caption+']]')
         else:
-            return unicode('[[File:'+file_path+']]')
+            return unicode('[[File:'+file_path+'|frame]]')
 
     '''The Table environment is handled with regex'''
     def do_table(self,node):
@@ -474,7 +473,6 @@ class MediaWikiRenderer (Renderer):
         label_tag = ''
         structure_label_tag = ''
         s = node.source
-
         #$$ search
         global_dollars_search = re.search(ur'\$\$(.*?)\$\$', s)
         #search \begin and end \tag
@@ -554,7 +552,7 @@ class MediaWikiRenderer (Renderer):
     def do_ensuremath(self,node):
         self.used_tag('ENSURE_MATH')
         s = node.source
-        #removing \ensumemath{}
+        #removing \ensuremath{}
         s = get_content_greedy(s,'\\ensuremath')
         #check math content
         s = self.math_check(s)
@@ -693,9 +691,9 @@ class MediaWikiRenderer (Renderer):
         s.append("''Dimostrazione ")
         if proof_name!="":
             s.append("("+proof_name+")")
-        s.append("''   ")
-        s.append(unicode(node).lstrip())  
-        s.append('\n') 
+        s.append("''\n\n")
+        s.append(unicode(node).lstrip())
+        s.append('\n')
         return u''.join(s)
 
 
