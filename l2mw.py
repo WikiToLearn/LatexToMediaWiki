@@ -4,6 +4,7 @@
 from l2mw import *
 from plasTeX.TeX import TeX
 import json 
+import utility
 
 #setting utf8 encoding
 import sys
@@ -35,7 +36,9 @@ def execute_mediawiki_parser(config):
 	#parsing DOM
 	document = tex.parse()
 	#renderer creation\
-	rend_conf = {'doc_title':title,'image_extension':config['images_ext']}
+	rend_conf = {'doc_title':title,
+		'image_extension':config['images_ext'],
+		'keywords':config['keywords']}
 	rend = MediaWikiRenderer(rend_conf)
 	#inserting theorem dictionary in renderer
 	rend.init_theorems(preparser_result[1])
@@ -107,6 +110,9 @@ for p in process_data:
 	config['export_pages'] = bool(int(p['export_pages']))
 	config['print_preparsed_tex']= bool(int(p['print_preparsed_tex']))
 	config['images_ext']= p['images_ext']
+	#loading localized keywords
+	lang = p['lang']
+	config['keywords']= json.loads(open('lang.txt').read())[lang]
 	for r in config['renderers']:
 		if r=='mediawiki':
 			#base path is added to title (hack)

@@ -1,6 +1,6 @@
 ### UTILITY FUNCTIONS ###
 from string import *
-
+import json
 
 '''This function remove a command live \command{content}, leaving 
 the command untouched, even if it contains nested brakets'''

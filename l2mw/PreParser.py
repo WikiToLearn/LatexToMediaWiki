@@ -1,5 +1,5 @@
 import re
-
+from utility import *
 
 def preparse_tex(tex,print_path):
 	#preparse theorem

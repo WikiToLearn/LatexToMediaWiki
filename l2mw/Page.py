@@ -1,5 +1,6 @@
 import re
 from xml.sax.saxutils import escape
+from utility import *
 
 ''' Class that manages the pages' content '''
 class Page(object):
@@ -8,12 +9,14 @@ class Page(object):
 	-self.subpages contains the list of the subpages
 	-self.level memorize the level of the page.(root=-1))
 	-self.url contains the unique internal url of the page
-	-self.type is 'root',part,chapter,section,subsection,subsubection,paragraph.'''
-	def __init__(self,title,title_name,url,page_type,level):
+	-self.type is 'root',part,chapter,section,subsection,subsubection,paragraph.
+	-self.keywords is a dictionary with localized keywords for output'''
+	def __init__(self,title,title_name,url,page_type,level, keywords ):
 		self.title = title
 		self.title_name = title_name
 		self.url = url
 		self.type = page_type
+		self.keywords= keywords
 		#contains the page text
 		self.text = ''
 		'''list of subpages urls'''
@@ -37,7 +40,7 @@ class Page(object):
 				pages_dict[subpage].collapseText(max_level,pages_dict)
 			#the subpages'index is created if not level =-1
 			if self.subpages and self.level !=-1:
-				self.text+='\n<noinclude>\n==Sottopagine=='
+				self.text+='\n<noinclude>\n=='+self.keywords['subpages']+'=='
 				for p in self.subpages:
 					self.text += '\n*[['+p+'|'+pages_dict[p].title_name+']]'
 				self.text+= '</noinclude>'

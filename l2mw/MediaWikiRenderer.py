@@ -29,7 +29,8 @@ class MediaWikiRenderer (Renderer):
         'align_star':'align*',
         'alignat_star':'alignat*',
         'multline_star':'multline*',
-        'gather_star':'gather*'
+        'gather_star':'gather*',
+        'paragraph_star':'paragraph*'
     }
 
     '''List of nodes not to explore'''
@@ -55,7 +56,7 @@ class MediaWikiRenderer (Renderer):
         self.footnotes = []
         self.blocks = []
         #tree object
-        self.tree = PageTree(self.doc_title)
+        self.tree = PageTree(self.doc_title, configs['keywords'])
         #parameter for list formatting
         self.list_level=u'' 
         #parameter for theorem handling
@@ -142,6 +143,8 @@ class MediaWikiRenderer (Renderer):
         self.used_tag('PARAGRAPH')
         self.sectioning(node,'paragraph')
         return u''
+
+    do__paragraph_star = do_paragraph
     #################################################
     
     #subparagraph are not node of the section tree
@@ -655,6 +658,9 @@ class MediaWikiRenderer (Renderer):
     def do_theorem(self,node):
         self.used_tag("THEOREM")
         self.in_theorem= True
+        if('th_id' not in node.attributes ):
+            print node.source
+            return u''
         th_id = node.attributes['th_id']
         th_name = ''
         if node.attributes['th_name']!=None:

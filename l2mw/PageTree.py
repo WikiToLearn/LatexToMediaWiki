@@ -4,12 +4,14 @@ import datetime
 import time
 import re
 from xml.sax.saxutils import escape
+from utility import *
 
 
 ''' Class that memorize the pages' structure and content during parsing '''
 class PageTree (object):
 
 	''' The constructor requires the document name.
+		-self.keywords is a dictionary with localized keywords for output
 		-self.current handles the working section during parsing.
 		-self.current_url handles the current url
 		-self.pages is a dictionary of pages. The keys are internal url of pages.
@@ -18,8 +20,9 @@ class PageTree (object):
 		-self.figures contains the list of figure objects
 		-self.tables contains the list of table objects
 		-self.page_stack contains the history of enviroment until the one before the current'''
-	def __init__(self, doc_title):
+	def __init__(self, doc_title, keywords):
 		self.doc_title= doc_title
+		self.keywords = keywords
 		self.index = {}
 		self.pages = {}
 		self.media_urls = {}
@@ -30,7 +33,7 @@ class PageTree (object):
 		self.theorems =[]
 		#ROOT PAGE
 		self.index[doc_title]={}
-		r = Page(doc_title,doc_title,doc_title,'root',-1)
+		r = Page(doc_title,doc_title,doc_title,'root',-1,self.keywords)
 		self.pages[doc_title]= r
 		#indexes
 		self.page_stack = []
@@ -52,7 +55,7 @@ class PageTree (object):
 		#finding level
 		level = len(self.page_stack)
 		#create new page	
-		p = Page(title,title_name,newurl,page_type,level)
+		p = Page(title,title_name,newurl,page_type,level,self.keywords)
 		#update index
 		cindex = self.index
 		for i in range(0,len(self.page_stack)):
@@ -161,7 +164,7 @@ class PageTree (object):
 	def createIndex(self,max_level):
 		ind = ''
 		base_page = self.pages[self.doc_title]
-		base_page.text+= '\n\n==Capitoli==\n'
+		base_page.text+= '\n\n==' +self.keywords['chapters']+'==\n'
 		base_page.text+= self._createIndex(self.doc_title,'*',max_level)
 
 	def _createIndex(self,page,ind,max_level):
