@@ -1,0 +1,10 @@
+{
+"it":{
+	"chapters":"Capitoli",
+	"subpages":"Sottopagine"
+	},
+"en":{
+	"chapters":"Chapters",
+	"subpages":"Subpages"
+	}
+}
