@@ -14,3 +14,9 @@ class eqref(Command):
 
 class cases(Environment):
 	pass
+
+class tikzpicture(Environment):
+	args = '[options]'
+
+class tikz(Command):
+	args = '[options]'

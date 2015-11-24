@@ -137,7 +137,7 @@ class PageTree (object):
 		self.pages[self.doc_title].collapseText(level_max,self.pages)
 		#collapsing mediawiki url
 		self.pages[self.doc_title].collapseMediaURL(level_max,self.pages,self.media_urls,'',{})
-		
+
 		#FIXING URLS FROM INTERNAL TO MEDIAWIKIURL
 		#fixing labels with mediawikiurls
 		for l in self.labels:

@@ -169,12 +169,12 @@ class MediaWikiRenderer (Renderer):
     #references
     ''' Method that insert label into PageTree'''
     def label(self,lab):
+        self.used_tag('LABEL')
         #the reference to the current page is saved
         self.tree.addLabel(lab)
 
     ''' Labels are managed bey PageTree'''
     def do_label(self,node):
-        self.used_tag('LABEL')
         #retriving label id
         l = node.attributes['label']
         #check if you are inside a theorem
@@ -419,6 +419,10 @@ class MediaWikiRenderer (Renderer):
         else:
             return unicode('[[File:'+file_path+'|frame]]')
 
+    def do_tikzpicture(self,node):
+        print node.source
+        return u''
+
     '''The Table environment is handled with regex'''
     def do_table(self,node):
         self.used_tag('TABLE')
@@ -631,13 +635,12 @@ class MediaWikiRenderer (Renderer):
         for star_tag in re.finditer(re_remove_star,mtxt):
             mtxt = mtxt.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
                 star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
-       
         #removing \boxed command
         mtxt = remove_command_greedy(mtxt,'\\boxed')
-
         #removing \ensuremath from macros
         mtxt = remove_command_greedy(mtxt,'\\ensuremath')
-
+        #removing \nonumber command
+        mtxt = mtxt.replace('\\nonumber',u'')
         return mtxt
 
     do_eqnarray = do_align
