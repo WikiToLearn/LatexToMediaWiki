@@ -38,14 +38,16 @@ class Page(object):
 		if(self.level<max_level):
 			for subpage in self.subpages:
 				pages_dict[subpage].collapseText(max_level,pages_dict)
-			#the subpages'index is created if not level =-1
-			if self.subpages and self.level !=-1:
-				self.text+='\n<noinclude>\n=='+self.keywords['subpages']+'=='
-				for p in self.subpages:
-					self.text += '\n*[['+p+'|'+pages_dict[p].title_name+']]'
-				self.text+= '</noinclude>'
-			#added refs tags to show footnotes
-			self.text+='\n<references/>'
+			#the subpages'index is created if not level =-1 and if the
+			#page has text 
+			if self.text != '':
+                            if self.subpages and self.level !=-1:
+                                self.text +='\n<noinclude>\n=='+self.keywords['subpages']+'=='
+                                for p in self.subpages:
+                                    self.text += '\n*[['+p+'|'+pages_dict[p].title_name+']]'
+                                    self.text+= '</noinclude>'
+                            #added refs tags to show footnotes
+                            self.text+='\n<references/>'
 		else:
 			#we have to managed the text
 			for subpage in self.subpages:

@@ -136,7 +136,7 @@ class PageTree (object):
 		#collapsing text
 		self.pages[self.doc_title].collapseText(level_max,self.pages)
 		#collapsing mediawiki url
-		self.pages[self.doc_title].collapseMediaURL(level_max,self.pages,self.media_urls,'',{})
+                self.pages[self.doc_title].collapseMediaURL(level_max,self.pages,self.media_urls,'',{})
 
 		#FIXING URLS FROM INTERNAL TO MEDIAWIKIURL
 		#fixing labels with mediawikiurls
@@ -158,6 +158,7 @@ class PageTree (object):
 
 	'''Method that starts the rendering of refs'''
 	def fixReferences(self):
+		print(self.labels)
 		self.pages[self.doc_title].fixReferences(self.labels,self.pages)
 
 	'''Method that creates the index in the root page'''
@@ -170,9 +171,12 @@ class PageTree (object):
 	def _createIndex(self,page,ind,max_level):
 		index = []
 		for sub in self.pages[page].subpages:
+                    if sub.text !='':
 			index.append(ind+'[['+ sub+'|'+ self.pages[sub].title_name+']]\n')
-			if(self.pages[page].level<max_level-1):
-				index.append(self._createIndex(sub,ind+'*',max_level))
+                    else:
+                        index.append(ind + self.pages[sub].title_name + '\n')
+                    if(self.pages[page].level<max_level-1):
+                            index.append(self._createIndex(sub,ind+'*',max_level))
 		return u''.join(index)
 
 	'''Entry point for XML exporting
@@ -235,6 +239,9 @@ class PageTree (object):
 
 	'''Return the mediawiki XML of a single page'''
 	def getPageXML(self,page):
+                #check if the page is not void
+                if page.text =='':
+                    return ''
 		#text fixing before export
 		page.text = escape(page.text)
 		page.title= escape(page.title)
