@@ -136,7 +136,7 @@ class PageTree (object):
 		#collapsing text
 		self.pages[self.doc_title].collapseText(level_max,self.pages)
 		#collapsing mediawiki url
-                self.pages[self.doc_title].collapseMediaURL(level_max,self.pages,self.media_urls,'',{})
+		self.pages[self.doc_title].collapseMediaURL(level_max,self.pages,self.media_urls,'',{})
 
 		#FIXING URLS FROM INTERNAL TO MEDIAWIKIURL
 		#fixing labels with mediawikiurls
@@ -174,8 +174,8 @@ class PageTree (object):
 				index.append(ind+'[['+ sub+'|'+ self.pages[sub].title_name+']]\n')
 			else:
 				index.append(ind + self.pages[sub].title_name + '\n')
-		if(self.pages[page].level<max_level-1):
-			index.append(self._createIndex(sub,ind+'*',max_level))
+			if(self.pages[page].level<max_level-1):
+				index.append(self._createIndex(sub,ind+'*',max_level))
 		return u''.join(index)
 
 	'''Entry point for XML exporting

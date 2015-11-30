@@ -48,8 +48,8 @@ class Page(object):
 					for p in self.subpages:
 						self.text += '\n*[['+p+'|'+pages_dict[p].title_name+']]'
 						self.text+= '</noinclude>'
-					#added refs tags to show footnotes
-					self.text+='\n<references/>'
+				#added refs tags to show footnotes
+				self.text+='\n<references/>'
 		else:
 			#we have to managed the text
 			for subpage in self.subpages:
