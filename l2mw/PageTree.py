@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 from Page import Page
 import datetime
 import time
@@ -82,14 +82,12 @@ class PageTree (object):
 
 	'''This method insert text in the current page   '''
 	def addText(self,text):
-		#print('ADDING TEXT TO URL='+unicode(self.current_url)+' | ADDING TEXT='+unicode(text) +\
-			#' |current url='+unicode(self.current_url)+ '|current='+unicode(self.current) )
 		self.pages[self.current_url].addText(text)
 
 	'''This method insert a page in the current page's index. It's used when 
  	subsection is encountered'''
 	def addToSubpageIndex(self,title):
-		self.pages[self.current_url].addIndex(self.current_url+'/'+\
+		self.pages[self.current_url].addSubpage(self.current_url+'/'+\
 			self.getNormalizedUrl(title))
 
 	'''Return to the parent page enviroment'''
@@ -99,6 +97,8 @@ class PageTree (object):
 
 	'''Add label to the current page enviroment'''
 	def addLabel(self,label):
+		print(label.encode('utf-8'))
+		#convert label to unicode
 		self.labels[label]= self.current_url
 
 	'''This method return the media_url of the section closer to the label''' 
@@ -158,7 +158,6 @@ class PageTree (object):
 
 	'''Method that starts the rendering of refs'''
 	def fixReferences(self):
-		print(self.labels)
 		self.pages[self.doc_title].fixReferences(self.labels,self.pages)
 
 	'''Method that creates the index in the root page'''
@@ -171,12 +170,12 @@ class PageTree (object):
 	def _createIndex(self,page,ind,max_level):
 		index = []
 		for sub in self.pages[page].subpages:
-                    if sub.text !='':
-			index.append(ind+'[['+ sub+'|'+ self.pages[sub].title_name+']]\n')
-                    else:
-                        index.append(ind + self.pages[sub].title_name + '\n')
-                    if(self.pages[page].level<max_level-1):
-                            index.append(self._createIndex(sub,ind+'*',max_level))
+			if self.pages[sub].text !='':
+				index.append(ind+'[['+ sub+'|'+ self.pages[sub].title_name+']]\n')
+			else:
+				index.append(ind + self.pages[sub].title_name + '\n')
+		if(self.pages[page].level<max_level-1):
+			index.append(self._createIndex(sub,ind+'*',max_level))
 		return u''.join(index)
 
 	'''Entry point for XML exporting

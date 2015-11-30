@@ -168,10 +168,10 @@ class MediaWikiRenderer (Renderer):
     ###############################################
     #references
     ''' Method that insert label into PageTree'''
-    def label(self,lab):
+    def label(self,label):
         self.used_tag('LABEL')
         #the reference to the current page is saved
-        self.tree.addLabel(lab)
+        self.tree.addLabel(label)
 
     ''' Labels are managed bey PageTree'''
     def do_label(self,node):

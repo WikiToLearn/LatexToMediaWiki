@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 import re
 from xml.sax.saxutils import escape
 from utility import *
+import unidecode
 
 ''' Class that manages the pages' content '''
 class Page(object):
@@ -28,7 +30,7 @@ class Page(object):
 	def addText(self,text):
 		self.text = text
 
-	def addIndex(self, ind):
+	def addSubpage(self, ind):
 		self.subpages.append(ind)
                     
 	''' This method insert the text of subpages in this page if his level is 
@@ -41,13 +43,13 @@ class Page(object):
 			#the subpages'index is created if not level =-1 and if the
 			#page has text 
 			if self.text != '':
-                            if self.subpages and self.level !=-1:
-                                self.text +='\n<noinclude>\n=='+self.keywords['subpages']+'=='
-                                for p in self.subpages:
-                                    self.text += '\n*[['+p+'|'+pages_dict[p].title_name+']]'
-                                    self.text+= '</noinclude>'
-                            #added refs tags to show footnotes
-                            self.text+='\n<references/>'
+				if self.subpages and self.level !=-1:
+					self.text +='\n<noinclude>\n=='+self.keywords['subpages']+'=='
+					for p in self.subpages:
+						self.text += '\n*[['+p+'|'+pages_dict[p].title_name+']]'
+						self.text+= '</noinclude>'
+					#added refs tags to show footnotes
+					self.text+='\n<references/>'
 		else:
 			#we have to managed the text
 			for subpage in self.subpages:
@@ -99,8 +101,8 @@ class Page(object):
 	'''This method insert the right mediawikiurl in 
 	the \ref tags after the collapsing'''
 	def fixReferences(self, labels, pages):
-		for label in re.findall(r'\\ref{(.*?)}', self.text): 
-			self.text = self.text.replace(unicode('\\ref{'+label+'}'),\
+		for label in re.findall(ur'\\ref{(.*?)}', self.text): 
+			self.text = self.text.replace('\\ref{'+label+'}',\
 				' ([[' + labels[label] + ']]) ')
 		for sub in self.subpages:
 			pages[sub].fixReferences(labels,pages)
