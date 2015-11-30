@@ -8,6 +8,8 @@ def preparse_tex(tex,print_path):
 	#add paragraph after envirmoments
 	tex = add_par_after_env(tex,'theorem')
 	tex = add_par_after_env(tex,'proof')
+	#preparsing labels and refs
+	tex = preparserLabels(tex)
 
 	if(print_path != ""):
 		o = open(print_path,"w")
@@ -42,3 +44,42 @@ def preparseTheorems(tex):
 
 def add_par_after_env(tex,env):
 	return tex.replace('\\end{'+env+'}', '\\end{'+env+'}\n')
+
+
+def preparserLabels(tex):
+	label_dict = {}
+	i = 0
+	#searching all labels
+	l = re.compile(ur'\\label\s*\{\s*(.*?)\s*\}')
+	for match in re.finditer(l,tex):
+		label= match.group(1)
+		if label not in label_dict:
+			label_dict[label]= unicode(i)
+			i+=1
+		#replacing new label
+		tex = tex.replace(match.group(0), u'\\label{'+label_dict[label]+ '}')
+	#searching all refs
+	r = re.compile(ur'\\ref\s*\{\s*(.*?)\s*\}')
+	for r_match in re.finditer(r,tex):
+		r_label = r_match.group(1)
+		#replacing with new label
+		if r_label not in label_dict:
+			print("ERROR: label not found: "+ r_label)
+		tex = tex.replace(r_match.group(0),u'\\ref{'+label_dict[r_label]+'}')
+	#searching for vref
+	vr = re.compile(ur'\\vref\s*\{\s*(.*?)\s*\}')
+	for vr_match in re.finditer(vr,tex):
+		vr_label = vr_match.group(1)
+		#replacing with new label
+		if vr_label not in label_dict:
+			print("ERROR: label not found: "+ vr_label)
+		tex = tex.replace(vr_match.group(0),u'\\ref{'+label_dict[vr_label]+'}')
+	#searching all pageref
+	pr = re.compile(ur'\\pageref\s*\{\s*(.*?)\s*\}')
+	for pr_match in re.finditer(pr,tex):
+		pr_label = pr_match.group(1)
+		#replacing with new label
+		if pr_label not in label_dict:
+			print("ERROR: label not found: "+ pr_label)
+		tex = tex.replace(pr_match.group(0),u'\\ref{'+label_dict[pr_label]+'}')
+	return tex

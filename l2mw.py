@@ -47,9 +47,6 @@ def execute_mediawiki_parser(config):
 	#collapsing pages
 	rend.tree.collapseText(collapse_level)
 	#fixing refs
-	print("LABEL_DICT")
-	for ur in rend.tree.labels:
-		print(ur+"="+ rend.tree.labels[ur])
 	rend.tree.fixReferences()
 	#create index
 	rend.tree.createIndex(collapse_level)

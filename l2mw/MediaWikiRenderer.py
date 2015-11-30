@@ -618,6 +618,23 @@ class MediaWikiRenderer (Renderer):
         
         #check math content
         s = self.math_check(s)
+
+        #searching for label
+        global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', s)
+        #getting label and deleting label tag
+        if global_label_tag:
+            label_tag = global_label_tag.group(1)
+            structure_label_tag = global_label_tag.group(0)
+        else:
+            label_tag = ''
+            structure_label_tag = ''
+        #deleting label tag
+        s = s.replace(structure_label_tag, "")
+
+        s_tag = ''
+        if label_tag is not '':
+            #adding label to tree
+            self.label(label_tag)
        
         exists_text = re.search(ur'\\begin{(.*?)}(.*?)\\end{(.*?)}', s, re.DOTALL)
         if exists_text:

@@ -97,8 +97,8 @@ class PageTree (object):
 
 	'''Add label to the current page enviroment'''
 	def addLabel(self,label):
-		print(label.encode('utf-8'))
-		#convert label to unicode
+		#convert label to int
+		label = int(label)
 		self.labels[label]= self.current_url
 
 	'''This method return the media_url of the section closer to the label''' 
@@ -228,7 +228,6 @@ class PageTree (object):
 					page = self.pages[self.doc_title]
 				else:
 					page = self.pages[cur_url+ '/'+key]
-
 				text.append(self.getPageXML(page))
 				if cur_url =='':
 					self._exportXML(text,lev+1,cur_dict[key],self.doc_title)
@@ -236,12 +235,13 @@ class PageTree (object):
 					self._exportXML(text,lev+1,cur_dict[key],cur_url+"/"+key)
 
 
-	'''Return the mediawiki XML of a single page'''
+	'''Return the mediawiki XML of a single page encoded in utf-8'''
 	def getPageXML(self,page):
-                #check if the page is not void
-                if page.text =='':
-                    return ''
+		#check if the page is not void
+		if page.text == '':
+			return ''
 		#text fixing before export
+		### HACK!!! ###
 		page.text = escape(page.text)
 		page.title= escape(page.title)
 		#fix for double apostrophes quotes
@@ -267,7 +267,9 @@ class PageTree (object):
 		s.append('<format>text/x-wiki</format>')
 		s.append('\n<text xml:space="preserve">'+ page.text+'\n</text>')
 		s.append('\n</revision>\n</page>')
-		return '\n'.join(s)
+		result = '\n'.join(s)
+		#encoding result
+		return result.encode('utf-8')
 
 	'''Function that export pages in separated files'''
 	def exportXML_single_pages(self,base_path=''):
@@ -275,7 +277,9 @@ class PageTree (object):
 			page = self.pages[p]
 			if page.level <= self.collapse_level:
 				xml = self.getPageXML(page)
-				f = open(base_path+'/'+page.title+".xml",'w')
+				path = base_path+'/'+page.title+".xml"
+				path = path.encode('utf-8')
+				f = open(path,'w')
 				f.write(xml)
 				f.close()
 
