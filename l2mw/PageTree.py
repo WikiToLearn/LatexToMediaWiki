@@ -48,6 +48,7 @@ class PageTree (object):
 	in his enviroment setting current variables'''
 	def createPage(self, title,page_type):
 		title_name = title[:]
+		print(title)
 		#remove math tag
 		title = self.getNormalizedUrl(title)
 		#new url
@@ -118,13 +119,14 @@ class PageTree (object):
 
 	current_theorem = None
 	'''Method that insert a theorem in the page'''	
-	def addTheorem(self, title,label=''):
-		t = Theorem(title,"", self.current_url)
+	def addTheorem(self, title):
+		t = Theorem(title, self.current_url)
 		self.current_theorem= t
 		self.theorems.append(t)
 
-	def addTheoremLabel(self,label):
-		self.current_theorem.label = label
+	def addLabel_insideTheorem(self,label):
+		label = int(label)
+		self.current_theorem.labels.append(label)
 
 	''' This method collapse the text contained in subpages 
 	in the pages with level > level_min.
@@ -153,8 +155,9 @@ class PageTree (object):
 			murl = self.media_urls[thm.internal_url]
 			murl +=  "#"+thm.title
 			thm.media_url= murl
-			#adding label to dict
-			self.labels[thm.label]= murl
+			#adding labels inside theorem to labels dict
+			for lt in thm.labels:
+				self.labels[lt]= murl
 
 	'''Method that starts the rendering of refs'''
 	def fixReferences(self):
@@ -330,8 +333,8 @@ class Table(object):
 
 class Theorem(object):
 
-	def __init__(self,title, label, internal_url):
+	def __init__(self,title,internal_url):
 		self.title = title
-		self.label = label
+		self.labels = []
 		self.internal_url = internal_url
 		self.media_url = ''

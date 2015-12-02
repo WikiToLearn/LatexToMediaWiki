@@ -171,17 +171,18 @@ class MediaWikiRenderer (Renderer):
     def label(self,label):
         self.used_tag('LABEL')
         #the reference to the current page is saved
-        self.tree.addLabel(label)
+        if self.in_theorem:
+            print(label)
+            self.tree.addLabel_insideTheorem(label)
+        else:
+            self.tree.addLabel(label)
 
     ''' Labels are managed bey PageTree'''
     def do_label(self,node):
         #retriving label id
         l = node.attributes['label']
-        #check if you are inside a theorem
-        if self.in_theorem:
-            self.tree.addTheoremLabel(l)
-        else:
-            self.label(l)
+        #saving label
+        self.label(l)
         return u''
 
     '''All ref tag are substituted by normal ref tag.
@@ -678,32 +679,30 @@ class MediaWikiRenderer (Renderer):
     def do_theorem(self,node):
         self.used_tag("THEOREM")
         self.in_theorem= True
-        if('th_id' not in node.attributes ):
-            print node.source
-            return u''
+        #reading id 
         th_id = node.attributes['th_id']
-        th_name = ''
-        if node.attributes['th_name']!=None:
-            th_name = node.attributes['th_name']
-        #reading attributes
-        th_title = self.th_dict[th_id]
-        num = self.th_numb[th_id]+1
-        #creating title
-        title = th_title.strip()
+        #reading title
+        th_title = ''
+        if node.attributes['th_title']!=None:
+            th_title = node.attributes['th_title'].strip()
+        #reading name form thms dict
+        th_name = self.th_dict[th_id]
         #update theorem numbering
-        if th_id.endswith('*'):
-            self.th_numb[th_id]+=1
-            #cadding numb to title
-            title += " "+str(num)
-        #adding theorem name to title
-        if th_name != '':
-            title += " (''"+th_name+"'')"
+        if not th_id.endswith('*'):
+            num = self.th_numb[th_id]+1
+            self.th_numb[th_id] = num
+            #adding numb to name
+            th_name += " "+str(num)
         #add theorem to PageTree
-        self.tree.addTheorem(title)
+        self.tree.addTheorem(th_name +" " + th_title)
+        #adding content to page through a template
         s =[]
-        s.append("\n===="+ title+ "====")
+        s.append("{{Environment|name="+th_name+'|title=' + \
+            th_title+"|content=")
         #elaborating childnodes
         s.append(unicode(node).lstrip()+'\n')
+        #closing template
+        s.append("}}")
         #exiting theorem env
         self.in_theorem=False
         return u'\n'.join(s)

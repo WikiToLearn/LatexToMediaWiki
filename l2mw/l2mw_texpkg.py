@@ -1,7 +1,7 @@
 from plasTeX import Command,Environment, Macro
 
 class theorem(Environment):
-    args = 'th_id:str [th_name:str]' 
+    args = 'th_id:str [th_title:str]' 
 
 class proof(Environment):
 	args = '[proof_name:str]'
