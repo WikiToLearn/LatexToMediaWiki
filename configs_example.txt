@@ -1,0 +1,15 @@
+[{
+	"renderers": ["mediawiki"],
+	"input" : "",
+	"output" : "",
+	"title": "",
+	"base_path": "",
+	"collapse_level":"0",
+	"export_pages":"1",
+	"create_index":"1",
+	"print_preparsed_tex":"1",
+	"images_ext":"png",
+	"lang":"en",
+	"username":"",
+	"userid":""
+}]

@@ -19,16 +19,17 @@ def execute_mediawiki_parser(config):
 	title = config['title']
 	collapse_level = int(config['collapse_level'])
 
-	#process
+	#startin process process
 	f = open(input_path,'r')
+	#input text must be utf-8 encoded. 
 	text = f.read().decode('utf-8')
 	###preparser operations
 	#reading theorems
 	#the preparser result is a tuple of (tex, th_dict)
-	preparser_export_path= ''
+	pre_export_path= ''
 	if(config['print_preparsed_tex']):
-		preparser_export_path = output_path+".pre"
-	preparser_result = preparse_tex(text,preparser_export_path)
+		pre_export_path = output_path+".pre"
+	preparser_result = preparse_tex(text,pre_export_path)
 	#tex object
 	tex = TeX()
 	tex.input(preparser_result[0])
@@ -49,7 +50,8 @@ def execute_mediawiki_parser(config):
 	#fixing refs
 	rend.tree.fixReferences()
 	#create index
-	rend.tree.createIndex(collapse_level)
+	if config['create_index']:
+		rend.tree.createIndex(collapse_level)
 	#exporting XML
 	xml = rend.tree.exportXML(config['username'],config['userid'])
 	#writing to output
@@ -67,8 +69,6 @@ def execute_mediawiki_parser(config):
 	for key in sorted(rend.used_tags):
 		d.write(key+ ": "+str(rend.used_tags[key])+'\n')
 	d.close()
-	#exporting tables
-	#end.tree.exportFiguresTables()
 
 '''Function that execute a xml_parser with given parameters'''
 def execute_xml_parser(config):
@@ -107,13 +107,15 @@ for p in process_data:
 	config['collapse_level']= int(p['collapse_level'])
 	config['renderers'] = p['renderers']
 	config['export_pages'] = bool(int(p['export_pages']))
+	config['create_index'] = bool(int(p['create_index']))
 	config['print_preparsed_tex']= bool(int(p['print_preparsed_tex']))
 	config['images_ext']= p['images_ext']
-	config['username']= p['username']
-	config['userid']= p['userid']
 	#loading localized keywords
 	lang = p['lang']
 	config['keywords']= json.loads(open('lang.txt').read())[lang]
+	config['username']= p['username']
+	config['userid']= p['userid']
+	#executing process for alla renderers
 	for r in config['renderers']:
 		if r=='mediawiki':
 			#base path is added to title (hack)
