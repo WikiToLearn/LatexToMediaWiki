@@ -51,7 +51,7 @@ def execute_mediawiki_parser(config):
 	#create index
 	rend.tree.createIndex(collapse_level)
 	#exporting XML
-	xml = rend.tree.exportXML()
+	xml = rend.tree.exportXML(config['username'],config['userid'])
 	#writing to output
 	o = open(output_path+".mw",'w')
 	o.write(xml)
@@ -109,6 +109,8 @@ for p in process_data:
 	config['export_pages'] = bool(int(p['export_pages']))
 	config['print_preparsed_tex']= bool(int(p['print_preparsed_tex']))
 	config['images_ext']= p['images_ext']
+	config['username']= p['username']
+	config['userid']= p['userid']
 	#loading localized keywords
 	lang = p['lang']
 	config['keywords']= json.loads(open('lang.txt').read())[lang]

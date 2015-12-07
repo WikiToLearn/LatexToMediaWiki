@@ -183,7 +183,9 @@ class PageTree (object):
 
 	'''Entry point for XML exporting
 	-base_path is the base path for all exported pages'''
-	def exportXML(self):
+	def exportXML(self,username,userid):
+		self.export_username = username
+		self.export_userid = userid
 		s = []
 		s.append('<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.10/"\
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \
@@ -265,7 +267,8 @@ class PageTree (object):
 		ts = time.time()
 		s.append('\n<timestamp>'+ datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
 		s.append('</timestamp>')
-		s.append('\n<contributor><username>Valsdav</username><id>1820</id></contributor>')
+		s.append('\n<contributor><username>'+self.export_username+'</username>'+
+			'<id>'+self.export_userid+'</id></contributor>')
 		s.append('\n<model>wikitext</model>')
 		s.append('<format>text/x-wiki</format>')
 		s.append('\n<text xml:space="preserve">'+ page.text+'\n</text>')
