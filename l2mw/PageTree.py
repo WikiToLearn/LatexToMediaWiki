@@ -48,7 +48,6 @@ class PageTree (object):
 	in his enviroment setting current variables'''
 	def createPage(self, title,page_type):
 		title_name = title[:]
-		print(title)
 		#remove math tag
 		title = self.getNormalizedUrl(title)
 		#new url
