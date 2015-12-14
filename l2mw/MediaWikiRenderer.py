@@ -172,7 +172,6 @@ class MediaWikiRenderer (Renderer):
         self.used_tag('LABEL')
         #the reference to the current page is saved
         if self.in_theorem:
-            print(label)
             self.tree.addLabel_insideTheorem(label)
         else:
             self.tree.addLabel(label)
@@ -305,6 +304,9 @@ class MediaWikiRenderer (Renderer):
     do_quote=do_quotation
     do_verse=do_quotation
 
+    def do_href(self,node):
+        return unicode(node.attributes['url'])
+
     def do_centering(self, node):
         self.used_tag('CENTERING')
         s = []
@@ -385,7 +387,6 @@ class MediaWikiRenderer (Renderer):
         for line in source.split('\n'):
             s.append(" %s" % line)
         s.append(u' </nowiki>\n')
-        #print s
         return u'\n'.join(s)
         
     ##########################################
@@ -400,7 +401,7 @@ class MediaWikiRenderer (Renderer):
         graphics_search = re.search(ur'\\includegraphics\s(\[.*?\])*{(.*?)}',node.source)
         if graphics_search: 
             file_path= graphics_search.group(2)
-            file_path+='.'+ self.configs['image_extension']
+            #file_path+='.'+ self.configs['image_extension']
         #searching label
         label_search = re.search(ur'\\label{(.*?)}',node.source)
         if label_search:
@@ -657,8 +658,11 @@ class MediaWikiRenderer (Renderer):
         mtxt = remove_command_greedy(mtxt,'\\boxed')
         #removing \ensuremath from macros
         mtxt = remove_command_greedy(mtxt,'\\ensuremath')
+        #replace hspace with \quad
+        mtxt = replace_command_greedy(mtxt, '\\hspace', '\\quad')
         #removing \nonumber command
         mtxt = mtxt.replace('\\nonumber',u'')
+
         return mtxt
 
     do_eqnarray = do_align
