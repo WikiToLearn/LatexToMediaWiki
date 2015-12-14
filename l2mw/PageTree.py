@@ -246,18 +246,7 @@ class PageTree (object):
 		if page.text == '':
 			return ''
 		#text fixing before export
-		### HACK!!! ###
 		page.text = escape(page.text)
-		#fix for double apostrophes quotes
-		#page.text = page.text.decode('utf-8')
-		s = re.findall(u'(\`\`)\s?(.*?)\s?(\'\')', page.text, re.DOTALL)
-		for item in s:
-			page.text = page.text.replace(unicode(item[0]),'"')
-		 	page.text = page.text.replace(unicode(item[2]),'"')
-		 	
-		#apostrophe fixed
-		page.text = page.text.replace(u'’',u"'")
-		page.text = page.text.replace(u'`',u"'")
 		#construction of page xml
 		s =[]
 		s.append('<page>\n<title>'+ page.url +'</title>')

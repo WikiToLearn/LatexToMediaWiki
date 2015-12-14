@@ -39,6 +39,9 @@ class Page(object):
 	greater than the level parameter.
 	It requires the dictionary of pages.'''
 	def collapseText(self,max_level,pages_dict):
+		#first of all the text is fixed
+		self.fix_text_characters()
+		#start collapsing
 		if(self.level<max_level):
 			for subpage in self.subpages:
 				pages_dict[subpage].collapseText(max_level,pages_dict)
@@ -111,6 +114,21 @@ class Page(object):
 		for sub in self.subpages:
 			pages[sub].fixReferences(labels,pages)
 			
+	'''Utility function to fix apostrophes and other characters 
+	inside the text of the page'''
+	def fix_text_characters(self):
+		#fix for double apostrophes quotes
+		s = re.findall(u'(\`\`)\s?(.*?)\s?(\'\')', self.text, re.DOTALL)
+		for item in s:
+			self.text = self.text.replace(unicode(item[0]),'"')
+		 	self.text = self.text.replace(unicode(item[2]),'"')
+		s2 = re.findall(u'(\‘\‘)\s?(.*?)\s?(\’\’)', self.text, re.DOTALL)
+		for item2 in s2:
+			self.text = self.text.replace(unicode(item2[0]),'"')
+		 	self.text = self.text.replace(unicode(item2[2]),'"')
+		#apostrophe fixed
+		self.text = self.text.replace(u'’',u"'")
+		self.text = self.text.replace(u'`',u"'")
 
 	def __str__(self):
 		s =[]
