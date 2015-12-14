@@ -212,7 +212,7 @@ class MediaWikiRenderer (Renderer):
     '''Breaks line inside a paragraph'''
     def do_newline(self,node):
         self.used_tag('NEWLINE')
-        return u'<br/>'
+        return u'\n'
     
     do__backslash = do_newline
     do_linebreak = do_newline
