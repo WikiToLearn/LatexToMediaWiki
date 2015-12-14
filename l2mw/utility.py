@@ -3,8 +3,8 @@ from string import *
 import json
 
 '''This function remove a command live \command{content}, leaving 
-the command untouched, even if it contains nested brakets'''
-def remove_command_greedy(tex,command,repl=''):
+the content untouched, even if it contains nested brakets'''
+def remove_command_greedy(tex,command):
 	result=''
 	tokens = tex.split(command)
 	#Remove the fist token that doesn't contain data and save it
@@ -24,13 +24,13 @@ def remove_command_greedy(tex,command,repl=''):
 			#now check if we are returned to 0 level
 			if level ==0:
 				#we can get the content of outer {}
-				result+=repl+ tok[1:pos] + ' '+ tok[pos+1:]+repl
+				result+= tok[1:pos] + ' '+ tok[pos+1:]
 				break;
 	return result;
 
 ''' This function replace a command with the repl par. It understands
 nested brakets'''
-def replace_command_greedy(tex,command, repl):
+def replace_command_greedy(tex,command, repl, rm_content):
 	result=''
 	tokens = tex.split(command)
 	#Remove the fist token that doesn't contain data and save it
@@ -49,8 +49,10 @@ def replace_command_greedy(tex,command, repl):
 				level-=1
 			#now check if we are returned to 0 level
 			if level ==0:
-				#we can replace the content of outer {}
-				result+=repl+' '+ tok[pos+1:]
+				if rm_content:
+					result+=repl+' '+ tok[pos+1:]
+				else:
+					result+= repl + '{'+ tok[1:pos]+ '} '+ tok[pos+1:]
 				break;
 	return result;
 

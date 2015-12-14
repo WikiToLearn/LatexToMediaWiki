@@ -404,7 +404,7 @@ class MediaWikiRenderer (Renderer):
         #searchin includegraphics
         graphics_search = re.search(ur'\\includegraphics\s(\[.*?\])*{(.*?)}',node.source)
         if graphics_search: 
-            file_path= graphics_search.group(2)
+            file_path = graphics_search.group(2).split('/').pop()
             #file_path+='.'+ self.configs['image_extension']
         #searching label
         label_search = re.search(ur'\\label{(.*?)}',node.source)
@@ -663,7 +663,9 @@ class MediaWikiRenderer (Renderer):
         #removing \ensuremath from macros
         mtxt = remove_command_greedy(mtxt,'\\ensuremath')
         #replace hspace with \quad
-        mtxt = replace_command_greedy(mtxt, '\\hspace', '\\quad')
+        mtxt = replace_command_greedy(mtxt, '\\hspace', '\\quad',True)
+        #replacing bb and bbm with boldmath
+        mtxt = replace_command_greedy(mtxt, '\\bm','\\boldmath', False)
         #removing \nonumber command
         mtxt = mtxt.replace('\\nonumber',u'')
 
