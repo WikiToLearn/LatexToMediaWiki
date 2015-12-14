@@ -662,6 +662,8 @@ class MediaWikiRenderer (Renderer):
         mtxt = remove_command_greedy(mtxt,'\\boxed')
         #removing \ensuremath from macros
         mtxt = remove_command_greedy(mtxt,'\\ensuremath')
+        #removing tiny command
+        mtxt = remove_command_greedy(mtxt,'\\tiny')
         #replace hspace with \quad
         mtxt = replace_command_greedy(mtxt, '\\hspace', '\\quad',True)
         #replacing bb and bbm with boldmath
