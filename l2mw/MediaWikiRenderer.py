@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import string,re
 from plasTeX.Renderers import Renderer
 from plasTeX import Command, Environment
@@ -103,6 +104,9 @@ class MediaWikiRenderer (Renderer):
     #sectioning
     def sectioning(self, node,page_type):
         title = unicode(node.attributes['title'])
+        #fixing wrong symbolds
+        title = title.replace(u'’',u"'")
+        title = title.replace(u'`',u"'")
         #adding index to parent
         self.tree.addToSubpageIndex(title)
         #creation of the new page

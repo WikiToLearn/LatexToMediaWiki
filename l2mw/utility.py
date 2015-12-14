@@ -23,8 +23,34 @@ def remove_command_greedy(tex,command,repl=''):
 				level-=1
 			#now check if we are returned to 0 level
 			if level ==0:
-				#we can get che content of outer {}
+				#we can get the content of outer {}
 				result+=repl+ tok[1:pos] + ' '+ tok[pos+1:]+repl
+				break;
+	return result;
+
+''' This function replace a command with the repl par. It understands
+nested brakets'''
+def replace_command_greedy(tex,command, repl):
+	result=''
+	tokens = tex.split(command)
+	#Remove the fist token that doesn't contain data and save it
+	result+= tokens[0]
+	#removing spaces at the begin of tokens
+	tokens = map(lstrip,tokens[1:])
+	#analyzing each token
+	for tok in tokens:
+		level = 0
+		pos = -1
+		for ch in tok:
+			pos+=1
+			if ch=='{':
+				level+=1
+			elif ch=='}':
+				level-=1
+			#now check if we are returned to 0 level
+			if level ==0:
+				#we can replace the content of outer {}
+				result+=repl+' '+ tok[pos+1:]
 				break;
 	return result;
 

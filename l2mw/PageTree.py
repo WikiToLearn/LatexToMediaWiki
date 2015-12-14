@@ -47,6 +47,7 @@ class PageTree (object):
 	''' This method creates a new page and enters 
 	in his enviroment setting current variables'''
 	def createPage(self, title,page_type):
+		#starting elaboration
 		title_name = title[:]
 		#remove math tag
 		title = self.getNormalizedUrl(title)
@@ -247,7 +248,6 @@ class PageTree (object):
 		#text fixing before export
 		### HACK!!! ###
 		page.text = escape(page.text)
-		page.title= escape(page.title)
 		#fix for double apostrophes quotes
 		page.text = page.text.decode('utf-8')
 		s = re.findall(u'(\`\`)\s?(.*?)\s?(\'\')', page.text, re.DOTALL)
@@ -260,7 +260,8 @@ class PageTree (object):
 		page.text = page.text.replace(u'`',u"'")
 		#construction of page xml
 		s =[]
-		s.append('<page>\n<title>'+escape(page.url)+'</title>')
+		print(page.url)
+		s.append('<page>\n<title>'+ page.url +'</title>')
 		s.append('\n<restrictions></restrictions>')
 		s.append('\n<revision>')
 		ts = time.time()

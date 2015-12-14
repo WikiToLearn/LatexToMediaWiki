@@ -8,6 +8,8 @@ import unidecode
 class Page(object):
 
 	''' Constructor needs title.
+	-self.title is the title normalized for urls
+	-self.title_name is the original title (could contains math)
 	-self.subpages contains the list of the subpages
 	-self.level memorize the level of the page.(root=-1))
 	-self.url contains the unique internal url of the page
