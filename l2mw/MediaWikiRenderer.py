@@ -665,7 +665,10 @@ class MediaWikiRenderer (Renderer):
         #replace hspace with \quad
         mtxt = replace_command_greedy(mtxt, '\\hspace', '\\quad',True)
         #replacing bb and bbm with boldmath
-        mtxt = replace_command_greedy(mtxt, '\\bm','\\boldmath', False)
+        mtxt = replace_command_greedy(mtxt, '\\bm','\\mathbf', False)
+        mtxt = replace_command_greedy(mtxt, '\\bbm','\\mathbf', False)
+        #abs
+        mtxt = replace_command_greedy(mtxt, '\\abs','|', False)
         #removing \nonumber command
         mtxt = mtxt.replace('\\nonumber',u'')
 
