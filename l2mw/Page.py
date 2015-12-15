@@ -48,14 +48,14 @@ class Page(object):
 			#the subpages'index is created if not level =-1 and if the
 			#page has text 
 			if self.text != '':
+				#added refs tags to show footnotes
+				self.text+='\n<references/>'
 				if self.subpages and self.level !=-1:
 					self.text +='\n<noinclude>\n=='+self.keywords['subpages']+'=='
 					for p in self.subpages:
 						if pages_dict[p].text != '':
 							self.text += '\n*[['+p+'|'+pages_dict[p].title_name+']]'
-						self.text+= '</noinclude>'
-				#added refs tags to show footnotes
-				self.text+='\n<references/>'
+					self.text+= '\n</noinclude>'	
 		else:
 			#we have to managed the text
 			for subpage in self.subpages:
