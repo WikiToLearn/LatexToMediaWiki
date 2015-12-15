@@ -1,4 +1,3 @@
-
 ##test output files
 *.tex
 *.json
@@ -141,4 +140,3 @@ sympy-plots-for-*.tex/
 # WinEdt
 *.bak
 *.sav
->>>>>>> a5dc6d7d7e981a0923fc18777949c0de52780c81
