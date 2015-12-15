@@ -134,7 +134,7 @@ class Page(object):
 	def __str__(self):
 		s =[]
 		s.append('title='+self.title)
-		s.append('title_name'+self.title_name)
+		s.append('title_name='+self.title_name)
 		s.append('url='+self.url)
 		s.append('media_url='+ self.media_url)
 		s.append('subpages='+str(self.subpages))

@@ -163,14 +163,33 @@ class PageTree (object):
 	def fixReferences(self):
 		self.pages[self.doc_title].fixReferences(self.labels,self.pages)
 
-	'''Method that creates the index in the root page'''
+	'''index for book export page'''
+	book_export_index = ['{{libro_salvato | setting-papersize = a4\
+ 				| setting-toc = auto | setting-columns = 1}}']
+
+	'''Method that creates the index in the root page and the 
+	index for book export page'''
 	def createIndex(self,max_level):
 		ind = ''
 		base_page = self.pages[self.doc_title]
-		base_page.text+= '\n\n==' +self.keywords['chapters']+'==\n'
 		base_page.text += '{{RiferimentiEsterni \
-		|esercizi= \n|dispense=\n|testi=}}'
-		base_page.text+= self._createIndex(self.doc_title,'',max_level)
+		|esercizi= \n|dispense=\n|testi=}}\n'
+		#book export: link
+		base_page.text+= '{{libro|Project:Libri/'+self.doc_title+\
+				'|'+ self.doc_title + '}}\n'
+		#book export: setting title
+		self.book_export_index.append('=='+ self.doc_title+'==')
+		#creating root index
+		base_page.text+= '\n\n==' +self.keywords['chapters']+'==\n'
+		base_page.text+= self._createIndex(self.doc_title,'',max_level) 
+		#creating book export page
+		book_title = 'Project:Libri_'+self.doc_title
+		book_export_page= Page(book_title,book_title,
+			'Project:Libri/'+self.doc_title,'root',-1,None)
+		#inserting index text
+		book_export_page.addText(u'\n'.join(self.book_export_index))
+		#the export book page is inserted in the pages dict and index
+		self.pages['Project:Libri/'+self.doc_title] = book_export_page
 
 	def _createIndex(self,page,ind,max_level):
 		index = []
@@ -181,11 +200,15 @@ class PageTree (object):
 				index.append('{{Section\n|sectionTitle=')
 				index.append(p.title_name+'\n')
 				index.append('|sectionText=\n')
+				#book export index for chapters
+				self.book_export_index.append(';'+ p.title_name)
 				if p.text != '':
 					index.append('*[['+ sub+'|Introduzione]]\n')
+					self.book_export_index.append(':[['+ sub+']]')
 
 			elif p.text !='':
 				index.append(ind+'[['+ sub+'|'+ p.title_name+']]\n')
+				self.book_export_index.append(':[['+ sub+']]')
 			else:
 				index.append(ind + p.title_name + '\n')
 			#next level
@@ -235,25 +258,12 @@ class PageTree (object):
 			<namespace key="2600" case="first-letter">Argomento</namespace>\
 			</namespaces>\
 			</siteinfo>')
-		self._exportXML(s,-1,self.index,'')
+		#getting xml for every page
+		for page in self.pages.values():
+			if page.level <= self.collapse_level:
+				s.append(self.getPageXML(page))
 		s.append('</mediawiki>')
 		return '\n'.join(s)
-
-	'''Recursion function to explore the tree during exporting'''
-	def _exportXML(self, text, lev,cur_dict, cur_url):
-		if lev<= self.collapse_level:
-			for key in cur_dict:
-				page = None
-				if cur_url=='':
-					page = self.pages[self.doc_title]
-				else:
-					page = self.pages[cur_url+ '/'+key]
-				text.append(self.getPageXML(page))
-				if cur_url =='':
-					self._exportXML(text,lev+1,cur_dict[key],self.doc_title)
-				else:
-					self._exportXML(text,lev+1,cur_dict[key],cur_url+"/"+key)
-
 
 	'''Return the mediawiki XML of a single page encoded in utf-8'''
 	def getPageXML(self,page):

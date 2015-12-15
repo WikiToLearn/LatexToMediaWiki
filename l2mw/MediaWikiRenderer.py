@@ -120,7 +120,7 @@ class MediaWikiRenderer (Renderer):
 
     def do_part (self,node):
         self.used_tag('PART')
-        self.sectioning(node,'PART')
+        self.sectioning(node,'part')
         return u''
 
     def do_chapter (self,node):
