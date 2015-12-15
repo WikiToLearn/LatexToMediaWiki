@@ -51,7 +51,8 @@ class Page(object):
 				if self.subpages and self.level !=-1:
 					self.text +='\n<noinclude>\n=='+self.keywords['subpages']+'=='
 					for p in self.subpages:
-						self.text += '\n*[['+p+'|'+pages_dict[p].title_name+']]'
+						if pages_dict[p].text != '':
+							self.text += '\n*[['+p+'|'+pages_dict[p].title_name+']]'
 						self.text+= '</noinclude>'
 				#added refs tags to show footnotes
 				self.text+='\n<references/>'

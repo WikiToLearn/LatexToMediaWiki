@@ -347,6 +347,9 @@ class MediaWikiRenderer (Renderer):
 
     do_rule=do_hrulefill   
 
+    def do_vspace(self,node):
+        return u''
+
     def do_textrm(self, node):
         self.used_tag('TEXTRM')
         return unicode(node)

@@ -168,17 +168,32 @@ class PageTree (object):
 		ind = ''
 		base_page = self.pages[self.doc_title]
 		base_page.text+= '\n\n==' +self.keywords['chapters']+'==\n'
-		base_page.text+= self._createIndex(self.doc_title,'*',max_level)
+		base_page.text += '{{RiferimentiEsterni \
+		|esercizi= \n|dispense=\n|testi=}}'
+		base_page.text+= self._createIndex(self.doc_title,'',max_level)
 
 	def _createIndex(self,page,ind,max_level):
 		index = []
 		for sub in self.pages[page].subpages:
-			if self.pages[sub].text !='':
-				index.append(ind+'[['+ sub+'|'+ self.pages[sub].title_name+']]\n')
+			p = self.pages[sub]
+			#managing chapters
+			if p.level ==0:
+				index.append('{{Section\n|sectionTitle=')
+				index.append(p.title_name+'\n')
+				index.append('|sectionText=\n')
+				if p.text != '':
+					index.append('*[['+ sub+'|Introduzione]]\n')
+
+			elif p.text !='':
+				index.append(ind+'[['+ sub+'|'+ p.title_name+']]\n')
 			else:
-				index.append(ind + self.pages[sub].title_name + '\n')
+				index.append(ind + p.title_name + '\n')
+			#next level
 			if(self.pages[page].level<max_level-1):
 				index.append(self._createIndex(sub,ind+'*',max_level))
+			#closing chapter
+			if p.level==0:
+				index.append('}}\n{{ForceBreak}}\n')
 		return u''.join(index)
 
 	'''Entry point for XML exporting
