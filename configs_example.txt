@@ -1,15 +1,16 @@
 [{
 	"renderers": ["mediawiki"],
-	"input" : "",
-	"output" : "",
-	"title": "",
-	"base_path": "",
-	"collapse_level":"0",
-	"export_pages":"1",
-	"create_index":"1",
-	"print_preparsed_tex":"1",
+	"input" : "", (input file with extension)
+	"output" : "" (insert output path without extension),
+	"title": "",  (overall title of the document)
+	"base_path": "",  (base path in your wiki for the pages)
+	"collapse_level":"0", (Sections with level greater than collapse_level 						will be collapsed inside upper pages. 
+						Index page = -1, Chapters/Part=0, Section=1 and so on until paragraph.)
+	"export_pages":"1", (tell if single pages have to be exported)
+	"create_index":"1", (tell if the index has to be created)
+	"print_preparsed_tex":"1", (print the latex after pre-parsing)
 	"images_ext":"png",
-	"lang":"en",
-	"username":"",
-	"userid":""
+	"lang":"en",   (lang for keywords inside text)
+	"username":"", (wiki username and userid)
+	"userid":"
 }]
