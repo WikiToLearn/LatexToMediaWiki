@@ -452,8 +452,8 @@ class MediaWikiRenderer (Renderer):
         #adding label
         if label:
             self.label(label)
-        #return warning text for table
-        return unicode('[[Tabella:'+label+'_'+caption+']]')
+        #elaborating child nodes (tabular)
+        return unicode(node)
 
     '''Counter for orphan (outside table) tabular'''
     tabular_counter = 0
@@ -468,8 +468,25 @@ class MediaWikiRenderer (Renderer):
         t = Table(label,label)
         #adding table to the tree
         self.tree.addTable(t)
-        #return warning text for table
-        return unicode('[[Tabella:'+label+'_'+label+']]')
+        tablestring = ''
+        firstrow = True
+        # Iterate through all rows in the table
+        for row in enumerate(node):
+
+        # Iterate through all cells in the row
+            for cell in enumerate(row):
+                # Iterate through all paragraphs in the cell
+                for par in cell:
+                    # Print the text content of each cell to tablestring
+                    i=0
+                    if type(par) != int:
+                        if firstrow:
+                            firstrow = False
+                        else:
+                            tablestring += '|-\n'
+                        for i in range (0,len(par)):
+                            tablestring += ' |' + str(par[i])[2:] + '\n'
+        return unicode('{|\n'+tablestring+'|}')
 
 
     ###################################################
