@@ -442,9 +442,7 @@ class MediaWikiRenderer (Renderer):
         if label_search:
             label = label_search.group(1)
         #searching caption
-        caption_search = re.search(ur'\\caption{(.*?)}',node.source)
-        if caption_search:
-            caption = caption_search.group(1)
+        caption = get_content_greedy(node.source, '\\caption')
         #creating table
         t = Table(label,caption)
         #adding table to the tree
