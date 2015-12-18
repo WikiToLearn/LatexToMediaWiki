@@ -62,6 +62,9 @@ def execute_mediawiki_parser(config):
 	if(config['export_pages']):
 		#writing single pages
 		rend.tree.exportXML_single_pages(output_path+'_pages')
+	if(config['export_pages_text']):
+		rend.tree.exportText_single_pages(output_path+'_pages')
+
 	#writing debug info
 	d = open(output_path+".debug",'w')
 	#used_tags
@@ -107,6 +110,7 @@ for p in process_data:
 	config['collapse_level']= int(p['collapse_level'])
 	config['renderers'] = p['renderers']
 	config['export_pages'] = bool(int(p['export_pages']))
+	config['export_pages_text'] = bool(int(p['export_pages_text']))
 	config['create_index'] = bool(int(p['create_index']))
 	config['print_preparsed_tex']= bool(int(p['print_preparsed_tex']))
 	config['images_ext']= p['images_ext']

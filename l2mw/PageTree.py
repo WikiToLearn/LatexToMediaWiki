@@ -261,7 +261,7 @@ class PageTree (object):
 		if page.text == '':
 			return ''
 		#text fixing before export
-		#page.text = escape(page.text)
+		text = escape(page.text)
 		#construction of page xml
 		s =[]
 		s.append('<page>\n<title>'+ page.url +'</title>')
@@ -274,16 +274,15 @@ class PageTree (object):
 			'<id>'+self.export_userid+'</id></contributor>')
 		s.append('\n<model>wikitext</model>')
 		s.append('<format>text/x-wiki</format>')
-		s.append('\n<text xml:space="preserve">'+ page.text+'\n</text>')
+		s.append('\n<text xml:space="preserve">'+ text+'\n</text>')
 		s.append('\n</revision>\n</page>')
 		result = '\n'.join(s)
 		#encoding result
 		return result.encode('utf-8')
 
-	'''Function that export pages in separated files'''
+	'''Function that export the XML dump format of pages in separated fils'''
 	def exportXML_single_pages(self,base_path=''):
-		for p in self.pages:
-			page = self.pages[p]
+		for page in self.pages.values():
 			if page.level <= self.collapse_level:
 				xml = self.getPageXML(page)
 				path = base_path+'/'+page.title+".xml"
@@ -292,13 +291,16 @@ class PageTree (object):
 				f.write(xml)
 				f.close()
 
-	def exportFiguresTables(self):
-		f = open('ft_list',w)
-		for fig in self.figures:
-			f.write(str(fig))
-		for t in self.tables:
-			f.write(str(t))
-		f.close()
+	'''Function that exports the text of pages in separated files'''
+	def exportText_single_pages(self,base_path=''):
+		for page in self.pages.values():
+			if page.level <= self.collapse_level:
+				text = page.text
+				path = base_path+'/'+page.title+".txt"
+				path = path.encode('utf-8')
+				f = open(path, 'w')
+				f.write(text)
+				f.close()
 
 class Figure(object):
 

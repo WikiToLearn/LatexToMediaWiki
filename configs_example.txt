@@ -7,6 +7,7 @@
 	"collapse_level":"0", (Sections with level greater than collapse_level 						will be collapsed inside upper pages. 
 						Index page = -1, Chapters/Part=0, Section=1 and so on until paragraph.)
 	"export_pages":"1", (tell if single pages have to be exported)
+	"export_pages_text":"1", (tell if single pages have to be exported as plain 							text, no xml escaping and mediawiki dump tags)
 	"create_index":"1", (tell if the index has to be created)
 	"print_preparsed_tex":"1", (print the latex after pre-parsing)
 	"images_ext":"png",
