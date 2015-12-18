@@ -23,7 +23,6 @@ class PageTree (object):
 	def __init__(self, doc_title, keywords):
 		self.doc_title= doc_title
 		self.keywords = keywords
-		self.index = {}
 		self.pages = {}
 		self.media_urls = {}
 		self.labels = {}
@@ -32,7 +31,6 @@ class PageTree (object):
 		self.tables = []
 		self.theorems =[]
 		#ROOT PAGE
-		self.index[doc_title]={}
 		r = Page(doc_title,doc_title,doc_title,'root',-1,self.keywords)
 		self.pages[doc_title]= r
 		#indexes
@@ -57,15 +55,7 @@ class PageTree (object):
 		level = len(self.page_stack)
 		#create new page	
 		p = Page(title,title_name,newurl,page_type,level,self.keywords)
-		#update index
-		cindex = self.index
-		for i in range(0,len(self.page_stack)):
-			cindex = cindex[self.page_stack[i]]
-		cindex = cindex[self.current]
-		#now cindex has the current dict
-		#and new key is inserted
-		cindex[title]={}
-		#add pages to pages index
+		#add page to pages index
 		self.pages[newurl] = p
 		#updates current
 		self.page_stack.append(self.current)
@@ -271,7 +261,7 @@ class PageTree (object):
 		if page.text == '':
 			return ''
 		#text fixing before export
-		page.text = escape(page.text)
+		#page.text = escape(page.text)
 		#construction of page xml
 		s =[]
 		s.append('<page>\n<title>'+ page.url +'</title>')

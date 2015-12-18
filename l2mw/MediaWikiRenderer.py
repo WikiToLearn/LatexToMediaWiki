@@ -551,6 +551,7 @@ class MediaWikiRenderer (Renderer):
 
     do_displaymath = handleDisplayMath
     do_equation = handleDisplayMath
+    do_empheq = handleDisplayMath
     do__equation_star = handleDisplayMath
 
     '''Handles inline math ( $..$ \( \) ) '''
