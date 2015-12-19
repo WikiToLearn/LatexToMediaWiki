@@ -4,6 +4,7 @@ from plasTeX.Renderers import Renderer
 from plasTeX import Command, Environment
 from PageTree import *
 from utility import *
+from MathParser import *
 
 class MediaWikiRenderer (Renderer):
 
@@ -496,60 +497,32 @@ class MediaWikiRenderer (Renderer):
     only for \begin{equation} and \begin{displaymath}.
     Other \begin{math_environment} that are not inside a displaymath 
     have to be handled by specific methods'''
-    def handleDisplayMath(self, node): 
+    def handleDisplayMath(self, node, env='equation'): 
         self.used_tag('DISPLAY_MATH')
-        begin_tag = ''
-        end_Tag = ''     
-        split_tag = ''
-        label_tag = ''
-        structure_label_tag = ''
         s = node.source
-        #$$ search
-        global_dollars_search = re.search(ur'\$\$(.*?)\$\$', s)
-        #search \begin and end \tag
-        global_begin_tag = re.search(ur'\\\bbegin\b\{(\bequation\*?)\}|\\\[', s)
-        global_end_tag = re.search(ur'\\\bend\b\{(\bequation\*?)\}|\\\]', s)
-
-        #get content between $$ $$
-        #get \begin{tag} and \end{tag}
-        #and delete the tags
-        if global_begin_tag and global_end_tag:
-            begin_tag = global_begin_tag.group(0)
-            end_tag = global_end_tag.group(0)
-            s = s.replace(begin_tag, "")
-            s = s.replace(end_tag, "")
-        elif global_dollars_search:
-            dollars_tag = global_dollars_search.group(1)
-            s = s.replace(dollars_tag, "")
-
-        #replace split with align
-        s = s.replace("split", u"align")
-
+        #get content of environment or display math tags
+        content = get_environment_content(env)
+        if content:
+            s = content
+        else:
+            '''if there is no environment we have
+            remove the $$..$$ or \[..\]'''
+            content2 = get_content_dispaly_math(s)
+            if content2:
+                s = content2 
         #check math content
         s = self.math_check(s)
-        
-        #searching for label
-        global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', s)
-        #getting label and deleting label tag
-        if global_label_tag:
-            label_tag = global_label_tag.group(1)
-            structure_label_tag = global_label_tag.group(0)
-        else:
-            label_tag = ''
-            structure_label_tag = ''
-        #deleting label tag
-        s = s.replace(structure_label_tag, "")
-
-        s_tag = ''
-        if label_tag is not '':
+        #search label
+        label = get_label(s)
+        s_tag='<dmath>'
+        if label:
             #adding label to tree
-            self.label(label_tag)
-            s_tag = '<dmath label="' + label_tag + '">'
-        else:
-            s_tag = '<dmath>'
+            self.label(label)
+            s_tag = '<dmath label="' + label + '">'
         return s_tag + s + '</dmath>'
 
-    do_displaymath = handleDisplayMath
+    def do_displaymath(self,node):
+        self.handleDisplayMath(self,node,'displaymath') 
     do_equation = handleDisplayMath
     do_empheq = handleDisplayMath
     do__equation_star = handleDisplayMath
@@ -557,30 +530,14 @@ class MediaWikiRenderer (Renderer):
     '''Handles inline math ( $..$ \( \) ) '''
     def do_math(self, node):
         self.used_tag('MATH')
-        content = ''
         s = node.source
-        #search content between $ $
-        global_tag = re.search(ur'\$(.*?)\$', s)
-        #search for \( \)
-        regexp_brackets_global_tag = re.compile(ur'\\\((.*?)\\\)', re.DOTALL)
-        brackets_global_tag = re.search(regexp_brackets_global_tag,s)
+        result= inline_math(s)
+        #adding label
+        if result[1]:
+            self.label(result[1])
+        return result[0]
 
-        #get content between $ $ and remove them
-        if global_tag:
-            content = global_tag.group(1)
-        elif brackets_global_tag:
-            content = brackets_global_tag.group(1)
-        else:
-            content = ''
-
-        #check math content
-        content = self.math_check(content)
-
-        #get content between \begin{split}
-        content = content.replace("split", u"align")
-
-        return '<math>'+ content +'</math>'
-
+    '''Check math inside macros'''
     def do_ensuremath(self,node):
         self.used_tag('ENSURE_MATH')
         s = node.source
