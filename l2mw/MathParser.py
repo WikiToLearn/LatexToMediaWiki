@@ -5,28 +5,19 @@ from utility import *
 
 '''Function that removes $$..$$ and \[...\]'''
 def get_content_display_math(tex):
+	content = ''
 	tag_search = re.search(ur'\$\$(.*?)\$\$|\\\[(.*?)\\\]', tex,re.DOTALL)
 	if tag_search:
-		return tag_search.group(1)
-	else:
-		return ''
+		content = tag_search.group(1)
+	return content
 
-'''Functions that manipulate inline math.
-Return a tuple with (result, label)'''
-def inline_math(tex):
-	#removing $..$ and \(..\)
+'''Functions that removes $...$ and \(...\)'''
+def get_content_inline_math(tex):
 	content = ''
-	dollar_tag = re.search(ur'\$(.*?)\$', tex)
-	open_tag = re.search(ur'\\\((.*?)\\\)', tex)
-	if dollar_tag:
-		content = dollar_tag.group(1)
-	elif:
-		content = open_tag.group(1)
-	#getting label
-	label = get_label(content)
-	#checking math
-	content = math_check(content)
-	return ('<math>'+ content +'</math>',label)
+	tag_search = re.search(ur'\$(.*?)\$|\\\((.*?)\\\)', tex,re.DOTALL)
+	if tag_search:
+		content = tag_search.group(1)
+	return content
 
 '''Function that extract label from tex'''
 def get_label(tex):

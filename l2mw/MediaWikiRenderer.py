@@ -498,7 +498,7 @@ class MediaWikiRenderer (Renderer):
     Other \begin{math_environment} that are not inside a displaymath 
     have to be handled by specific methods'''
     def handleDisplayMath(self, node, env='equation'): 
-        self.used_tag('DISPLAY_MATH')
+        self.used_tag('DISPLAY_MATH@'+env )
         s = node.source
         #get content of environment or display math tags
         content = get_environment_content(env)
@@ -507,7 +507,7 @@ class MediaWikiRenderer (Renderer):
         else:
             '''if there is no environment we have
             remove the $$..$$ or \[..\]'''
-            content2 = get_content_dispaly_math(s)
+            content2 = get_content_display_math(s)
             if content2:
                 s = content2 
         #check math content
@@ -521,21 +521,32 @@ class MediaWikiRenderer (Renderer):
             s_tag = '<dmath label="' + label + '">'
         return s_tag + s + '</dmath>'
 
-    def do_displaymath(self,node):
-        self.handleDisplayMath(self,node,'displaymath') 
+    #displaymath is converted to \[..\]
+    do_displaymath = handleDisplayMath
     do_equation = handleDisplayMath
-    do_empheq = handleDisplayMath
-    do__equation_star = handleDisplayMath
+   
+    #functions for displaymath with different environments
+    def do_empheq(self,node):
+        self.handleDisplayMath(self,node,env='empheq')
+
+    def do__equation_star(self,node):
+        self.handleDisplayMath(self,node,env='equation*')
 
     '''Handles inline math ( $..$ \( \) ) '''
     def do_math(self, node):
         self.used_tag('MATH')
         s = node.source
-        result= inline_math(s)
-        #adding label
-        if result[1]:
-            self.label(result[1])
-        return result[0]
+        #get content
+        content = get_content_inline_math(s)
+        if content:
+            s = content
+        #check math content
+        s = self.math_check(s)
+        #search label
+        label = get_label(s)
+        if label:
+            self.label(label)
+        return '<math>'+s+'</math>'
 
     '''Check math inside macros'''
     def do_ensuremath(self,node):
@@ -549,7 +560,7 @@ class MediaWikiRenderer (Renderer):
 
     '''Support for align type tags. 
     They are outside math modes an supported directly'''
-    def do_align(self, node):
+    def handleAlign(self, node,env='align'):
         self.used_tag('MATH_ALIGN')
         split_tag = ''
         label_tag = ''
