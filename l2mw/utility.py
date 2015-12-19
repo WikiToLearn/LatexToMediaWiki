@@ -1,6 +1,6 @@
 ### UTILITY FUNCTIONS ###
 from string import *
-import json
+import re, string,json
 
 '''This function remove a command live \command{content}, leaving 
 the content untouched, even if it contains nested brakets'''
@@ -95,3 +95,15 @@ def get_content_list_greedy(tex,command):
 				#we can get che content of outer {}
 				result.append(tok[1:pos])
 	return result
+
+'''Function that returns the content of the first occurence
+of the environment env'''
+def get_environment_content(tex,env):
+	#search \begin and end \tag
+	pattern = ur'\\\bbegin\b\s*\{\s*\b'+env+'\b\s*\}(.*?)\\\bend\b\s*\{\s*\b'+env+'\b\s*\}'
+	env_result = re.search(pattern,tex,re.DOTALL)
+	if env_result:
+		return env_result.group(1)
+	else:
+		return ''
+
