@@ -102,7 +102,6 @@ def get_environment_content(tex,env):
 	#search \begin and end \tag
 	pattern = ur'\\begin\s*\{\s*'+env+ \
 			ur'\s*\}(.*?)\\end\s*\{\s*'+env+ur'\s*\}'
-	print(tex,pattern)
 	env_result = re.search(pattern,tex,re.DOTALL)
 	if env_result:
 		return env_result.group(1)

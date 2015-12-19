@@ -501,7 +501,7 @@ class MediaWikiRenderer (Renderer):
         self.used_tag('DISPLAY_MATH@'+env )
         s = node.source
         #get content of environment or display math tags
-        content = get_environment_content(env)
+        content = get_environment_content(s,env)
         if content:
             s = content
         else:
@@ -509,9 +509,9 @@ class MediaWikiRenderer (Renderer):
             remove the $$..$$ or \[..\]'''
             content2 = get_content_display_math(s)
             if content2:
-                s = content2 
+                s = content2
         #check math content
-        s = self.math_check(s)
+        s = math_check(s)
         #search label
         label = get_label(s)
         s_tag='<dmath>'
@@ -527,10 +527,10 @@ class MediaWikiRenderer (Renderer):
    
     #functions for displaymath with different environments
     def do_empheq(self,node):
-        self.handleDisplayMath(self,node,env='empheq')
+        return self.handleDisplayMath(node,'empheq')
 
     def do__equation_star(self,node):
-        self.handleDisplayMath(self,node,env='equation*')
+        return self.handleDisplayMath(node,'equation\\*')
 
     '''Handles inline math ( $..$ \( \) ) '''
     def do_math(self, node):
@@ -541,7 +541,7 @@ class MediaWikiRenderer (Renderer):
         if content:
             s = content
         #check math content
-        s = self.math_check(s)
+        s = math_check(s)
         #search label
         label = get_label(s)
         if label:
@@ -560,47 +560,40 @@ class MediaWikiRenderer (Renderer):
 
     '''Support for align type tags. 
     They are outside math modes an supported directly'''
-    def handleAlign(self, node,env='align'):
+    def do_align(self, node):
         self.used_tag('MATH_ALIGN')
-        split_tag = ''
-        label_tag = ''
-        begin_tag = ''
-        end_Tag = ''
-        structure_label_tag = ''
         s = node.source
-      
-        #replace split with align
-        s = s.replace("split", u"align")
         #replace eqnarray,multline,alignat with align
         s = s.replace('alignat',u'align')
         s = s.replace('eqnarray',u'align')
         s = s.replace('multline',u'align')
-
+        s = s.replace('align*',u'align')
+        s = s.replace('alignat*',u'align')
+        s = s.replace('eqnarray*',u'align')
+        s = s.replace('multline*',u'align')
+        #get content of environment
+        content = get_environment_content(s,'align')
+        if content:
+            s = content
         #check math content
-        s = self.math_check(s)
-            
-        #search equation tag
-        global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', node.source)
-        #getting label and deleting label tag
-        if global_label_tag:
-            label_tag = global_label_tag.group(1)
-            structure_label_tag = global_label_tag.group(0)
-        else:
-            label_tag = ''
-            structure_label_tag = ''
-        #deleting label tag
-        s = s.replace(structure_label_tag, "")
-        
-        # check if label tag exist. If it does,
-        # insert the tag in output and tree
-        s_tag = ''
-        if label_tag is not '':
+        s = math_check(s)
+        #search label
+        label = get_label(s)
+        s_tag='<dmath type="align">'
+        if label:
             #adding label to tree
-            self.label(label_tag)
-            s_tag = '<dmath label="' + label_tag + '">'
-        else:
-            s_tag = '<dmath>'
+            self.label(label)
+            s_tag = '<dmath type="align" label="' + label + '">'
         return s_tag + s + '</dmath>'
+
+    do_eqnarray = do_align
+    do_multline = do_align
+    do_alignat =  do_align
+    #using aliases
+    do__align_star = do_align
+    do__alignat_star = do_align
+    do__eqnarray_star = do_align
+    do__multline_star = do_align
 
     ''' Support for gather alignment style '''
     def do_gather(self, node):
@@ -610,7 +603,7 @@ class MediaWikiRenderer (Renderer):
         new_text = ''
         
         #check math content
-        s = self.math_check(s)
+        s = math_check(s)
 
         #searching for label
         global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', s)
@@ -639,38 +632,6 @@ class MediaWikiRenderer (Renderer):
             new_text = ""
         return new_text 
 
-    def math_check(self,mtxt):
-         #removing inner starred commands
-        re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
-        for star_tag in re.finditer(re_remove_star,mtxt):
-            mtxt = mtxt.replace(star_tag.group(0),u'\\begin{'+star_tag.group(1)+'}'+\
-                star_tag.group(2)+'\end{'+ star_tag.group(3)+'}')
-        #removing \boxed command
-        mtxt = remove_command_greedy(mtxt,'\\boxed')
-        #removing \ensuremath from macros
-        mtxt = remove_command_greedy(mtxt,'\\ensuremath')
-        #removing tiny command
-        mtxt = remove_command_greedy(mtxt,'\\tiny')
-        #replace hspace with \quad
-        mtxt = replace_command_greedy(mtxt, '\\hspace', '\\quad',True)
-        #replacing bb and bbm with boldmath
-        mtxt = replace_command_greedy(mtxt, '\\bm','\\mathbf', False)
-        mtxt = replace_command_greedy(mtxt, '\\bbm','\\mathbf', False)
-        #abs
-        mtxt = replace_command_greedy(mtxt, '\\abs','|', False)
-        #removing \nonumber command
-        mtxt = mtxt.replace('\\nonumber',u'')
-
-        return mtxt
-
-    do_eqnarray = do_align
-    do_multline = do_align
-    do_alignat =  do_align
-    #using aliases
-    do__align_star = do_align
-    do__alignat_star = do_align
-    do__eqnarray_star = do_align
-    do__multline_star = do_align
     do__gather_star = do_gather
 
 
