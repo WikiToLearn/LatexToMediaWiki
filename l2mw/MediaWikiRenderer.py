@@ -37,7 +37,7 @@ class MediaWikiRenderer (Renderer):
 
     '''List of nodes not to explore'''
     no_enter = ['titlepage','tableofcontents','pagestyle','maketitle',
-            'numberwithin','geometry']
+            'numberwithin','geometry',"index"]
 
     ##############################################################
     #initialization
@@ -241,6 +241,10 @@ class MediaWikiRenderer (Renderer):
         s.append(u"\'\'")
         return u''.join(s)    
 
+    def do_textsc(self,node):
+        self.used_tag('TEXTSC')
+        return unicode(node).lstrip().upper()
+
     do_emph = do_textit
     do_itshape = do_textit
     do_textsl = do_textit
@@ -302,7 +306,7 @@ class MediaWikiRenderer (Renderer):
         self.used_tag('QUOTATION')
         s = []
         s.append(u'<blockquote>')
-        s.append(unicode(node)).lstring()
+        s.append(unicode(node).lstrip())
         s.append(u'</blockquote>')
         return u''.join(s)
 
@@ -555,7 +559,7 @@ class MediaWikiRenderer (Renderer):
         #removing \ensuremath{}
         s = get_content_greedy(s,'\\ensuremath')
         #check math content
-        s = self.math_check(s)
+        s = math_check(s)
         return '<math>'+ s +'</math>'
 
     '''Support for align type tags. 
