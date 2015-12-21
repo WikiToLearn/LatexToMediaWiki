@@ -52,19 +52,16 @@ def execute_mediawiki_parser(config):
 	#create index
 	if config['create_index']:
 		rend.tree.createIndex(collapse_level)
-	#exporting XML
-	xml = rend.tree.exportXML(config['username'],config['userid'])
-	#writing to output
-	o = open(output_path+".mw",'w')
-	o.write(xml)
-	o.close()
+	#exporting 
+	export = rend.tree.exportPages(output_path,
+					(config['export_format'],
+					config['username'], config['userid']) )
 	#check if we have to export single pages
-	if(config['export_pages']):
+	if(config['export_single_pages']):
 		#writing single pages
-		rend.tree.exportXML_single_pages(output_path+'_pages')
-	if(config['export_pages_text']):
-		rend.tree.exportText_single_pages(output_path+'_pages')
-
+		rend.tree.export_singlePages(config['export_format'],
+					output_path+'_pages',(config['username'],
+					config['userid']))
 	#writing debug info
 	d = open(output_path+".debug",'w')
 	#used_tags
@@ -109,8 +106,8 @@ for p in process_data:
 	config['base_path'] = p['base_path']
 	config['collapse_level']= int(p['collapse_level'])
 	config['renderers'] = p['renderers']
-	config['export_pages'] = bool(int(p['export_pages']))
-	config['export_pages_text'] = bool(int(p['export_pages_text']))
+	config['export_format'] = p['export_format']
+	config['export_single_pages'] = bool(int(p['export_single_pages']))
 	config['create_index'] = bool(int(p['create_index']))
 	config['print_preparsed_tex']= bool(int(p['print_preparsed_tex']))
 	config['images_ext']= p['images_ext']

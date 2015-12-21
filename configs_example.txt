@@ -4,11 +4,19 @@
 	"output" : "" (insert output path without extension),
 	"title": "",  (overall title of the document)
 	"base_path": "",  (base path in your wiki for the pages)
-	"collapse_level":"0", (Sections with level greater than collapse_level 						will be collapsed inside upper pages. 
-						Index page = -1, Chapters/Part=0, Section=1 and so on until paragraph.)
-	"export_pages":"1", (tell if single pages have to be exported)
-	"export_pages_text":"1", (tell if single pages have to be exported as plain 							text, no xml escaping and mediawiki dump tags)
-	"create_index":"1", (tell if the index has to be created)
+	
+	(Sections with level greater than collapse_level 					will be collapsed inside upper pages. Index page = -1, Chapters/Part=0, Section=1 and so on until paragraph.)
+	"collapse_level":"0", 
+			
+    (It can be xml, for xml mediawiki dumps, or text, 
+    for plain text export)			
+	"export_format":"" 
+	(tell if single pages in separated files have to be exported)
+	"export_single_pages":"1", 
+
+	(tell if the index has to be created in the root page)
+	"create_index":"1", 
+	
 	"print_preparsed_tex":"1", (print the latex after pre-parsing)
 	"images_ext":"png",
 	"lang":"en",   (lang for keywords inside text)
