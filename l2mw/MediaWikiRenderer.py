@@ -472,24 +472,21 @@ class MediaWikiRenderer (Renderer):
         #adding table to the tree
         self.tree.addTable(t)
         tablestring = ''
-        firstrow = True
         # Iterate through all rows in the table
-        for row in enumerate(node):
-
-        # Iterate through all cells in the row
-            for cell in enumerate(row):
-                # Iterate through all paragraphs in the cell
-                for par in cell:
-                    # Print the text content of each cell to tablestring
-                    i=0
-                    if type(par) != int:
-                        if firstrow:
-                            firstrow = False
-                        else:
-                            tablestring += '|-\n'
-                        for i in range (0,len(par)):
-                            tablestring += ' |' + str(par[i])[2:] + '\n'
-        return unicode('{|\n'+tablestring+'|}')
+        for rownum, row in enumerate(node):
+            if rownum != 0:
+                    tablestring += '|-\n'
+            # Iterate through all cells in the row
+            for cellnum, cell in enumerate(row):
+                colspan = cell.attributes.get('colspan', 1)
+                # Print the text and align
+                align = cell.style['text-align']
+                if align != "left":
+                    tablestring += '|align\"' + cell.style['text-align'] + \
+                            '\" | ' + cell.textContent.strip() + '\n'
+                else:
+                    tablestring += '|' + cell.textContent.strip() + '\n'
+        return unicode('{|class=\"table-bordered wikitable\"\n'+tablestring+'|}')
 
 
     ###################################################
