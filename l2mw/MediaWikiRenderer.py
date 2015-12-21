@@ -596,43 +596,30 @@ class MediaWikiRenderer (Renderer):
     do__multline_star = do_align
 
     ''' Support for gather alignment style '''
-    def do_gather(self, node):
+    def do_gather(self, node, env='gather'):
         self.used_tag("MATH_GATHER")
         s = node.source
-        text = None
-        new_text = ''
-        
-        #check math content
-        s = math_check(s)
+        #get content
+        content = get_environment_content(s,env)
+        if content:
+            s = content
 
-        #searching for label
-        global_label_tag = re.search(ur'\\\blabel\b\{(.*?)\}', s)
-        #getting label and deleting label tag
-        if global_label_tag:
-            label_tag = global_label_tag.group(1)
-            structure_label_tag = global_label_tag.group(0)
-        else:
-            label_tag = ''
-            structure_label_tag = ''
-        #deleting label tag
-        s = s.replace(structure_label_tag, "")
+        result = []
+        #splitting every new line in gather
+        #creating separated dmath tag
+        eqs = s.split('\\\\')
+        for eq in eqs:
+            #check math
+            eq = math_check(eq)
+            #getting label
+            label = get_label(eq)
+            if label:
+                self.label(label)
+            result.append('<dmath>'+ eq+'</dmath>')
+        return u'\n'.join(result)
 
-        s_tag = ''
-        if label_tag is not '':
-            #adding label to tree
-            self.label(label_tag)
-       
-        exists_text = re.search(ur'\\begin{(.*?)}(.*?)\\end{(.*?)}', s, re.DOTALL)
-        if exists_text:
-            text = exists_text.group(2)
-            lines = text.split("\\\\")
-            for line in lines:
-                new_text += unicode("<dmath>" + line + "</dmath> \n")
-        else:
-            new_text = ""
-        return new_text 
-
-    do__gather_star = do_gather
+    def do__gather_star(self,node):
+        return self.do_gather(node, env='gather\*')
 
 
     ###############################################
