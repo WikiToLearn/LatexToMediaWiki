@@ -109,9 +109,12 @@ class Page(object):
 	def fixReferences(self, labels, pages):
 		for label in re.findall(ur'\\ref{(.*?)}', self.text):
 			#convert label to int
-			label_n = int(label)
-			self.text = self.text.replace('\\ref{'+label+'}',\
-				' ([[' + labels[label_n] + ']]) ')
+			try:
+				label_n = int(label)
+				self.text = self.text.replace('\\ref{'+label+'}',\
+					' ([[' + labels[label_n] + ']]) ')
+			except Exception, e:
+				print("REF_ERROR: "+ label)
 		for sub in self.subpages:
 			pages[sub].fixReferences(labels,pages)
 			

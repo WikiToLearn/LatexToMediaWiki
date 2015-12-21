@@ -58,6 +58,7 @@ def preparserLabels(tex):
 			i+=1
 		#replacing new label
 		tex = tex.replace(match.group(0), u'\\label{'+label_dict[label]+ '}')
+		print("LABEL: "+ label + "@"+ label_dict [label])
 	#searching all refs
 	r = re.compile(ur'\\ref\s*\{\s*(.*?)\s*\}')
 	for r_match in re.finditer(r,tex):
@@ -65,7 +66,17 @@ def preparserLabels(tex):
 		#replacing with new label
 		if r_label not in label_dict:
 			print("ERROR: label not found: "+ r_label)
+			continue
 		tex = tex.replace(r_match.group(0),u'\\ref{'+label_dict[r_label]+'}')
+		#searching all refs
+	er = re.compile(ur'\\eqref\s*\{\s*(.*?)\s*\}')
+	for er_match in re.finditer(er,tex):
+		er_label = er_match.group(1)
+		#replacing with new label
+		if er_label not in label_dict:
+			print("ERROR: label not found: "+ er_label)
+			continue
+		tex = tex.replace(er_match.group(0),u'\\ref{'+label_dict[er_label]+'}')
 	#searching for vref
 	vr = re.compile(ur'\\vref\s*\{\s*(.*?)\s*\}')
 	for vr_match in re.finditer(vr,tex):
@@ -73,6 +84,7 @@ def preparserLabels(tex):
 		#replacing with new label
 		if vr_label not in label_dict:
 			print("ERROR: label not found: "+ vr_label)
+			continue
 		tex = tex.replace(vr_match.group(0),u'\\ref{'+label_dict[vr_label]+'}')
 	#searching all pageref
 	pr = re.compile(ur'\\pageref\s*\{\s*(.*?)\s*\}')
@@ -81,5 +93,6 @@ def preparserLabels(tex):
 		#replacing with new label
 		if pr_label not in label_dict:
 			print("ERROR: label not found: "+ pr_label)
+			continue
 		tex = tex.replace(pr_match.group(0),u'\\ref{'+label_dict[pr_label]+'}')
 	return tex
