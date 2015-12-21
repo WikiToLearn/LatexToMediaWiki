@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from Page import Page
-import datetime
-import time
-import re
+import datetime,time,re,os
 from xml.sax.saxutils import escape
 from utility import *
 
@@ -222,6 +220,8 @@ class PageTree (object):
 
 	'''Entry point to export pages in separated files.'''
 	def export_singlePages(self, format,base_path,config=('','')):
+		if not os.path.exists(base_path):
+			os.makedirs(base_path)
 		if format=='xml':
 			self.exportXML_single_pages(config[0],config[1],base_path)
 		elif format == 'text':
@@ -319,7 +319,7 @@ class PageTree (object):
 			if page.level <= self.collapse_level:
 				if page.text != "":
 					output.append('##########')
-					output.append('\'\'\''+ page.title+ '\'\'\'')
+					output.append('\'\'\''+ page.url+ '\'\'\'')
 					output.append(page.text)
 					output.append('@@@@@@@@@@')
 		return ('\n'.join(output)).encode('utf-8')
@@ -330,7 +330,7 @@ class PageTree (object):
 			if page.level <= self.collapse_level:
 				text = []
 				text.append('##########')
-				text.append('\'\'\''+ page.title+ '\'\'\'')
+				text.append('\'\'\''+ page.url+ '\'\'\'')
 				text.append(page.text)
 				text.append('@@@@@@@@@@')
 				path = base_path+'/'+page.title+".txt"
