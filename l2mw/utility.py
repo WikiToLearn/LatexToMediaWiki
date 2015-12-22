@@ -24,8 +24,11 @@ def remove_command_greedy(tex,command,delete_content=False):
 				level-=1
 			#now check if we are returned to 0 level
 			if level ==0:
-				#we can get the content of outer {}
-				result+= tok[1:pos] + ' '+ tok[pos+1:]
+				if not delete_content:
+					#we can get the content of outer {}
+					result+= tok[1:pos] + ' '+ tok[pos+1:]
+				else:
+					result+= ' '+ tok[pos+1:]
 				break;
 	return result;
 
