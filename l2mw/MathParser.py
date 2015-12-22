@@ -55,6 +55,8 @@ def math_check(mtxt):
         #replacing bb and bbm with boldmath
         mtxt = replace_command_greedy(mtxt, '\\bm','\\mathbf', False)
         mtxt = replace_command_greedy(mtxt, '\\bbm','\\mathbf', False)
+        #replace intertext with mbox
+        mtxt = replace_command_greedy(mtxt, '\\intertext', '\\mbox', False)
         #symbols
         mtxt = mtxt.replace('\\abs','|')
         mtxt = mtxt.replace('\\lvert','|')

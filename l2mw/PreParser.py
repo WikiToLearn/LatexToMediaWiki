@@ -2,6 +2,8 @@ import re
 from utility import *
 
 def preparse_tex(tex,print_path):
+	#remove commands
+	tex = remove_commands(tex,['\\index'])
 	#preparse theorem
 	th_dict = {}
 	tex,th_dict = preparseTheorems(tex)
@@ -45,7 +47,8 @@ def preparseTheorems(tex):
 def add_par_after_env(tex,env):
 	return tex.replace('\\end{'+env+'}', '\\end{'+env+'}\n')
 
-
+'''Function that replace labels and references with int. This make more simple
+the identification of label in the rendere'''
 def preparserLabels(tex):
 	label_dict = {}
 	i = 0
@@ -95,4 +98,10 @@ def preparserLabels(tex):
 			print("ERROR: label not found: "+ pr_label)
 			continue
 		tex = tex.replace(pr_match.group(0),u'\\ref{'+label_dict[pr_label]+'}')
+	return tex
+
+'''Function that remove the list of command cmds from tex'''
+def remove_commands(tex,cmds):
+	for cmd in cmds:
+		tex = remove_command_greedy(tex,cmd,True)
 	return tex

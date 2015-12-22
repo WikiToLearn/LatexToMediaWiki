@@ -2,9 +2,10 @@
 from string import *
 import re, string,json
 
-'''This function remove a command live \command{content}, leaving 
-the content untouched, even if it contains nested brakets'''
-def remove_command_greedy(tex,command):
+'''This function remove a command like \command{content}
+ even if it contains nested brakets. If delete_content=False it leaves
+ the content of the command without the command, otherwise it deletes all'''
+def remove_command_greedy(tex,command,delete_content=False):
 	result=''
 	tokens = tex.split(command)
 	#Remove the fist token that doesn't contain data and save it
@@ -32,7 +33,7 @@ def remove_command_greedy(tex,command):
 with command with {}, not with declaration. It understands nested brakets.
 If rm_content is true che content of the command and {} are removed'''
 def replace_command_greedy(tex,command, repl, rm_content=False,
-							  left_delim='}',right_delim='{'):
+							  left_delim='{',right_delim='}'):
 	result=''
 	tokens = tex.split(command)
 	#Remove the fist token that doesn't contain data and save it
