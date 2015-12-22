@@ -59,6 +59,8 @@ def math_check(mtxt):
         mtxt = mtxt.replace('\\abs','|')
         mtxt = mtxt.replace('\\lvert','|')
         mtxt = mtxt.replace('\\rvert','|')
+        mtxt = replace_command_greedy(mtxt,'\\modul','|',False,'|','|')
         #removing \nonumber command
-        mtxt = mtxt.replace('\\nonumber',u'')
+        mtxt = mtxt.replace('\\nonumber','')
+        mtxt = mtxt.replace('\\notag','')
         return mtxt

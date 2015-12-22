@@ -31,7 +31,8 @@ def remove_command_greedy(tex,command):
 ''' This function replace a command with the repl par. It must be used 
 with command with {}, not with declaration. It understands nested brakets.
 If rm_content is true che content of the command and {} are removed'''
-def replace_command_greedy(tex,command, repl, rm_content):
+def replace_command_greedy(tex,command, repl, rm_content=False,
+							  left_delim='}',right_delim='{'):
 	result=''
 	tokens = tex.split(command)
 	#Remove the fist token that doesn't contain data and save it
@@ -53,7 +54,8 @@ def replace_command_greedy(tex,command, repl, rm_content):
 				if rm_content:
 					result+=repl+' '+ tok[pos+1:]
 				else:
-					result+= repl + '{'+ tok[1:pos]+ '} '+ tok[pos+1:]
+					result+= repl + left_delim+ tok[1:pos]+ \
+							right_delim+' '+ tok[pos+1:]
 				break;
 	return result;
 
