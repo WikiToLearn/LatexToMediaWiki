@@ -28,8 +28,9 @@ def remove_command_greedy(tex,command):
 				break;
 	return result;
 
-''' This function replace a command with the repl par. It understands
-nested brakets'''
+''' This function replace a command with the repl par. It must be used 
+with command with {}, not with declaration. It understands nested brakets.
+If rm_content is true che content of the command and {} are removed'''
 def replace_command_greedy(tex,command, repl, rm_content):
 	result=''
 	tokens = tex.split(command)

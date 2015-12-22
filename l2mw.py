@@ -53,7 +53,7 @@ def execute_mediawiki_parser(config):
 	if config['create_index']:
 		rend.tree.createIndex(collapse_level)
 	#exporting 
-	export = rend.tree.exportPages(output_path,
+	export = rend.tree.exportPages(output_path+".mw",
 					(config['export_format'],
 					config['username'], config['userid']) )
 	#check if we have to export single pages

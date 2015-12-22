@@ -514,13 +514,11 @@ class MediaWikiRenderer (Renderer):
         #check math content
         s = math_check(s)
         #search label
-        label = get_label(s)
-        s_tag='<dmath>'
+        label, s = get_label(s)
         if label:
             #adding label to tree
             self.label(label)
-            s_tag = '<dmath label="' + label + '">'
-        return s_tag + s + '</dmath>'
+        return '<dmath>' + s + '</dmath>'
 
     #displaymath is converted to \[..\]
     do_displaymath = handleDisplayMath
@@ -544,8 +542,9 @@ class MediaWikiRenderer (Renderer):
         #check math content
         s = math_check(s)
         #search label
-        label = get_label(s)
+        label, s = get_label(s)
         if label:
+            #adding label to tree
             self.label(label)
         return '<math>'+s+'</math>'
 
@@ -579,12 +578,12 @@ class MediaWikiRenderer (Renderer):
         #check math content
         s = math_check(s)
         #search label
-        label = get_label(s)
+        label,s = get_label(s)
         s_tag='<dmath type="align">'
         if label:
             #adding label to tree
             self.label(label)
-            s_tag = '<dmath type="align" label="' + label + '">'
+            s_tag = '<dmath type="align">'
         return s_tag + s + '</dmath>'
 
     do_eqnarray = do_align
@@ -613,7 +612,7 @@ class MediaWikiRenderer (Renderer):
             #check math
             eq = math_check(eq)
             #getting label
-            label = get_label(eq)
+            label,s = get_label(eq)
             if label:
                 self.label(label)
             result.append('<dmath>'+ eq+'</dmath>')

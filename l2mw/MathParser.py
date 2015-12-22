@@ -25,12 +25,15 @@ def get_content_inline_math(tex):
 			content = tag_search.group(2)
 	return content
 
-'''Function that extracts and removes the label from the tex'''
+'''Function that extracts and removes the label from the tex.
+it returns a tuple (label, tex)'''
 def get_label(tex):
-	label_re = re.search(ur'\\\blabel\b\{(.*?)\}', tex)
-	if(label_re):
-		tex = tex.replace(label_re.group(0),"")
-		return label_re.group(1)
+    label_re = re.search(ur'\\\blabel\b\{(.*?)\}', tex)
+    label = ''
+    if label_re:
+        label = label_re.group(1)
+        tex = tex.replace(label_re.group(0),"")
+    return (label,tex)
 
 '''Function that remove and replace some commands from math'''
 def math_check(mtxt):
@@ -52,8 +55,10 @@ def math_check(mtxt):
         #replacing bb and bbm with boldmath
         mtxt = replace_command_greedy(mtxt, '\\bm','\\mathbf', False)
         mtxt = replace_command_greedy(mtxt, '\\bbm','\\mathbf', False)
-        #abs
-        mtxt = replace_command_greedy(mtxt, '\\abs','|', False)
+        #symbols
+        mtxt = mtxt.replace('\\abs','|')
+        mtxt = mtxt.replace('\\lvert','|')
+        mtxt = mtxt.replace('\\rvert','|')
         #removing \nonumber command
         mtxt = mtxt.replace('\\nonumber',u'')
         return mtxt
