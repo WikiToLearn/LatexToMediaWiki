@@ -65,7 +65,8 @@ class PageTree (object):
 	def getNormalizedUrl(self,title):
 		mre = re.search('<\s*math\s*>(.*?)<\s*\/\s*math\s*>',title,re.DOTALL)
 		if mre:
-			return title.replace(mre.group(0),mre.group(1))
+			tit = str(raw_input("\n@Found title: "+ title+" --->  "))
+			return title.replace(mre.group(0),tit)
 		else:
 			return title
 
