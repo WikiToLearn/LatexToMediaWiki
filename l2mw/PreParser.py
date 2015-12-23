@@ -4,6 +4,8 @@ from utility import *
 def preparse_tex(tex,print_path):
 	#remove commands
 	tex = remove_commands(tex,['\\index'])
+	#remove centering inside table
+	tex = remove_center_inside_table(tex)
 	#preparse theorem
 	th_dict = {}
 	tex,th_dict = preparseTheorems(tex)
@@ -12,7 +14,7 @@ def preparse_tex(tex,print_path):
 	tex = add_par_after_env(tex,'proof')
 	#preparsing labels and refs
 	tex = preparserLabels(tex)
-
+	#printing preparser tex
 	if(print_path != ""):
 		o = open(print_path,"w")
 		o.write(tex)
@@ -104,4 +106,17 @@ def preparserLabels(tex):
 def remove_commands(tex,cmds):
 	for cmd in cmds:
 		tex = remove_command_greedy(tex,cmd,True)
+	return tex
+
+'''Function that removes centering command inside table environment'''
+def remove_center_inside_table(tex):
+	pattern = re.compile(ur'\\begin\s*\{\s*table\s*\}(.*?)\\end\s*\{\s*table\s*\}',re.DOTALL)
+	for match in re.finditer(pattern,tex):
+		#get content of center command
+		content = match.group(1)
+		content = remove_environment_greedy(content, '\\center')
+		content = content.replace('\\centering','')
+		#replacing conent without center
+		content = '\\begin{table}'+content+'\\end{table}'
+		tex = tex.replace(match.group(0), content)
 	return tex
