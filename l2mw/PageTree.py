@@ -14,15 +14,19 @@ class PageTree (object):
 		-self.current_url handles the current url
 		-self.pages is a dictionary of pages. The keys are internal url of pages.
 		-self.media_urls is a dictionary internal_url = media_url
+		-self.normalized_urls is a dictionary of titles replacement for titles
+			with math indide them. It's created interactively.
 		-self.labels is a dictionary for label: label=media_url 
 		-self.figures contains the list of figure objects
 		-self.tables contains the list of table objects
 		-self.page_stack contains the history of enviroment until the one before the current'''
-	def __init__(self, doc_title, keywords):
+	def __init__(self, doc_title, output_path, keywords):
 		self.doc_title= doc_title
+		self.output_path = output_path
 		self.keywords = keywords
 		self.pages = {}
 		self.media_urls = {}
+		self.normalized_urls ={}
 		self.labels = {}
 		#lists of figures and tables
 		self.figures = []
@@ -38,6 +42,13 @@ class PageTree (object):
 		self.current_url = doc_title
 		#collapse level
 		self.collapse_level = 0
+		#initializing normalized_urls dict reading from file if exists
+		if os.path.exists(self.output_path+".titles"):
+			for line in open(self.output_path+".titles",'r'):
+				tok = line.split('@@@')
+				self.normalized_urls[tok[0]] = tok[1]
+		#the file is used to save the dict of normalized urls
+		self.nurls_file = open(self.output_path+".titles",'a')
 
 
 	''' This method creates a new page and enters 
@@ -65,8 +76,17 @@ class PageTree (object):
 	def getNormalizedUrl(self,title):
 		mre = re.search('<\s*math\s*>(.*?)<\s*\/\s*math\s*>',title,re.DOTALL)
 		if mre:
-			tit = str(raw_input("\n@Found title: "+ title+" --->  "))
-			return title.replace(mre.group(0),tit)
+			math = mre.group(1)
+			#reading the normalized urls dict
+			if math in self.normalized_urls:
+				return title.replace(mre.group(0),self.normalized_urls[math])
+			else:
+				tit = str(raw_input("\n@Normalize title: "+ title+" --->  "))
+				#saving the normalized urls
+				self.normalized_urls[math]= tit
+				#saving it to file
+				self.nurls_file.write(math+'@@@'+tit+'\n')
+				return title.replace(mre.group(0),tit)
 		else:
 			return title
 

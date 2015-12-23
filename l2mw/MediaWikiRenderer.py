@@ -45,8 +45,8 @@ class MediaWikiRenderer (Renderer):
         Renderer.__init__(self, *args, **kwargs)
         #document title
         self.configs = configs
-        self.doc_title = configs['doc_title']
-        self.image_extension = configs['image_extension']
+        self.doc_title = configs['title']
+        self.image_extension = configs['images_ext']
         # Load dictionary with methods
         for key in dir(self):
             if key.startswith('do__'):
@@ -58,7 +58,8 @@ class MediaWikiRenderer (Renderer):
         self.footnotes = []
         self.blocks = []
         #tree object
-        self.tree = PageTree(self.doc_title, configs['keywords'])
+        self.tree = PageTree(self.doc_title,
+                configs['output_path'],configs['keywords'])
         #parameter for list formatting
         self.list_level=u'' 
         #parameter for theorem handling
