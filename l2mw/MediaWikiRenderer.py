@@ -410,7 +410,7 @@ class MediaWikiRenderer (Renderer):
         caption = ''
         label=''
         #searchin includegraphics
-        graphics_search = re.search(ur'\\includegraphics\s(\[.*?\])*{(.*?)}',node.source)
+        graphics_search = re.search(ur'\\includegraphics\s*(\[.*?\])*\s*{(.*?)}',node.source)
         if graphics_search: 
             file_path = graphics_search.group(2).split('/').pop()
             #file_path+='.'+ self.configs['image_extension']
@@ -432,6 +432,8 @@ class MediaWikiRenderer (Renderer):
             return unicode('[[File:'+file_path+'|frame|'+caption+']]')
         else:
             return unicode('[[File:'+file_path+'|frame]]')
+
+    do_wrapfigure = do_figure
 
     def do_tikzpicture(self,node):
         print node.source

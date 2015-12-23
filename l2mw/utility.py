@@ -67,7 +67,7 @@ def replace_command_greedy(tex,command, repl, rm_content=False,
 \command{content}'''
 def get_content_greedy(tex,command):
 	if tex.find(command)==-1: 
-		return tex
+		return ''
 	tok = tex.split(command)[1].lstrip()
 	level = 0
 	pos = -1
