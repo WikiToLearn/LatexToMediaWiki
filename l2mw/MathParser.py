@@ -65,4 +65,10 @@ def math_check(mtxt):
         #removing \nonumber command
         mtxt = mtxt.replace('\\nonumber','')
         mtxt = mtxt.replace('\\notag','')
+
+        #removing rule command
+        rule_match = re.search(ur'\\rule\s*(\[(.*?)\])?(\s*(\{(.*?)\}))*',mtxt)
+        if rule_match:
+            mtxt = mtxt.replace(rule_match.group(0),'')
+
         return mtxt
