@@ -46,7 +46,7 @@ class PageTree (object):
 		if os.path.exists(self.output_path+".titles"):
 			for line in open(self.output_path+".titles",'r'):
 				tok = line.split('@@@')
-				self.normalized_urls[tok[0]] = tok[1]
+				self.normalized_urls[tok[0]] = tok[1].strip()
 		#the file is used to save the dict of normalized urls
 		self.nurls_file = open(self.output_path+".titles",'a')
 
@@ -347,7 +347,9 @@ class PageTree (object):
 				
 	'''Function that exports the text of pages in separated files'''
 	def exportText_single_pages(self,base_path=''):
+		pf = open(base_path+'/pages.txt','w')
 		for page in self.pages.values():
+			pf.write('# [['+page.url+']]\n')
 			if page.level <= self.collapse_level:
 				text = []
 				text.append('##########')
@@ -359,6 +361,7 @@ class PageTree (object):
 				f = open(path, 'w')
 				f.write(('\n'.join(text)).encode('utf-8'))
 				f.close()
+		pf.close()
 
 class Figure(object):
 
