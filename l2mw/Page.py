@@ -111,8 +111,10 @@ class Page(object):
 			#convert label to int
 			try:
 				label_n = int(label)
-				self.text = self.text.replace('\\ref{'+label+'}',\
-					' ([[' + labels[label_n] + ']]) ')
+				link = labels[label_n]
+				if link != self.url:
+					self.text = self.text.replace('\\ref{'+label+'}',\
+						' ([[' + link + ']]) ')
 			except Exception, e:
 				print("REF_ERROR: "+ label)
 		for sub in self.subpages:
