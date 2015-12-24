@@ -37,7 +37,7 @@ class MediaWikiRenderer (Renderer):
 
     '''List of nodes not to explore'''
     no_enter = ['titlepage','tableofcontents','pagestyle','maketitle',
-            'numberwithin','geometry',"index"]
+            'numberwithin','geometry',"index","pspicture"]
 
     ##############################################################
     #initialization
@@ -106,6 +106,8 @@ class MediaWikiRenderer (Renderer):
     #sectioning
     def sectioning(self, node,page_type):
         title = unicode(node.attributes['title'])
+        #remove the \n insiede title
+        title = re.sub('\\n*','',title)
         #fixing wrong symbolds
         title = title.replace(u'’',u"'")
         title = title.replace(u'`',u"'")
