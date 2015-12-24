@@ -71,5 +71,7 @@ def math_check(mtxt):
         rule_match = re.search(ur'\\rule\s*(\[(.*?)\])?(\s*(\{(.*?)\}))*',mtxt)
         if rule_match:
             mtxt = mtxt.replace(rule_match.group(0),'')
+        #removing makebox[]{} command
+        mtxt = re.sub(ur'\\makebox\s*(\[(.*?)\])*\s?\{(.*?)\}','',mtxt)
 
         return mtxt
