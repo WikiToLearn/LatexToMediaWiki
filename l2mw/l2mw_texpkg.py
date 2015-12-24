@@ -15,8 +15,8 @@ class eqref(Command):
 class empheq(Environment):
 	pass
 
-class cases(Environment):
-	pass
+# class cases(Environment):
+# 	pass
 
 class tikzpicture(Environment):
 	args = '[options]'
