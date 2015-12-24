@@ -81,7 +81,7 @@ class PageTree (object):
 			if math in self.normalized_urls:
 				return title.replace(mre.group(0),self.normalized_urls[math])
 			else:
-				tit = str(raw_input("\n@Normalize title: "+ title+" --->  "))
+				tit = str(raw_input("\n@Normalize title: "+ title+" --->  ")).strip()
 				#saving the normalized urls
 				self.normalized_urls[math]= tit
 				#saving it to file
