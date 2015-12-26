@@ -115,6 +115,9 @@ class Page(object):
 				if link != self.url:
 					self.text = self.text.replace('\\ref{'+label+'}',\
 						' ([[' + link + ']]) ')
+				else:
+					self.text = self.text.replace('\\ref{'+label+'}',' ')
+
 			except Exception, e:
 				print("REF_ERROR: "+ label)
 		for sub in self.subpages:
