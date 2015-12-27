@@ -115,17 +115,17 @@ def get_environment_content(tex,env):
 	else:
 		return ''
 
-'''Function that removes an environment from tex, leaving or not 
-the content.'''
+'''Function that removes all the occurences of an environment 
+from tex, leaving or not the content.'''
 def remove_environment_greedy(tex,env,delete_content=False):
 	#search \begin and end \tag
 	pattern = ur'\\begin\s*\{\s*'+env+ \
 			ur'\s*\}(.*?)\\end\s*\{\s*'+env+ur'\s*\}'
-	env_result = re.search(pattern,tex,re.DOTALL)
-	if env_result:
-		if delete_content:
-			return tex.replace(env_result.group(0),'')
-		else:
-			return tex.replace(env_result.group(0),env_result.group(1)) 
-	else:
-		return ''
+	for env_result in re.finditer(pattern,tex):
+		print(env_result)
+		if env_result:
+			if delete_content:
+				tex =  tex.replace(env_result.group(0),'')
+			else:
+				tex =  tex.replace(env_result.group(0),env_result.group(1))
+	return tex
