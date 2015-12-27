@@ -111,10 +111,10 @@ class Page(object):
 			#convert label to int
 			try:
 				label_n = int(label)
-				link = labels[label_n]
-				if link != self.url:
+				page = pages[labels[label_n]]
+				if page.url != self.url:
 					self.text = self.text.replace('\\ref{'+label+'}',\
-						' ([[' + link + ']]) ')
+						' ([[' + page.url + '|'+ page.title_name + ']]) ')
 				else:
 					self.text = self.text.replace('\\ref{'+label+'}',' ')
 
