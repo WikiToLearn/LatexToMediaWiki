@@ -14,6 +14,8 @@ def preparse_tex(tex,print_path):
 	tex = add_par_after_env(tex,'proof')
 	#preparsing labels and refs
 	tex = preparserLabels(tex)
+	#removing pspicture
+	tex = remove_environment_greedy(tex,'\\pspicture',True)
 	#printing preparser tex
 	if(print_path != ""):
 		o = open(print_path,"w")
