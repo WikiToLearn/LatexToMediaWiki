@@ -23,3 +23,15 @@ class tikzpicture(Environment):
 
 class tikz(Command):
 	args = '[options]'
+
+class lstlisting(Environment):
+	args = '[options]'
+
+class lstset(Command):
+	args = 'args'
+
+class minted(Environment):
+	args = '[options]'
+
+class lstdefinestyle(Command):
+        args = 'name args'

@@ -677,3 +677,67 @@ class MediaWikiRenderer (Renderer):
         return u''.join(s)
 
 
+    ####################################################
+    #Code Environments 
+
+    def do_lstdefinestyle(self,node):
+        if not hasattr(self, 'style_lang'):
+            self.style_lang = dict([])
+        name = unicode(node.attributes['name'].source)
+        args = unicode(node.attributes['args'].source)
+        a = []
+        for i in args.split(','):
+            a.append(i+'= ')
+        argsdict = {arg.split('=')[0].strip(): arg.split('=')[1] for arg in (a)}
+        if 'language' in argsdict:
+            self.style_lang[name] = argsdict['language']
+        else:
+            self.style_lang[name] = 'Not specified in style'
+        return u''
+
+    def do_lstset(self,node):
+        args = unicode(node.attributes['args'])
+        a = []
+        for i in args.split(','):
+            a.append(i+'= ')
+        argsdict = {arg.split('=')[0].strip(): arg.split('=')[1] for arg in (a)}
+        if 'language' in argsdict:
+            self.lst_lang = argsdict['language']
+        elif 'style' in argsdict:
+            self.lst_lang = self.style_lang[argsdict['style']]
+        else:
+            self.lst_lang = 'Not specified'
+        print self.lst_lang
+        return u''
+
+    def do_lstlisting(self,node):
+        self.used_tag('LSTLISTING')
+        s=[]
+        source = node.source
+        s.append('<source lang="'+self.lst_lang+'">')
+        #ignore formatting from \lstlisting
+        if source.find('}')+1==source.find('['):
+            ind1 = source.find(']')
+        else:
+            ind1 = source.find('}')
+        ind2 = source.rfind('\\')
+        print(source)
+        s.append(source[ind1+1:ind2])
+        s.append('</source>\n')
+        return u'\n'.join(s)
+        
+    def do_minted(self,node):
+        self.used_tag('MINTED')
+        s=[]
+        source = node.source
+        lang = source[source.find('}'):]
+        lang = lang[lang.find('{')+1:]
+        #ignore formatting from \minted
+        source = lang[lang.find('}')+1:]
+        lang = lang[:lang.find('}')]
+        self.minted_lang = lang
+        s.append('<source lang="'+self.minted_lang+'">')
+        ind2 = source.rfind('\\')
+        s.append(source[:ind2])
+        s.append('</source>\n')
+        return u'\n'.join(s)
