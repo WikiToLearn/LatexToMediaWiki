@@ -1,7 +1,7 @@
 # LatexToMediaWiki
 Latex to MediaWiki Markup Converter
 
-This python script converts Latex documents into MediaWiki XML dump format.
+This python script converts Latex documents into MediaWiki wiki-text format.
 It runs on Python 2.7.x ans uses PlasTeX lib (https://github.com/tiarno/plastex)
 
 ##### Installation #####
