@@ -117,11 +117,8 @@ class Page(object):
 						' ([[' + page.url + '|'+ page.title_name + ']]) ')
 				else:
 					self.text = self.text.replace('\\ref{'+label+'}',' ')
-
 			except Exception, e:
 				print("REF_ERROR: "+ label)
-		for sub in self.subpages:
-			pages[sub].fixReferences(labels,pages)
 			
 	'''Utility function to fix apostrophes and other characters 
 	inside the text of the page'''

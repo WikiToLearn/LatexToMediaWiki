@@ -170,8 +170,9 @@ class PageTree (object):
 
 	'''Method that starts the rendering of refs'''
 	def fixReferences(self):
-		self.pages[self.doc_title].fixReferences(self.labels,self.pages)
-
+		for page in self.pages.values():
+			page.fixReferences(self.labels,self.pages)
+		
 	'''index for book export page'''
 	book_export_index = ['{{libro_salvato | setting-papersize = a4\
  				| setting-toc = auto | setting-columns = 1}}']
