@@ -73,6 +73,7 @@ def preparserLabels(tex):
 		#replacing with new label
 		if r_label not in label_dict:
 			print("ERROR: label not found: "+ r_label)
+			tex = tex.replace(r_match.group(0),u'\\ref{-1}')
 			continue
 		tex = tex.replace(r_match.group(0),u'\\ref{'+label_dict[r_label]+'}')
 		#searching all refs
@@ -82,6 +83,7 @@ def preparserLabels(tex):
 		#replacing with new label
 		if er_label not in label_dict:
 			print("ERROR: label not found: "+ er_label)
+			tex = tex.replace(er_match.group(0),u'\\ref{-1}')
 			continue
 		tex = tex.replace(er_match.group(0),u'\\ref{'+label_dict[er_label]+'}')
 	#searching for vref
@@ -91,6 +93,7 @@ def preparserLabels(tex):
 		#replacing with new label
 		if vr_label not in label_dict:
 			print("ERROR: label not found: "+ vr_label)
+			tex = tex.replace(vr_match.group(0),u'\\ref{-1}')
 			continue
 		tex = tex.replace(vr_match.group(0),u'\\ref{'+label_dict[vr_label]+'}')
 	#searching all pageref
@@ -100,6 +103,7 @@ def preparserLabels(tex):
 		#replacing with new label
 		if pr_label not in label_dict:
 			print("ERROR: label not found: "+ pr_label)
+			tex = tex.replace(pr_match.group(0),u'\\ref{-1}')
 			continue
 		tex = tex.replace(pr_match.group(0),u'\\ref{'+label_dict[pr_label]+'}')
 	return tex
