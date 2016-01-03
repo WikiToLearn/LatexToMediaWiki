@@ -528,6 +528,9 @@ class MediaWikiRenderer (Renderer):
     #displaymath is converted to \[..\]
     do_displaymath = handleDisplayMath
     do_equation = handleDisplayMath
+
+    def do_subequations(self,node):
+        return self.handleDisplayMath(node,'subequations')
    
     #functions for displaymath with different environments
     def do_empheq(self,node):
