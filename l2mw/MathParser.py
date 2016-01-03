@@ -36,7 +36,7 @@ def get_label(tex):
     return (label,tex)
 
 '''Function that remove and replace some commands from math'''
-def math_check(mtxt):
+def math_check(mtxt,env=''):
          #removing inner starred commands
         re_remove_star= re.compile(ur'\\begin{(\w+)\*}(.*?)\\end{(\w+)\*}',re.DOTALL)
         for star_tag in re.finditer(re_remove_star,mtxt):
@@ -74,4 +74,8 @@ def math_check(mtxt):
         #removing makebox[]{} command
         mtxt = re.sub(ur'\\makebox\s*(\[(.*?)\])*\s?\{(.*?)\}','',mtxt)
 
+        #environment specific changes
+        if env == 'empheq':
+            mtxt = re.sub(ur'\[box=(.*?)\]', u'', mtxt, re.DOTALL)
+            
         return mtxt

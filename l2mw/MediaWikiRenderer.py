@@ -517,7 +517,7 @@ class MediaWikiRenderer (Renderer):
             if content2:
                 s = content2
         #check math content
-        s = math_check(s)
+        s = math_check(s, env)
         #search label
         label, s = get_label(s)
         if label:
