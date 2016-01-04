@@ -73,6 +73,8 @@ def math_check(mtxt,env=''):
             mtxt = mtxt.replace(rule_match.group(0),'')
         #removing makebox[]{} command
         mtxt = re.sub(ur'\\makebox\s*(\[(.*?)\])*\s?\{(.*?)\}','',mtxt)
+        #removing tag command
+        mtxt = remove_command_greedy(mtxt,'\\tag', True)
 
         #environment specific changes
         if env == 'empheq':
