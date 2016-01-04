@@ -12,12 +12,6 @@ class vref(Command):
 class eqref(Command):
 	args = 'label'
 
-class empheq(Environment):
-	pass
-
-# class cases(Environment):
-# 	pass
-
 class tikzpicture(Environment):
 	args = '[options]'
 

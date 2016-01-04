@@ -16,6 +16,8 @@ def preparse_tex(tex,print_path):
 	tex = preparserLabels(tex)
 	#removing pspicture
 	tex = remove_environment_greedy(tex,'\\pspicture',True)
+	#replacing empheq with normal environments
+	tex = replace_empheq(tex)
 	#printing preparser tex
 	if(print_path != ""):
 		o = open(print_path,"w")
@@ -125,4 +127,22 @@ def remove_center_inside_table(tex):
 		#replacing conent without center
 		content = '\\begin{table}'+content+'\\end{table}'
 		tex = tex.replace(match.group(0), content)
+	return tex
+
+'''Function that removes empheq env replacing it with 
+the right \begin{env}\end{env}'''
+def replace_empheq(tex):
+	#searching for all empheq
+	while True:
+		env = get_environment_content(tex,'empheq')
+		print(env)
+		if env[0] == '':
+			break
+		content = env[0]
+		match = re.search(ur'\[box=(.*?)]\s*\{(.*?)\}',content,re.DOTALL)
+		if match:
+			content = content.replace(match.group(0),u'')
+			content = '\\begin{'+match.group(2)+'}'+content+'\\end{'+match.group(2)+'}'
+			tex = tex.replace(env[1], content)
+		pass
 	return tex
