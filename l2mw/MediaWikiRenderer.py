@@ -507,7 +507,7 @@ class MediaWikiRenderer (Renderer):
         self.used_tag('DISPLAY_MATH@'+env )
         s = node.source
         #get content of environment or display math tags
-        content = get_environment_content(s,env)
+        content = get_environment_content(s,env)[0]
         if content:
             s = content
         else:
@@ -531,10 +531,6 @@ class MediaWikiRenderer (Renderer):
 
     def do_subequations(self,node):
         return self.handleDisplayMath(node,'subequations')
-   
-    #functions for displaymath with different environments
-    def do_empheq(self,node):
-        return self.handleDisplayMath(node,'empheq')
 
     def do__equation_star(self,node):
         return self.handleDisplayMath(node,'equation\\*')
@@ -580,7 +576,7 @@ class MediaWikiRenderer (Renderer):
         s = s.replace('eqnarray*',u'align')
         s = s.replace('multline*',u'align')
         #get content of environment
-        content = get_environment_content(s,'align')
+        content = get_environment_content(s,'align')[0]
         if content:
             s = content
         #check math content
@@ -608,10 +604,9 @@ class MediaWikiRenderer (Renderer):
         self.used_tag("MATH_GATHER")
         s = node.source
         #get content
-        content = get_environment_content(s,env)
+        content = get_environment_content(s,env)[0]
         if content:
             s = content
-
         result = []
         #splitting every new line in gather
         #creating separated dmath tag
