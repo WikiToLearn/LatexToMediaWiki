@@ -13,7 +13,7 @@ class eqref(Command):
 	args = 'label'
 
 class tikzpicture(Environment):
-	args = '[options]'
+	args = '[options] code'
 
 class tikz(Command):
 	args = '[options]'
