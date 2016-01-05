@@ -106,10 +106,14 @@ def get_content_list_greedy(tex,command):
 '''Function that returns the content of the first occurence
 of the environment env and all the matched environment in a tuple.
 If the env is not found it return ('')'''
-def get_environment_content(tex,env):
+def get_environment_content(tex,env, remove_options=False):
 	#search \begin and end \tag
-	pattern = ur'\\begin\s*\{\s*'+env+ \
-			ur'\s*\}(.*?)\\end\s*\{\s*'+env+ur'\s*\}'
+	if remove_options:
+		pattern = ur'\\begin\s*\{\s*'+env+ \
+			ur'\s*\}\s*\[.*?\](.*?)\\end\s*\{\s*'+env+ur'\s*\}'
+	else:
+		pattern = ur'\\begin\s*\{\s*'+env+ \
+				ur'\s*\}(.*?)\\end\s*\{\s*'+env+ur'\s*\}'
 	env_result = re.search(pattern,tex,re.DOTALL)
 	if env_result:
 		return (env_result.group(1), env_result.group(0))
