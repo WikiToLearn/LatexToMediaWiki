@@ -25,15 +25,15 @@ def get_content_inline_math(tex):
 			content = tag_search.group(2)
 	return content
 
-'''Function that extracts and removes the label from the tex.
-it returns a tuple (label, tex)'''
-def get_label(tex):
-    label_re = re.search(ur'\\\blabel\b\{(.*?)\}', tex)
-    label = ''
-    if label_re:
-        label = label_re.group(1)
-        tex = tex.replace(label_re.group(0),"")
-    return (label,tex)
+'''Function that extracts and removes the labels from the tex.
+it returns a tuple (list of labels, tex)'''
+def get_labels(tex):
+    labels = []
+    for label_re in re.finditer(ur'\\\blabel\b\{(.*?)\}', tex,re.DOTALL):
+        if label_re:
+            labels.append(label_re.group(1))
+            tex = tex.replace(label_re.group(0),"")
+    return (labels,tex)
 
 '''Function that remove and replace some commands from math'''
 def math_check(mtxt,env=''):

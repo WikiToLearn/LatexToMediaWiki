@@ -184,6 +184,10 @@ class MediaWikiRenderer (Renderer):
         else:
             self.tree.addLabel(label)
 
+    def labels(self,lbls):
+        for l in lbls:
+            self.label(l)
+
     ''' Labels are managed bey PageTree'''
     def do_label(self,node):
         #retriving label id
@@ -519,10 +523,10 @@ class MediaWikiRenderer (Renderer):
         #check math content
         s = math_check(s, env)
         #search label
-        label, s = get_label(s)
-        if label:
+        labels, s = get_labels(s)
+        if labels:
             #adding label to tree
-            self.label(label)
+            self.labels(labels)
         return '<dmath>' + s + '</dmath>'
 
     #displaymath is converted to \[..\]
@@ -546,10 +550,10 @@ class MediaWikiRenderer (Renderer):
         #check math content
         s = math_check(s)
         #search label
-        label, s = get_label(s)
-        if label:
+        labels, s = get_labels(s)
+        if labels:
             #adding label to tree
-            self.label(label)
+            self.labels(labels)
         return '<math>'+s+'</math>'
 
     '''Check math inside macros'''
@@ -582,11 +586,11 @@ class MediaWikiRenderer (Renderer):
         #check math content
         s = math_check(s)
         #search label
-        label,s = get_label(s)
+        labels,s = get_labels(s)
         s_tag='<dmath type="align">'
-        if label:
+        if labels:
             #adding label to tree
-            self.label(label)
+            self.labels(labels)
             s_tag = '<dmath type="align">'
         return s_tag + s + '</dmath>'
 
@@ -615,9 +619,9 @@ class MediaWikiRenderer (Renderer):
             #check math
             eq = math_check(eq)
             #getting label
-            label,s = get_label(eq)
-            if label:
-                self.label(label)
+            labels,s = get_labels(eq)
+            if labels:
+                self.labels(labels)
             result.append('<dmath>'+ eq+'</dmath>')
         return u'\n'.join(result)
 
