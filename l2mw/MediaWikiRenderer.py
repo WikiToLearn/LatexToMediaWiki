@@ -445,14 +445,9 @@ class MediaWikiRenderer (Renderer):
             self.picture_nr = 1
         else: 
             self.picture_nr += 1
-        s = unicode(node.source)
-        options = unicode(node.attributes['options'])
-        code = get_environment_content(s,'tikzpicture', True)
-        print (options, code)
-        tikz = open('.tikz'+ str(self.picture_nr),'w+')
-        print >> tikz, args
-        print subprocess.check_output(["tikz2svg",'tikz'+str(self.picture_nr)])
-        return u''
+        file2 = open('./tikz'+ str(self.picture_nr) + '.svg','w+')
+        print >> file2,subprocess.check_output(["tikz2svg",'./tikz'+str(self.picture_nr)])
+        return u'[[File:tikz' + unicode(self.picture_nr) + u'.svg]]'
 
     ##########################################################à
     #Tables
