@@ -1,4 +1,5 @@
 import re
+import subprocess
 from utility import *
 
 def preparse_tex(tex,print_path):
@@ -18,6 +19,8 @@ def preparse_tex(tex,print_path):
 	tex = remove_environment_greedy(tex,'\\pspicture',True)
 	#replacing empheq with normal environments
 	tex = replace_empheq(tex)
+	#saving tikz source
+	tex = remove_tikz(tex)
 	#printing preparser tex
 	if(print_path != ""):
 		o = open(print_path,"w")
@@ -135,7 +138,6 @@ def replace_empheq(tex):
 	#searching for all empheq
 	while True:
 		env = get_environment_content(tex,'empheq')
-		print(env)
 		if env[0] == '':
 			break
 		content = env[0]
@@ -146,3 +148,22 @@ def replace_empheq(tex):
 			tex = tex.replace(env[1], content)
 		pass
 	return tex
+
+
+def remove_tikz(s):
+	#try using get_environment_content  from utility class.
+	#they are functions used for all the preparsing operations.
+        tikz = "\\begin{tikzpicture}";
+        tikzend = "\\end{tikzpicture}";
+        pos1 = 0
+        pos2 = 0
+        nbr = 1
+        while pos1 != -1:
+            pos1 = s.find(tikz, pos2)
+            pos2 = s.find(tikzend, pos1)
+            if pos1 != -1:
+                file1 = open('./tikz' + str(nbr),'w+')
+                print >> file1, s[pos1:pos2+17]
+                s = s[:pos1+19]+s[pos2:]
+            nbr += 1
+        return s
