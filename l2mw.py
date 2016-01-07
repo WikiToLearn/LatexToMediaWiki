@@ -5,11 +5,29 @@ from l2mw import *
 from plasTeX.TeX import TeX
 import json 
 import utility
+import subprocess
 
 #setting utf8 encoding
 import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
+
+
+def removetikz(s):
+        tikz = "\\begin{tikzpicture}";
+        tikzend = "\\end{tikzpicture}";
+        pos1 = 0
+        pos2 = 0
+        nbr = 1
+        while pos1 != -1:
+            pos1 = s.find(tikz, pos2)
+            pos2 = s.find(tikzend, pos1)
+            if pos1 != -1:
+                file1 = open('./tikz1','w+')
+                print >> file1, s[pos1:pos2-17]
+                s = s[:pos1+19]+s[pos2:]
+            nbr += 1
+        return s
 
 '''Function that execute a mediawiki_bparser with given parameters'''
 def execute_mediawiki_parser(config):
@@ -30,9 +48,10 @@ def execute_mediawiki_parser(config):
 	if(config['print_preparsed_tex']):
 		pre_export_path = output_path+".pre"
 	preparser_result = preparse_tex(text,pre_export_path)
+	source = removetikz(preparser_result[0])
 	#tex object
 	tex = TeX()
-	tex.input(preparser_result[0])
+	tex.input(source)
 	#parsing DOM
 	document = tex.parse()
 	#renderer creation
@@ -73,7 +92,6 @@ def execute_xml_parser(config):
 	input_path= config['input_path']
 	output_path = config['output_path']
 	title = config['title']
-
 	#process
 	f = open(input_path,'r')
 	text = f.read().decode('utf-8')
