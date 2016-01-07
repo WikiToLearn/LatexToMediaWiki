@@ -23,8 +23,8 @@ def removetikz(s):
             pos1 = s.find(tikz, pos2)
             pos2 = s.find(tikzend, pos1)
             if pos1 != -1:
-                file1 = open('./tikz1','w+')
-                print >> file1, s[pos1:pos2-17]
+                file1 = open('./tikz' + str(nbr),'w+')
+                print >> file1, s[pos1:pos2+17]
                 s = s[:pos1+19]+s[pos2:]
             nbr += 1
         return s
