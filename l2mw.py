@@ -30,9 +30,11 @@ def execute_mediawiki_parser(config):
 	if(config['print_preparsed_tex']):
 		pre_export_path = output_path+".pre"
 	preparser_result = preparse_tex(text,pre_export_path)
+	#saving source after preparsing
+	source = preparser_result[0]
 	#tex object
 	tex = TeX()
-	tex.input(preparser_result[0])
+	tex.input(source)
 	#parsing DOM
 	document = tex.parse()
 	#renderer creation
@@ -73,7 +75,6 @@ def execute_xml_parser(config):
 	input_path= config['input_path']
 	output_path = config['output_path']
 	title = config['title']
-
 	#process
 	f = open(input_path,'r')
 	text = f.read().decode('utf-8')

@@ -127,7 +127,6 @@ def remove_environment_greedy(tex,env,delete_content=False):
 	pattern = ur'\\begin\s*\{\s*'+env+ \
 			ur'\s*\}(.*?)\\end\s*\{\s*'+env+ur'\s*\}'
 	for env_result in re.finditer(pattern,tex):
-		print(env_result)
 		if env_result:
 			if delete_content:
 				tex =  tex.replace(env_result.group(0),'')

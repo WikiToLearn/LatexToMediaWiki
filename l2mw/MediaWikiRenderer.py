@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import string,re
+import subprocess
 from plasTeX.Renderers import Renderer
 from plasTeX import Command, Environment
 from PageTree import *
@@ -409,7 +410,8 @@ class MediaWikiRenderer (Renderer):
         return u'\n'.join(s)
         
     ##########################################
-    #figures and tables
+    #Figures and Tikz
+
     '''The figure environment is handled with regexs. '''
     def do_figure(self,node):
         self.used_tag('FIGURE')
@@ -443,8 +445,16 @@ class MediaWikiRenderer (Renderer):
     do_wrapfigure = do_figure
 
     def do_tikzpicture(self,node):
-        print node.source
-        return u''
+        if not hasattr(self,'picture_nr'):
+            self.picture_nr = 1
+        else: 
+            self.picture_nr += 1
+        file2 = open('./tikz'+ str(self.picture_nr) + '.svg','w+')
+        print >> file2,subprocess.check_output(["tikz2svg",'./tikz'+str(self.picture_nr)])
+        return u'[[File:tikz' + unicode(self.picture_nr) + u'.svg]]'
+
+    ##########################################################à
+    #Tables
 
     '''The Table environment is handled with regex'''
     def do_table(self,node):
