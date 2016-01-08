@@ -20,14 +20,14 @@ def preparse_tex(tex,print_path):
 	#replacing empheq with normal environments
 	tex = replace_empheq(tex)
 	#saving tikz source
-	tex = remove_tikz(tex)
+	tex , tikz_images = get_tikz_source(tex)
 	#printing preparser tex
 	if(print_path != ""):
 		o = open(print_path,"w")
 		o.write(tex)
 		o.close()
 
-	return (tex,th_dict)
+	return (tex,th_dict, tikz_images)
 
 
 '''Function that searches \newtheorem command in tex source to find
@@ -149,19 +149,22 @@ def replace_empheq(tex):
 		pass
 	return tex
 
-
-def remove_tikz(s):
-        tikz = "\\begin{tikzpicture}\n";
-        tikzend = "\\end{tikzpicture}\n";
-        nbr = 1
-        rest = ''
-        for i in environment_split(s,'tikzpicture', False):
-                if nbr % 2 == 0:
-                        file = open('tikz' + str(nbr/2),'w+')
-                        print >> file, tikz + i + tikzend
-                        rest += tikz + tikzend
-                else:
-                        rest += i
-                nbr += 1
-        return rest
+'''Function that removes tikx sources from tex and put them inside a dictionary
+to further processing in the renderer'''
+def get_tikz_source(s):
+	#dictionary to save tikx code
+	tikz_images  = {}
+	#check tikz dir
+	tikz = "\\begin{tikzpicture}\n"
+	tikzend = "\\end{tikzpicture}\n"
+	nbr = 1
+	rest = ''
+	for i in environment_split(s,'tikzpicture'):
+		if nbr % 2 == 0:
+			tikz_images['tikz'+ str(nbr/2)] =  tikz + i + tikzend
+			rest += tikz + tikzend
+		else:
+			rest += i
+		nbr += 1
+	return (rest, tikz_images)
 

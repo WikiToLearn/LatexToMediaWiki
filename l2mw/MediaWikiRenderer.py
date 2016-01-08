@@ -81,6 +81,11 @@ class MediaWikiRenderer (Renderer):
             #adding key in theorem numbering dict
             self.th_numb[key]=0
 
+    '''Function that save a tikz sources dictionary {tikz1:'source',...}
+    for rendering in do_tikzpicture'''
+    def init_tikz_images(self,tikz_dict):
+        self.tikz_images = tikz_dict
+
     #####################################
     #Utils for debug
     def used_tag(self,tag):
@@ -450,11 +455,9 @@ class MediaWikiRenderer (Renderer):
             self.picture_nr = 1
         else: 
             self.picture_nr += 1
-        file_in = open('./tikz'+str(self.picture_nr),'r')
-        file2 = open('./tikz'+ str(self.picture_nr) + '.svg','w+')
-        file2.write(tikz2svg.tikz2svg(file_in.read()))
-        file_in.close()
-        file2.close()
+        file_out = open('./tikz'+ str(self.picture_nr) + '.svg','w+')
+        file_out.write(tikz2svg.tikz2svg(self.tikz_images['tikz'+ str(self.picture_nr)]))
+        file_out.close()
         return u'[[File:tikz' + unicode(self.picture_nr) + u'.svg]]'
 
     ##########################################################à

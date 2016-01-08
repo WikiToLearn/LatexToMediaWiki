@@ -122,7 +122,7 @@ def get_environment_content(tex,env, remove_options=False):
 
 '''Function that returns a tuple. Each second member is the content 
 of the specified environment'''
-def environment_split(tex,env, remove_options=False):
+def environment_split(tex,env):
 	#search \begin and end \tag
 	pattern = ur'\\begin\s*\{\s*'+env+ \
 			ur'\s*\}(.*?)\\end\s*\{\s*'+env+ur'\s*\}'

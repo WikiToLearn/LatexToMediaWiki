@@ -41,6 +41,8 @@ def execute_mediawiki_parser(config):
 	rend = MediaWikiRenderer(config)
 	#inserting theorem dictionary in renderer
 	rend.init_theorems(preparser_result[1])
+	#inserting tikz images source in renderer
+	rend.init_tikz_images(preparser_result[2])
 	#starting rendering
 	rend.render(document)
 	#after rendering work
