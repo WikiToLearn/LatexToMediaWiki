@@ -438,9 +438,9 @@ class MediaWikiRenderer (Renderer):
             self.label(label)
         #return warning text for figure
         if caption != '':
-            return unicode('[[File:'+file_path+'|frame|'+caption+']]')
+            return unicode('[[File:'+file_path+'|'+caption+']]')
         else:
-            return unicode('[[File:'+file_path+'|frame]]')
+            return unicode('[[File:'+file_path+']]')
 
     do_wrapfigure = do_figure
 
