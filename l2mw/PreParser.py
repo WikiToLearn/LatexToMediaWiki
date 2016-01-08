@@ -151,19 +151,17 @@ def replace_empheq(tex):
 
 
 def remove_tikz(s):
-	#try using get_environment_content  from utility class.
-	#they are functions used for all the preparsing operations.
-        tikz = "\\begin{tikzpicture}";
-        tikzend = "\\end{tikzpicture}";
-        pos1 = 0
-        pos2 = 0
+        tikz = "\\begin{tikzpicture}\n";
+        tikzend = "\\end{tikzpicture}\n";
         nbr = 1
-        while pos1 != -1:
-            pos1 = s.find(tikz, pos2)
-            pos2 = s.find(tikzend, pos1)
-            if pos1 != -1:
-                file1 = open('./tikz' + str(nbr),'w+')
-                print >> file1, s[pos1:pos2+17]
-                s = s[:pos1+19]+s[pos2:]
-            nbr += 1
-        return s
+        rest = ''
+        for i in environment_split(s,'tikzpicture', False):
+                if nbr % 2 == 0:
+                        file = open('./tikz' + str(nbr/2),'w+')
+                        print >> file, tikz + i + tikzend
+                        rest += tikz + tikzend
+                else:
+                        rest += i
+                nbr += 1
+        return rest
+
