@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import string,re
 import subprocess
+import tikz2svg
 from plasTeX.Renderers import Renderer
 from plasTeX import Command, Environment
 from PageTree import *
@@ -449,8 +450,11 @@ class MediaWikiRenderer (Renderer):
             self.picture_nr = 1
         else: 
             self.picture_nr += 1
+        file_in = open('./tikz'+str(self.picture_nr),'r')
         file2 = open('./tikz'+ str(self.picture_nr) + '.svg','w+')
-        print >> file2,subprocess.check_output(["tikz2svg",'./tikz'+str(self.picture_nr)])
+        file2.write(tikz2svg.tikz2svg(file_in.read()))
+        file_in.close()
+        file2.close()
         return u'[[File:tikz' + unicode(self.picture_nr) + u'.svg]]'
 
     ##########################################################à

@@ -124,10 +124,10 @@ def get_environment_content(tex,env, remove_options=False):
 of the specified environment'''
 def environment_split(tex,env, remove_options=False):
 	#search \begin and end \tag
-        pattern = ur'\\begin\s*\{\s*'+env+ \
-                        ur'\s*\}(.*?)\\end\s*\{\s*'+env+ur'\s*\}'
+	pattern = ur'\\begin\s*\{\s*'+env+ \
+			ur'\s*\}(.*?)\\end\s*\{\s*'+env+ur'\s*\}'
 	content = re.split(pattern, tex, flags=re.DOTALL)
-        return content
+	return content
 
 '''Function that removes all the occurences of an environment 
 from tex, leaving or not the content.'''

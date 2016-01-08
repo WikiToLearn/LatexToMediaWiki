@@ -157,7 +157,7 @@ def remove_tikz(s):
         rest = ''
         for i in environment_split(s,'tikzpicture', False):
                 if nbr % 2 == 0:
-                        file = open('./tikz' + str(nbr/2),'w+')
+                        file = open('tikz' + str(nbr/2),'w+')
                         print >> file, tikz + i + tikzend
                         rest += tikz + tikzend
                 else:
