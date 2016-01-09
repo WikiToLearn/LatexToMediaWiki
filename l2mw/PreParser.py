@@ -21,13 +21,14 @@ def preparse_tex(tex,print_path):
 	tex = replace_empheq(tex)
 	#saving tikz source
 	tex , tikz_images = get_tikz_source(tex)
+	tex , tikz_com = get_tikzcom_source(tex)
 	#printing preparser tex
 	if(print_path != ""):
 		o = open(print_path,"w")
 		o.write(tex)
 		o.close()
 
-	return (tex,th_dict, tikz_images)
+	return (tex,th_dict, tikz_images, tikz_com)
 
 
 '''Function that searches \newtheorem command in tex source to find
@@ -152,7 +153,7 @@ def replace_empheq(tex):
 '''Function that removes tikx sources from tex and put them inside a dictionary
 to further processing in the renderer'''
 def get_tikz_source(s):
-	#dictionary to save tikx code
+	#dictionary to save tikz code
 	tikz_images  = {}
 	#check tikz dir
 	tikz = "\\begin{tikzpicture}\n"
@@ -164,7 +165,34 @@ def get_tikz_source(s):
 			tikz_images['tikz'+ str(nbr/2)] =  tikz + i + tikzend
 			rest += tikz + tikzend
 		else:
-			rest += i
+                        if nbr != len(environment_split(s,'tikzpicture')):
+                                rest += i[:len(i)-20]
+                        else:
+                                rest += i
 		nbr += 1
 	return (rest, tikz_images)
 
+def get_tikzcom_source(s):
+        nbr = 1
+        rest = ''
+        countst = 0
+	countend = 0
+	#dictionary to save tikz code
+	tikz_com  = {}
+        for i in command_split(s,'tikz', False):
+                if nbr > 1:
+                        char = 0
+                        for pos in i:
+                                if pos == '{':
+                                        countst += 1
+                                elif pos == '}':
+                                        countend += 1
+                                if countst == countend & countst != 0:
+                                        break
+                                char += 1
+                        tikz_com['tikz'+ str(nbr-1)] =  '\\tikz' + i[:char] + '}'
+                        rest += '\\tikz{' + i[char:]
+                else:
+                        rest += i
+                nbr += 1
+        return (rest, tikz_com)

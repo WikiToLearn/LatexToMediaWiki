@@ -129,6 +129,13 @@ def environment_split(tex,env):
 	content = re.split(pattern, tex, flags=re.DOTALL)
 	return content
 
+'''Function that returns a tuple. The text is split according to
+the occurence of the specified command'''
+def command_split(tex,com, remove_options=False):
+	pattern = ur'\\'+com
+	content = re.split(pattern, tex, flags=re.DOTALL)
+	return content
+
 '''Function that removes all the occurences of an environment 
 from tex, leaving or not the content.'''
 def remove_environment_greedy(tex,env,delete_content=False):
