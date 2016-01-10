@@ -20,14 +20,15 @@ def preparse_tex(tex,print_path):
 	#replacing empheq with normal environments
 	tex = replace_empheq(tex)
 	#saving tikz source
-	tex = remove_tikz(tex)
+	tex , tikz_images = get_tikz_source(tex)
+	tex , tikz_com = get_tikzcom_source(tex)
 	#printing preparser tex
 	if(print_path != ""):
 		o = open(print_path,"w")
 		o.write(tex)
 		o.close()
 
-	return (tex,th_dict)
+	return (tex,th_dict, tikz_images, tikz_com)
 
 
 '''Function that searches \newtheorem command in tex source to find
@@ -149,21 +150,49 @@ def replace_empheq(tex):
 		pass
 	return tex
 
+'''Function that removes tikx sources from tex and put them inside a dictionary
+to further processing in the renderer'''
+def get_tikz_source(s):
+	#dictionary to save tikz code
+	tikz_images  = {}
+	#check tikz dir
+	tikz = "\\begin{tikzpicture}\n"
+	tikzend = "\\end{tikzpicture}\n"
+	nbr = 1
+	rest = ''
+	for i in environment_split(s,'tikzpicture'):
+		if nbr % 2 == 0:
+			tikz_images['tikz'+ str(nbr/2)] =  tikz + i + tikzend
+			rest += tikz + tikzend
+		else:
+                        if nbr != len(environment_split(s,'tikzpicture')):
+                                rest += i[:len(i)-20]
+                        else:
+                                rest += i
+		nbr += 1
+	return (rest, tikz_images)
 
-def remove_tikz(s):
-	#try using get_environment_content  from utility class.
-	#they are functions used for all the preparsing operations.
-        tikz = "\\begin{tikzpicture}";
-        tikzend = "\\end{tikzpicture}";
-        pos1 = 0
-        pos2 = 0
+def get_tikzcom_source(s):
         nbr = 1
-        while pos1 != -1:
-            pos1 = s.find(tikz, pos2)
-            pos2 = s.find(tikzend, pos1)
-            if pos1 != -1:
-                file1 = open('./tikz' + str(nbr),'w+')
-                print >> file1, s[pos1:pos2+17]
-                s = s[:pos1+19]+s[pos2:]
-            nbr += 1
-        return s
+        rest = ''
+        countst = 0
+	countend = 0
+	#dictionary to save tikz code
+	tikz_com  = {}
+        for i in command_split(s,'tikz', False):
+                if nbr > 1:
+                        char = 0
+                        for pos in i:
+                                if pos == '{':
+                                        countst += 1
+                                elif pos == '}':
+                                        countend += 1
+                                if countst == countend & countst != 0:
+                                        break
+                                char += 1
+                        tikz_com['tikz'+ str(nbr-1)] =  '\\tikz' + i[:char] + '}'
+                        rest += '\\tikz{' + i[char:]
+                else:
+                        rest += i
+                nbr += 1
+        return (rest, tikz_com)

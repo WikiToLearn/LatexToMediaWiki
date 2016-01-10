@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import string,re
 import subprocess
+import tikz2svg
 from plasTeX.Renderers import Renderer
 from plasTeX import Command, Environment
 from PageTree import *
@@ -79,6 +80,12 @@ class MediaWikiRenderer (Renderer):
         for key in th_dict:
             #adding key in theorem numbering dict
             self.th_numb[key]=0
+
+    '''Function that save a tikz sources dictionary {tikz1:'source',...}
+    for rendering in do_tikzpicture and do_tikz'''
+    def init_tikz_images(self,tikz_dict,tikzcom_dict):
+        self.tikz_images = tikz_dict
+        self.tikzcom_images = tikzcom_dict
 
     #####################################
     #Utils for debug
@@ -444,13 +451,24 @@ class MediaWikiRenderer (Renderer):
 
     do_wrapfigure = do_figure
 
+    def do_tikz(self,node):
+        if not hasattr(self,'picture_nrcom'):
+            self.picture_nrcom = 1
+        else:
+            self.picture_nrcom += 1
+        file_out = open('./tikzcom'+ str(self.picture_nrcom) + '.svg','w+')
+        file_out.write(tikz2svg.tikz2svg(self.tikzcom_images['tikz'+ str(self.picture_nrcom)]))
+        file_out.close()
+        return u'[[File:tikzcom' + unicode(self.picture_nrcom) + u'.svg]]'
+
     def do_tikzpicture(self,node):
         if not hasattr(self,'picture_nr'):
             self.picture_nr = 1
         else: 
             self.picture_nr += 1
-        file2 = open('./tikz'+ str(self.picture_nr) + '.svg','w+')
-        print >> file2,subprocess.check_output(["tikz2svg",'./tikz'+str(self.picture_nr)])
+        file_out = open('./tikz'+ str(self.picture_nr) + '.svg','w+')
+        file_out.write(tikz2svg.tikz2svg(self.tikz_images['tikz'+ str(self.picture_nr)]))
+        file_out.close()
         return u'[[File:tikz' + unicode(self.picture_nr) + u'.svg]]'
 
     ##########################################################à
