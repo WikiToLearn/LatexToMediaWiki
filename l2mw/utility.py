@@ -126,7 +126,7 @@ def remove_environment_greedy(tex,env,delete_content=False):
 	#search \begin and end \tag
 	pattern = ur'\\begin\s*\{\s*'+env+ \
 			ur'\s*\}(.*?)\\end\s*\{\s*'+env+ur'\s*\}'
-	for env_result in re.finditer(pattern,tex):
+	for env_result in re.finditer(pattern,tex,re.DOTALL):
 		if env_result:
 			if delete_content:
 				tex =  tex.replace(env_result.group(0),'')
