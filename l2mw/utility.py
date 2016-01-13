@@ -103,10 +103,14 @@ def get_content_list_greedy(tex,command):
 				result.append(tok[1:pos])
 	return result
 
-'''Function that returns the content of the first occurence
-of the environment env and all the matched environment in a tuple.
-If the env is not found it return ('')'''
-def get_environment_content(tex,env, remove_options=False):
+'''Function that returns the content of an environment,
+removing options in [...] brakets if remove_options=True.
+If single=True it returns the first occurence of an environment 
+in the format (content, all env test) and returns ('','') if 
+no environment is found.
+If single=False it returns a list of matches in the same format of
+signle case.'''
+def get_environment_content(tex,env, single=True, remove_options=False):
 	#search \begin and end \tag
 	if remove_options:
 		pattern = ur'\\begin\s*\{\s*'+env+ \
@@ -114,11 +118,19 @@ def get_environment_content(tex,env, remove_options=False):
 	else:
 		pattern = ur'\\begin\s*\{\s*'+env+ \
 				ur'\s*\}(.*?)\\end\s*\{\s*'+env+ur'\s*\}'
-	env_result = re.search(pattern,tex,re.DOTALL)
-	if env_result:
-		return (env_result.group(1), env_result.group(0))
+	if single:
+		env_result = re.search(pattern,tex,re.DOTALL)
+		if env_result:
+			return (env_result.group(1), env_result.group(0))
+		else:
+			return ('','')
 	else:
-		return ('','')
+		result = []
+		for env_result in re.finditer(pattern, tex,re.DOTALL):
+			result.append((env_result.group(1), env_result.group(0)))
+		return result
+
+
 
 '''Function that returns a tuple. Each second member is the content 
 of the specified environment'''
@@ -143,9 +155,8 @@ def remove_environment_greedy(tex,env,delete_content=False):
 	pattern = ur'\\begin\s*\{\s*'+env+ \
 			ur'\s*\}(.*?)\\end\s*\{\s*'+env+ur'\s*\}'
 	for env_result in re.finditer(pattern,tex,re.DOTALL):
-		if env_result:
-			if delete_content:
-				tex =  tex.replace(env_result.group(0),'')
-			else:
-				tex =  tex.replace(env_result.group(0),env_result.group(1))
+		if delete_content:
+			tex =  tex.replace(env_result.group(0),'')
+		else:
+			tex =  tex.replace(env_result.group(0),env_result.group(1))
 	return tex
