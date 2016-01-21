@@ -119,9 +119,6 @@ for p in process_data:
 	#executing process for alla renderers
 	for r in config['renderers']:
 		if r=='mediawiki':
-			#base path is added to title (hack)
-			if config['base_path']!='':
-				title = config['base_path']+ "/"+ config['title']
 			execute_mediawiki_parser(config)
 		elif r =="xml":
 			execute_xml_parser(config)

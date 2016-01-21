@@ -113,7 +113,8 @@ class Page(object):
 				label_n = int(label)
 				if label_n == -1:
 					#ref not foung
-					self.text = self.text.replace('\\ref{'+label+'}','MISSING REF')
+					self.text = self.text.replace('\\ref{'+label+'}',
+							"'''MISSING REF'''")
 					continue
 				page = pages[labels[label_n]]
 				if page.url != self.url:

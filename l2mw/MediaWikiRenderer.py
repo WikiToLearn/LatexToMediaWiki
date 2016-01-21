@@ -461,15 +461,17 @@ class MediaWikiRenderer (Renderer):
         file_out.close()
         return u'[[File:tikzcom' + unicode(self.picture_nrcom) + u'.svg]]'
 
-    def do_tikzpicture(self,node):
+    def do_tikzpicture(self,node, label=''):
         if not hasattr(self,'picture_nr'):
             self.picture_nr = 1
         else: 
             self.picture_nr += 1
-        file_out = open('./tikz'+ str(self.picture_nr) + '.svg','w+')
+        if label=='':
+            label = 'tikz '+ str(self.picture_nr) + '.svg'
+        file_out = open(label + '.svg','w+')
         file_out.write(tikz2svg.tikz2svg(self.tikz_images['tikz'+ str(self.picture_nr)]))
         file_out.close()
-        return u'[[File:tikz' + unicode(self.picture_nr) + u'.svg]]'
+        return u'[[File:'+ label +']]'
 
     ##########################################################à
     #Tables
@@ -588,8 +590,10 @@ class MediaWikiRenderer (Renderer):
     def do_ensuremath(self,node):
         self.used_tag('ENSURE_MATH')
         s = node.source
+        print s
         #removing \ensuremath{}
-        s = get_content_greedy(s,'\\ensuremath')
+        s = remove_command_greedy(s,'\\ensuremath',False)
+        print s
         #check math content
         s = math_check(s)
         return '<math>'+ s +'</math>'
