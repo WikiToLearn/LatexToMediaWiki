@@ -213,7 +213,7 @@ class PageTree (object):
 				#book export index for chapters
 				self.book_export_index.append(';'+ p.title_name)
 				if p.text != '':
-					index.append('*[['+ sub+'|Introduzione]]\n')
+					index.append('*[['+ sub+'|'+ self.keywords['intro']+ ']]\n')
 					self.book_export_index.append(':[['+ sub+']]')
 
 			elif p.text !='':

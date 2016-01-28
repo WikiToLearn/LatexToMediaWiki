@@ -1,10 +1,12 @@
 {
 "it":{
 	"chapters":"Capitoli",
-	"subpages":"Sottopagine"
+	"subpages":"Sottopagine",
+	"intro":"Introduzione"
 	},
 "en":{
 	"chapters":"Chapters",
-	"subpages":"Subpages"
+	"subpages":"Subpages",
+	"intro":"Introduction"
 	}
 }
