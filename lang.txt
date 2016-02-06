@@ -2,11 +2,13 @@
 "it":{
 	"chapters":"Capitoli",
 	"subpages":"Sottopagine",
-	"intro":"Introduzione"
+	"intro":"Introduzione",
+	"proof":"Dimostrazione"
 	},
 "en":{
 	"chapters":"Chapters",
 	"subpages":"Subpages",
-	"intro":"Introduction"
+	"intro":"Introduction",
+	"proof":"Proof"
 	}
 }

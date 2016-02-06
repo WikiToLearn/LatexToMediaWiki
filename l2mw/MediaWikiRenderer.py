@@ -702,12 +702,12 @@ class MediaWikiRenderer (Renderer):
         if node.attributes['proof_name']!=None:
             proof_name = node.attributes['proof_name']
         s=[]
-        s.append("''Dimostrazione ")
+        s.append("{{Environment|name="+self.configs['keywords']['proof'])s
         if proof_name!="":
-            s.append("("+proof_name+")")
-        s.append("''\n\n")
+            s.append(" ("+proof_name+")")
+        s.append("|content=")
         s.append(unicode(node).lstrip())
-        s.append('\n')
+        s.append('}}\n')
         return u''.join(s)
 
 
