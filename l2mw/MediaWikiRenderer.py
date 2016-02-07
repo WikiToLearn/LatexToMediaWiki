@@ -445,9 +445,9 @@ class MediaWikiRenderer (Renderer):
             self.label(label)
         #return warning text for figure
         if caption != '':
-            return unicode('[[File:'+file_path+'|'+caption+']]')
+            return unicode('[[File:'+file_path+']]\n')
         else:
-            return unicode('[[File:'+file_path+']]')
+            return unicode('[[File:'+file_path+']]\n')
 
     do_wrapfigure = do_figure
 
@@ -702,7 +702,7 @@ class MediaWikiRenderer (Renderer):
         if node.attributes['proof_name']!=None:
             proof_name = node.attributes['proof_name']
         s=[]
-        s.append("{{Environment|name="+self.configs['keywords']['proof'])s
+        s.append("{{Environment|name="+self.configs['keywords']['proof'])
         if proof_name!="":
             s.append(" ("+proof_name+")")
         s.append("|content=")
