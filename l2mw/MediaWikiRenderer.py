@@ -61,7 +61,7 @@ class MediaWikiRenderer (Renderer):
         self.blocks = []
         #tree object
         self.tree = PageTree(self.doc_title,
-                configs['output_path'],configs['keywords'])
+                configs['output_path'],configs)
         #parameter for list formatting
         self.list_level=u'' 
         #parameter for theorem handling

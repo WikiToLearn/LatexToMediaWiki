@@ -20,10 +20,11 @@ class PageTree (object):
 		-self.figures contains the list of figure objects
 		-self.tables contains the list of table objects
 		-self.page_stack contains the history of enviroment until the one before the current'''
-	def __init__(self, doc_title, output_path, keywords):
+	def __init__(self, doc_title, output_path, configs):
 		self.doc_title= doc_title
 		self.output_path = output_path
-		self.keywords = keywords
+		self.configs = configs
+		self.keywords = configs['keywords']
 		self.pages = {}
 		self.media_urls = {}
 		self.normalized_urls ={}
@@ -33,13 +34,15 @@ class PageTree (object):
 		self.tables = []
 		self.theorems =[]
 		#ROOT PAGE
-		r = Page(doc_title,doc_title,doc_title,'root',-1,self.keywords)
-		self.pages[doc_title]= r
+		self.root_url = self.configs['base_path']+ "/"+ doc_title
+		print(self.root_url)
+		r = Page(doc_title,doc_title,self.root_url,'root',-1,self.keywords)
+		self.pages[self.root_url]= r
 		#indexes
 		self.page_stack = []
 		self.pageurl_stack = []
 		self.current = doc_title
-		self.current_url = doc_title
+		self.current_url = self.root_url
 		#collapse level
 		self.collapse_level = 0
 		#initializing normalized_urls dict reading from file if exists
@@ -145,9 +148,9 @@ class PageTree (object):
 	def collapseText(self,level_max):
 		self.collapse_level = level_max
 		#collapsing text
-		self.pages[self.doc_title].collapseText(level_max,self.pages)
+		self.pages[self.root_url].collapseText(level_max,self.pages)
 		#collapsing mediawiki url
-		self.pages[self.doc_title].collapseMediaURL(level_max,self.pages,self.media_urls,'',{})
+		self.pages[self.root_url].collapseMediaURL(level_max,self.pages,self.media_urls,'',{})
 
 		#FIXING URLS FROM INTERNAL TO MEDIAWIKIURL
 		#fixing labels with mediawikiurls
@@ -181,7 +184,7 @@ class PageTree (object):
 	index for book export page'''
 	def createIndex(self,max_level):
 		ind = ''
-		base_page = self.pages[self.doc_title]
+		base_page = self.pages[self.root_url]
 		base_page.text += '{{RiferimentiEsterni \
 		|esercizi= \n|dispense=\n|testi=}}\n'
 		#book export: link
@@ -191,7 +194,7 @@ class PageTree (object):
 		self.book_export_index.append('=='+ self.doc_title+'==')
 		#creating root index
 		base_page.text+= '\n\n==' +self.keywords['chapters']+'==\n'
-		base_page.text+= self._createIndex(self.doc_title,'',max_level) 
+		base_page.text+= self._createIndex(self.root_url,'',max_level) 
 		#creating book export page
 		book_title = 'Project:Libri_'+self.doc_title
 		book_export_page= Page(book_title,book_title,
