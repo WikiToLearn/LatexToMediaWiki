@@ -34,7 +34,10 @@ class PageTree (object):
 		self.tables = []
 		self.theorems =[]
 		#ROOT PAGE
-		self.root_url = self.configs['base_path']+ "/"+ doc_title
+		if self.configs ['base_path']!='':
+			self.root_url = self.configs['base_path']+ "/"+ doc_title
+		else:
+			self.root_url = doc_title
 		print(self.root_url)
 		r = Page(doc_title,doc_title,self.root_url,'root',-1,self.keywords)
 		self.pages[self.root_url]= r
