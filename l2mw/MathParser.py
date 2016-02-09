@@ -65,6 +65,8 @@ def math_check(mtxt,env=''):
     #removing \nonumber command
     mtxt = mtxt.replace('\\nonumber','')
     mtxt = mtxt.replace('\\notag','')
+    #dag to dagger
+    mtxt = mtxt.replace('\\dag','\\dagger')
     #replacing spacing commands
     mtxt = mtxt.replace('\\:','\\,')
     #removing rule command
