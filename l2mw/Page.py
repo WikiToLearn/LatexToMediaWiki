@@ -140,6 +140,7 @@ class Page(object):
 		#apostrophe fixed
 		self.text = self.text.replace(u'’',u"'")
 		self.text = self.text.replace(u'`',u"'")
+		self.text = self.text.replace(u'”',u"''")
 
 	def __str__(self):
 		s =[]

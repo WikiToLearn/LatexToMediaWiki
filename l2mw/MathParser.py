@@ -55,6 +55,7 @@ def math_check(mtxt,env=''):
     #replacing bb and bbm with boldmath
     mtxt = replace_command_greedy(mtxt, '\\bm','\\mathbf', False)
     mtxt = replace_command_greedy(mtxt, '\\bbm','\\mathbf', False)
+    mrxr = replace_command_greedy(mtxt, '\\mathsrc', '\\mathcal', False)
     #replace intertext with mbox
     mtxt = replace_command_greedy(mtxt, '\\intertext', '\\mbox', False)
     #symbols
@@ -67,6 +68,7 @@ def math_check(mtxt,env=''):
     mtxt = mtxt.replace('\\notag','')
     #dag to dagger
     mtxt = mtxt.replace('\\dag','\\dagger')
+    mtxt = mtxt.replace('\\fint','\\int')
     #replacing spacing commands
     mtxt = mtxt.replace('\\:','\\,')
     #removing rule command
@@ -77,7 +79,8 @@ def math_check(mtxt,env=''):
     mtxt = re.sub(ur'\\makebox\s*(\[(.*?)\])*\s?\{(.*?)\}','',mtxt)
     #removing tag command
     mtxt = remove_command_greedy(mtxt,'\\tag', True)
-
+    #apostrophe in math
+    mtxt = mtxt.replace('”',"''")
     #environment specific changes
     if env == 'empheq':
         mtxt = re.sub(ur'\[box=(.*?)\]', u'', mtxt, re.DOTALL)

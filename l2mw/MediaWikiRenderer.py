@@ -63,7 +63,7 @@ class MediaWikiRenderer (Renderer):
         self.tree = PageTree(self.doc_title,
                 configs['output_path'],configs)
         #parameter for list formatting
-        self.list_level=u'' 
+        self.list_level=u''
         #parameter for theorem handling
         self.in_theorem=False
 
@@ -71,7 +71,7 @@ class MediaWikiRenderer (Renderer):
         #dictionary for tag usage
         self.used_tags = {}
 
-    '''function that register user defined theorem 
+    '''function that register user defined theorem
     to the theorem function. Moreover it register a dictionary
     for theorem numbering'''
     def init_theorems(self, th_dict):
@@ -108,7 +108,7 @@ class MediaWikiRenderer (Renderer):
     def do_textDefault(self, node):
         self.used_tag('TEXT-DEFAULT')
         text = unicode(node).lstrip()
-        return text        
+        return text
 
     ###############################
     #sectioning
@@ -162,7 +162,7 @@ class MediaWikiRenderer (Renderer):
 
     do__paragraph_star = do_paragraph
     #################################################
-    
+
     #subparagraph are not node of the section tree
     def do_subparagraph(self,node):
         self.used_tag('SUBPARAGRAPH')
@@ -172,7 +172,7 @@ class MediaWikiRenderer (Renderer):
         s.append('\'\'\'\'')
         s.append(unicode(node).lstrip())
         return u''.join(s)
-    
+
     '''Enter point for parsing. Root page is already created'''
     def do_document(self,node):
         self.used_tag('DOCUMENT')
@@ -229,7 +229,7 @@ class MediaWikiRenderer (Renderer):
     def do_newline(self,node):
         self.used_tag('NEWLINE')
         return u'\n'
-    
+
     do__backslash = do_newline
     do_linebreak = do_newline
 
@@ -247,14 +247,14 @@ class MediaWikiRenderer (Renderer):
         s.append(unicode(node).lstrip())
         s.append(u"\'\'\'")
         return u''.join(s)
-        
+
     def do_textit(self,node):
         self.used_tag('TEXTIT')
         s=[]
         s.append(u"\'\'")
         s.append(unicode(node).lstrip())
         s.append(u"\'\'")
-        return u''.join(s)    
+        return u''.join(s)
 
     def do_textsc(self,node):
         self.used_tag('TEXTSC')
@@ -264,7 +264,7 @@ class MediaWikiRenderer (Renderer):
     do_itshape = do_textit
     do_textsl = do_textit
     do_slshape = do_textit
-   
+
     def do_itemize(self,node):
         self.used_tag('ITEMIZE')
         s = []
@@ -284,7 +284,7 @@ class MediaWikiRenderer (Renderer):
             s.append(self.list_level+t)
         self.list_level = self.list_level[:-1]
         return u'\n'.join(s)
-    
+
     def do_description(self,node):
         self.used_tag('DESCRIPTION')
         s = []
@@ -294,7 +294,7 @@ class MediaWikiRenderer (Renderer):
         return u'\n'.join(s)
 
     def do__tilde(self,node):
-        return unicode(node)    
+        return unicode(node)
 
     def do__dollar(self,node):
         return u'$'
@@ -307,7 +307,7 @@ class MediaWikiRenderer (Renderer):
 
     def do__closecurly(self,node):
         return u'}'
-    
+
     def do__hashmark(self,node):
         return u'#'
 
@@ -363,9 +363,9 @@ class MediaWikiRenderer (Renderer):
 
     def do_hrulefill(self,node):
         self.used_tag('HRULEFILL')
-        return u'----'  
+        return u'----'
 
-    do_rule=do_hrulefill   
+    do_rule=do_hrulefill
 
     def do_vspace(self,node):
         return u''
@@ -384,7 +384,7 @@ class MediaWikiRenderer (Renderer):
 
     do_tiny=do_small
     do_scriptsize=do_small
-    
+
     def do_underline(self, node):
         self.used_tag('UNDERLINE')
         s = []
@@ -392,7 +392,7 @@ class MediaWikiRenderer (Renderer):
         s.append(unicode(node).lstrip())
         s.append(u'</u>')
         return u''.join(s)
-    
+
     do_underbar=do_underline
     do_uline = do_underline
 
@@ -402,7 +402,7 @@ class MediaWikiRenderer (Renderer):
         s.append(u"<code>")
         s.append(unicode(node).lstrip())
         s.append(u"</code>")
-        return u''.join(s)  
+        return u''.join(s)
 
     def do_verbatim(self,node):
         self.used_tag('VERBATIM')
@@ -415,7 +415,7 @@ class MediaWikiRenderer (Renderer):
             s.append(" %s" % line)
         s.append(u' </nowiki>\n')
         return u'\n'.join(s)
-        
+
     ##########################################
     #Figures and Tikz
 
@@ -426,8 +426,9 @@ class MediaWikiRenderer (Renderer):
         caption = ''
         label=''
         #searchin includegraphics
-        graphics_search = re.search(ur'\\includegraphics\s*(\[.*?\])*\s*{(.*?)}',node.source)
-        if graphics_search: 
+        graphics_search = re.search(ur'\\includegraphics\s*(\[.*?\])*\s*{(.*?)}',
+                                    node.source)
+        if graphics_search:
             file_path = graphics_search.group(2).split('/').pop()
             #file_path+='.'+ self.configs['image_extension']
         #searching label
@@ -464,7 +465,7 @@ class MediaWikiRenderer (Renderer):
     def do_tikzpicture(self,node, label=''):
         if not hasattr(self,'picture_nr'):
             self.picture_nr = 1
-        else: 
+        else:
             self.picture_nr += 1
         if label=='':
             label = 'tikz '+ str(self.picture_nr) + '.svg'
@@ -504,7 +505,7 @@ class MediaWikiRenderer (Renderer):
     If not, the table is marks'''
     def do_tabular(self,node):
         self.tabular_counter+=1
-        self.used_tag('TABULAR')    
+        self.used_tag('TABULAR')
         label = 'table'+str(self.tabular_counter)
         #creating table
         t = Table(label,label)
@@ -533,11 +534,11 @@ class MediaWikiRenderer (Renderer):
 
     '''Handles math inside a displaymath mode:
     -it removes $$ and \[ \].
-    -it remove \begin and \end so it has to be used 
+    -it remove \begin and \end so it has to be used
     only for \begin{equation} and \begin{displaymath}.
-    Other \begin{math_environment} that are not inside a displaymath 
+    Other \begin{math_environment} that are not inside a displaymath
     have to be handled by specific methods'''
-    def handleDisplayMath(self, node, env='equation'): 
+    def handleDisplayMath(self, node, env='equation'):
         self.used_tag('DISPLAY_MATH@'+env )
         s = node.source
         #get content of environment or display math tags
@@ -590,15 +591,13 @@ class MediaWikiRenderer (Renderer):
     def do_ensuremath(self,node):
         self.used_tag('ENSURE_MATH')
         s = node.source
-        print s
         #removing \ensuremath{}
         s = remove_command_greedy(s,'\\ensuremath',False)
-        print s
         #check math content
         s = math_check(s)
         return '<math>'+ s +'</math>'
 
-    '''Support for align type tags. 
+    '''Support for align type tags.
     They are outside math modes an supported directly'''
     def do_align(self, node):
         self.used_tag('MATH_ALIGN')
@@ -668,12 +667,10 @@ class MediaWikiRenderer (Renderer):
     def do_theorem(self,node):
         self.used_tag("THEOREM")
         self.in_theorem= True
-        #reading id 
+        #reading id
         th_id = node.attributes['th_id']
         #reading title
         th_title = ''
-        if node.attributes['th_title']!=None:
-            th_title = node.attributes['th_title'].strip()
         #reading name form thms dict
         th_name = self.th_dict[th_id]
         #update theorem numbering
@@ -681,13 +678,39 @@ class MediaWikiRenderer (Renderer):
             num = self.th_numb[th_id]+1
             self.th_numb[th_id] = num
             #adding numb to name
-            th_name += " "+str(num)
+            if node.attributes['th_title']!=None:
+                th_title = node.attributes['th_title'].strip()
+                th_title = str(num)+ " - "+ th_title
+            else:
+                th_title = str(num)
         #add theorem to PageTree
         self.tree.addTheorem(th_name +" " + th_title)
-        #adding content to page through a template
         s =[]
-        s.append("{{Environment|name="+th_name+'|title=' + \
-            th_title+"|content=")
+        if th_name.lower() == 'teorema':
+        #adding content to page through a template
+            s.append("{{Teorema|titolo=" + \
+                    th_title+"|")
+        elif th_name.lower() == 'definizione':
+            s.append("{{Definizione|titolo=" + \
+                    th_title+"|")
+        elif th_name.lower() == 'titolo':
+            s.append("{{Lemma|title=" + \
+                    th_title+"|")
+        elif th_name.lower() == 'corollario':
+            s.append("{{Corollario|titolo=" + \
+                    th_title+"|")
+        elif th_name.lower()[:-2] == 'eserciz':
+            s.append("{{Esercizio|titolo=" + \
+                    th_title+"|")
+        elif th_name.lower()[:-1] == 'osservazion':
+            s.append("{{Osservazione|titolo=" + \
+                    th_title+"|")
+        elif th_name.lower()[:-2] == 'esemp':
+            s.append("{{Esempio|titolo=" + \
+                    th_title+"|")
+        elif th_name.lower() == 'dimostrazione':
+            s.append("{{Dimostrazione|titolo=" + \
+                    th_title+"|")
         #elaborating childnodes
         s.append(unicode(node).lstrip()+'\n')
         #closing template
@@ -702,17 +725,17 @@ class MediaWikiRenderer (Renderer):
         if node.attributes['proof_name']!=None:
             proof_name = node.attributes['proof_name']
         s=[]
-        s.append("{{Environment|name="+self.configs['keywords']['proof'])
+        s.append("{{Dimostrazione")
         if proof_name!="":
             s.append(" ("+proof_name+")")
-        s.append("|content=")
+        s.append("|")
         s.append(unicode(node).lstrip())
         s.append('}}\n')
         return u''.join(s)
 
 
     ####################################################
-    #Code Environments 
+    #Code Environments
 
     def do_lstdefinestyle(self,node):
         if not hasattr(self, 'style_lang'):
@@ -741,7 +764,6 @@ class MediaWikiRenderer (Renderer):
             self.lst_lang = self.style_lang[argsdict['style']]
         else:
             self.lst_lang = 'Not specified'
-        print self.lst_lang
         return u''
 
     def do_lstlisting(self,node):
@@ -755,11 +777,10 @@ class MediaWikiRenderer (Renderer):
         else:
             ind1 = source.find('}')
         ind2 = source.rfind('\\')
-        print(source)
         s.append(source[ind1+1:ind2])
         s.append('</source>\n')
         return u'\n'.join(s)
-        
+
     def do_minted(self,node):
         self.used_tag('MINTED')
         s=[]
